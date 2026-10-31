@@ -13,6 +13,7 @@ import { parseDone, resumeIndex } from './model/progress';
 import { missionSteps, type Control, type Game, type MissionStep, type Scene } from './missions/index';
 import { drawBars } from './view/bars';
 import { drawGraph, graphNote } from './view/graph';
+import { notesHtml } from './view/notes';
 import { createRadio } from './view/radio';
 import { drawScene, rampAt, slipAt, type SceneRun } from './view/scene';
 import { STRINGS } from './strings';
@@ -59,12 +60,12 @@ function setResult(outcome: '' | 'pass' | 'slid') {
   $('status').textContent = outcome === 'pass' ? tr('코너 통과', 'Through the corner') : outcome === 'slid' ? tr('필요한 힘이 낼 수 있는 힘을 넘어 미끄러졌습니다', 'It needed more force than the tyres had, so the car slid') : '';
 }
 
-function go() {
+function go(forceSlide?: boolean) {
   // 판정은 계산으로 먼저 정하고 애니메이션은 결과만 보여 줌
   const { req, avail } = forces();
-  passed = holdsGrip(gripLimit(cornerValues(S)), S.speed);
+  passed = forceSlide === undefined ? holdsGrip(gripLimit(cornerValues(S)), S.speed) : !forceSlide;
   run = { p: 0, slipP: null, slide: 0 };
-  if (!passed) run.slipP = slipAt(avail / req);
+  if (!passed) run.slipP = slipAt(Math.min(1, avail / req));
   setResult(''); stage.dataset.running = '1';
 }
 
@@ -101,6 +102,8 @@ function configure(c: Scene) {
 const FREE: Scene = { open: ['speed', 'radius', 'surface', 'wing', 'go'], limit: true, graph: true };
 const game: Game = {
   configure, condition,
+  clearRadio: () => radio.clear(),
+  drive(kmh, slide) { S.speed = Math.max(60, Math.min(340, kmh)); speedIn.value = String(S.speed); go(slide); },
   target: c => c === 'stage' ? stage : c === 'forces' ? $('forcesBox') : $(CONTROLS[c]),
 };
 
@@ -114,10 +117,12 @@ const tut = createTutorial({
   steps: STEPS, episode: 'race-engineer', ctrl: $('tutCtrl'), openButton: $('tutOpen'),
   resume: () => resumeIndex(STEPS.map(s => s.mission), done),
   onEnd: () => configure(FREE),
+  onAction: el => tut.emit('act', el.dataset.act),
   onRender: () => {
     const c = tut.current(); if (!c) return;
     const step = c.step as MissionStep;
     radio.show(step.radio);
+    if (step.radioHidden?.(c.state)) $('tutCtrl').hidden = true;
     if (step.mission && step.done?.(c.state)) markDone(step.mission);
   },
 });
@@ -126,11 +131,12 @@ speedIn.addEventListener('input', () => { S.speed = +speedIn.value; clearRun(); 
 radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(); tut.emit('setup', gripLimit(cornerValues(S)).kind); refreshCard(); });
 bindMode('surface', v => { S.surface = v as Surface; });
 bindMode('wing', v => { S.wing = v as Wing; });
-$('go').onclick = go;
+$('go').onclick = () => go();
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
 window.addEventListener('resize', () => { size = fitCanvas(stage); if (!$('graphBox').hidden) gsize = fitCanvas(graph); draw(); });
-onLangChange(() => { draw(); refreshCard(); });
+const showNotes = () => { $('notes').innerHTML = '<h2>' + tr('이 모델이 뺀 것', 'What this model leaves out') + '</h2>' + notesHtml(); };
+onLangChange(() => { draw(); showNotes(); refreshCard(); });
 bindLangButton($('langBtn'));
-applyLang(); size = fitCanvas(stage);
+applyLang(); showNotes(); size = fitCanvas(stage);
 startFixedStepLoop({ dt: DT, active: () => stage.dataset.running === '1', step, frame: draw });
 tut.autoStart();

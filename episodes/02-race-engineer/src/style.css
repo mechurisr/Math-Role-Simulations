@@ -37,3 +37,7 @@ body.tut-open #cond{display:none}
 /* 360px: 그래프 단계에서는 막대를 접어 한 화면에 들어오게 */
 body.tut-open .forces.graph-on .bar-row,body.tut-open .forces.graph-on .status{display:none}
 .tut-body td{font-size:13px}
+.tut-body td.good{color:var(--good);font-weight:500}
+.tut-body td.bad{color:var(--bad);font-weight:500}
+.note-list{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.tut-body .note-list{font-size:13px}

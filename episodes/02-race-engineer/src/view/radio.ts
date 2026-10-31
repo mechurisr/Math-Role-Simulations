@@ -13,6 +13,7 @@ export function createRadio(onSend: (a: RadioAnswer) => void) {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
   none.onclick = () => onSend({ kind: 'noLimit' });
   return {
+    clear() { input.value = ''; },
     // 단계가 바뀔 때만 입력을 비움
     show(spec: RadioSpec | undefined) {
       if (spec !== owner) { input.value = ''; owner = spec ?? null; }
