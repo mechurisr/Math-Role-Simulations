@@ -109,6 +109,19 @@ test('랜딩 목록에 공개됨 (FR-014)', async ({ page }) => {
   await expect(page.locator('h1')).toContainText('엔지니어');
 });
 
+test('윙이 있으면 속도를 올릴 때 파랑 막대가 실제로 길어지고, 윙이 없으면 그대로 (18단계)', async ({ page }) => {
+  await start(page, ['M1', 'M2', 'M3']); await next(page);
+  const blue = () => page.locator('#barAvail').evaluate(e => e.getBoundingClientRect().width);
+  await setRange(page, 'speed', 100); const none100 = await blue();
+  await setRange(page, 'speed', 200); expect(await blue()).toBeCloseTo(none100, 1);
+  await page.locator('#wing button[data-v=high]').tap();
+  await setRange(page, 'speed', 200); expect(await blue()).toBeGreaterThan(none100);
+  const widths: number[] = [];
+  for (const v of [100, 150, 200, 300]) { await setRange(page, 'speed', v); widths.push(await blue()); }
+  console.log('파랑 막대 폭', none100, widths);
+  for (let i = 1; i < widths.length; i++) expect(widths[i]).toBeGreaterThan(widths[i - 1]);
+});
+
 test('진행이 저장되어 끝낸 다음 미션부터 이어 감', async ({ page }) => {
   await start(page, ['M1', 'M2', 'M3']);
   await expect(page.locator('#tutTitle')).toHaveText('리어 윙이 하는 일');

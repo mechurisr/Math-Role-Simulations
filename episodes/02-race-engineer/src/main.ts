@@ -6,7 +6,7 @@ import { applyLang, bindLangButton, defineStrings, onLangChange, tr } from '@ser
 import { byId as $, fitCanvas, load, onThemeChange, readCssVars, save, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
 import { startFixedStepLoop } from '@series/engine/sim';
 import { createTutorial } from '@series/engine/tutorial';
-import { G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constants';
+import { DOWNFORCE, G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constants';
 import { availableForce, cornerValues, gripLimit, holdsGrip, kmhToMs, msToKmh, requiredForce, type CornerSetup } from './model/corner';
 import { circleRadius, insideCircle, lateralAccel } from './model/friction-circle';
 import { graphRange } from './model/graph-range';
@@ -23,11 +23,12 @@ import './style.css';
 
 defineStrings(STRINGS);
 
+const BAR_MARGIN = 1.25;   // 막대 끝 = 최고 속도에서 낼 수 있는 힘 × 이 값. 필요한 힘이 그보다 크면 막대가 꽉 차고 숫자로 보임
 const DT = 1 / 60, LAP = 2.2, SLIDE = 1;   // 호 한 번 도는 시간, 미끄러지는 시간 (s, 화면 표현용)
 const stage = $<HTMLCanvasElement>('stage'), ctx = stage.getContext('2d')!, graph = $<HTMLCanvasElement>('graph'), gctx = graph.getContext('2d')!, circle = $<HTMLCanvasElement>('circle'), cctx = circle.getContext('2d')!;
 const speedIn = $<HTMLInputElement>('speed'), radiusIn = $<HTMLInputElement>('radius');
 const S: CornerSetup & { speed: number } = { speed: 120, radius: 80, surface: 'dry', wing: 'none' };
-let C = readCssVars(THEME_KEYS), size: CanvasSize | undefined, gsize: CanvasSize | undefined, csize: CanvasSize | undefined, brake = 0, run: SceneRun | null = null, passed = false;
+let C = readCssVars(THEME_KEYS), size: CanvasSize | undefined, gsize: CanvasSize | undefined, csize: CanvasSize | undefined, brake = 0, wingOpen = true, run: SceneRun | null = null, passed = false;
 
 function forces() {
   const { mu, k } = cornerValues(S), v = kmhToMs(S.speed);
@@ -47,7 +48,9 @@ function draw() {
   if (!size) return;
   const { req, avail } = forces(), shownReq = run ? req * rampAt(run.slipP ?? run.p) : req;
   drawScene(ctx, size, C, S.radius, run, shownReq / Math.max(req, avail));
-  drawBars(req, avail, shownReq);
+  // 윙을 바꿀 수 있으면 눈금을 윙 높음에 맞춰 공유: 그래야 윙을 세울 때 파랑 막대가 길어짐
+  const { mu, k } = cornerValues(S), barK = wingOpen ? DOWNFORCE.high : k;
+  drawBars(req, avail, availableForce(kmhToMs(TOP_SPEED_KMH), mu, barK) * BAR_MARGIN, shownReq);
   $('speedV').textContent = S.speed + ' km/h'; $('radiusV').textContent = S.radius + ' m';
   $('cond').textContent = condition();
   $('limit').textContent = limitText();
@@ -103,6 +106,7 @@ function configure(c: Scene) {
   Object.assign(S, { speed: c.speed ?? S.speed, radius: c.radius ?? S.radius, surface: c.surface ?? S.surface, wing: c.wing ?? S.wing });
   speedIn.value = String(S.speed); radiusIn.value = String(S.radius); press('surface', S.surface); press('wing', S.wing);
   (Object.keys(CONTROLS) as Control[]).forEach(k => { $(CONTROLS[k]).hidden = !c.open.includes(k); });
+  wingOpen = c.open.includes('wing');
   $('limit').hidden = !c.limit; $('graphBox').hidden = !c.graph; $('circleBox').hidden = !c.circle; $('forcesBox').classList.toggle('graph-on', !!(c.graph || c.circle));
   if (c.graph) gsize = fitCanvas(graph);
   if (c.circle) { csize = fitCanvas(circle); setBrake(0); }

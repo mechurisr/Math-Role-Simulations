@@ -3,9 +3,10 @@ import { byId as $ } from '@series/engine/ui';
 
 const kN = (n: number) => (n / 1000).toFixed(1) + ' kN';
 
-export function drawBars(req: number, avail: number, shownReq = req) {
-  const top = Math.max(req, avail) * 1.1;
-  $('barReq').style.width = shownReq / top * 100 + '%'; $('barAvail').style.width = avail / top * 100 + '%';
+// top: 막대 끝의 힘. 속도와 상관없이 고정해야 파랑 막대가 실제 힘과 같은 방향으로 움직임
+export function drawBars(req: number, avail: number, top: number, shownReq = req) {
+  const pct = (f: number) => Math.min(100, f / top * 100) + '%';
+  $('barReq').style.width = pct(shownReq); $('barAvail').style.width = pct(avail);
   $('barReq').classList.toggle('over', shownReq > avail);
   $('reqV').textContent = kN(shownReq); $('availV').textContent = kN(avail);
 }
