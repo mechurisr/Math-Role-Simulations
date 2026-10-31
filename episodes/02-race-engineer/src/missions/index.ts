@@ -4,10 +4,11 @@ import type { Surface, Wing } from '../model/constants';
 import type { RadioSpec } from '../view/radio';
 import { basicSteps } from './basic';
 import { downforceSteps } from './downforce';
-import { raceSteps } from './race';
+import { notesSteps, raceSteps } from './race';
+import { brakingSteps } from './braking';
 
 export type Control = 'speed' | 'radius' | 'surface' | 'wing' | 'go';
-export interface Scene { speed?: number; radius?: number; surface?: Surface; wing?: Wing; open: Control[]; limit?: boolean; graph?: boolean }
+export interface Scene { speed?: number; radius?: number; surface?: Surface; wing?: Wing; open: Control[]; limit?: boolean; graph?: boolean; circle?: boolean }
 export interface Game {
   configure(s: Scene): void;
   condition(): string;      // 지금 조건 m·g·μ·k·r (FR-015)
@@ -18,4 +19,4 @@ export interface Game {
 export interface Drive { kmh: number; slid: boolean }
 export type MissionStep = TutStep & { mission?: string; radio?: RadioSpec; radioHidden?: (s: StepState) => boolean; done?: (s: StepState) => boolean };
 
-export const missionSteps = (g: Game): MissionStep[] => [...basicSteps(g), ...downforceSteps(g), ...raceSteps(g)];
+export const missionSteps = (g: Game): MissionStep[] => [...basicSteps(g), ...downforceSteps(g), ...raceSteps(g), ...brakingSteps(g), ...notesSteps(g)];

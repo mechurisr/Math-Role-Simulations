@@ -24,6 +24,11 @@
       <canvas id="graph" data-i18n-aria="aGraph"></canvas>
       <p class="limit" id="graphNote"></p>
     </div>
+    <div class="circle" id="circleBox" hidden>
+      <canvas id="circle" data-i18n-aria="aCircle"></canvas>
+      <div class="row"><input type="range" id="brake" min="0" max="30" step="0.1" value="0" data-i18n-aria="aBrake"></div>
+      <p class="limit" id="circleNote"></p>
+    </div>
     <div class="bar-row"><span class="bar-name" data-i18n="reqL"></span><span class="bar-track"><span class="bar-fill req" id="barReq"></span></span><span class="val small-val" id="reqV"></span></div>
     <div class="bar-row"><span class="bar-name" data-i18n="availL"></span><span class="bar-track"><span class="bar-fill avail" id="barAvail"></span></span><span class="val small-val" id="availV"></span></div>
     <p class="status" id="status" role="status"></p>

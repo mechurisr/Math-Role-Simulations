@@ -8,10 +8,12 @@ import { startFixedStepLoop } from '@series/engine/sim';
 import { createTutorial } from '@series/engine/tutorial';
 import { G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constants';
 import { availableForce, cornerValues, gripLimit, holdsGrip, kmhToMs, msToKmh, requiredForce, type CornerSetup } from './model/corner';
+import { circleRadius, insideCircle, lateralAccel } from './model/friction-circle';
 import { graphRange } from './model/graph-range';
 import { parseDone, resumeIndex } from './model/progress';
 import { missionSteps, type Control, type Game, type MissionStep, type Scene } from './missions/index';
 import { drawBars } from './view/bars';
+import { bindCircleDrag, circleNote, drawCircle } from './view/circle';
 import { drawGraph, graphNote } from './view/graph';
 import { notesHtml } from './view/notes';
 import { createRadio } from './view/radio';
@@ -22,10 +24,10 @@ import './style.css';
 defineStrings(STRINGS);
 
 const DT = 1 / 60, LAP = 2.2, SLIDE = 1;   // 호 한 번 도는 시간, 미끄러지는 시간 (s, 화면 표현용)
-const stage = $<HTMLCanvasElement>('stage'), ctx = stage.getContext('2d')!, graph = $<HTMLCanvasElement>('graph'), gctx = graph.getContext('2d')!;
+const stage = $<HTMLCanvasElement>('stage'), ctx = stage.getContext('2d')!, graph = $<HTMLCanvasElement>('graph'), gctx = graph.getContext('2d')!, circle = $<HTMLCanvasElement>('circle'), cctx = circle.getContext('2d')!;
 const speedIn = $<HTMLInputElement>('speed'), radiusIn = $<HTMLInputElement>('radius');
 const S: CornerSetup & { speed: number } = { speed: 120, radius: 80, surface: 'dry', wing: 'none' };
-let C = readCssVars(THEME_KEYS), size: CanvasSize | undefined, gsize: CanvasSize | undefined, run: SceneRun | null = null, passed = false;
+let C = readCssVars(THEME_KEYS), size: CanvasSize | undefined, gsize: CanvasSize | undefined, csize: CanvasSize | undefined, brake = 0, run: SceneRun | null = null, passed = false;
 
 function forces() {
   const { mu, k } = cornerValues(S), v = kmhToMs(S.speed);
@@ -49,6 +51,11 @@ function draw() {
   $('speedV').textContent = S.speed + ' km/h'; $('radiusV').textContent = S.radius + ' m';
   $('cond').textContent = condition();
   $('limit').textContent = limitText();
+  if (csize && !$('circleBox').hidden) {
+    const { mu, k } = cornerValues(S), v = kmhToMs(S.speed), radius = circleRadius(v, mu, k), lateral = lateralAccel(v, S.radius);
+    const c = { radius, lateral, brake, inside: insideCircle(brake, lateral, radius) };
+    drawCircle(cctx, csize, C, c); $('circleNote').textContent = circleNote(c);
+  }
   if (gsize && !$('graphBox').hidden) {
     const range = graphRange(gripLimit(cornerValues(S)));
     drawGraph(gctx, gsize, C, cornerValues(S), range); $('graphNote').textContent = graphNote(range);
@@ -88,6 +95,7 @@ const clearRun = () => { run = null; setResult(''); stage.dataset.running = ''; 
 
 const CONTROLS: Record<Control, string> = { speed: 'speedCtl', radius: 'radiusCtl', surface: 'surfaceCtl', wing: 'wingCtl', go: 'goCtl' };
 const press = (id: string, v: string) => $(id).querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+const setBrake = (v: number) => { brake = Math.min(30, v); $<HTMLInputElement>('brake').value = String(brake); draw(); };
 const refreshCard = () => { if (tut.current()) tut.render(false); };
 
 // 미션이 정한 조건을 넣고, 바꿀 수 없는 조작은 숨김 (360px에서 장면과 조작이 함께 보이게)
@@ -95,8 +103,9 @@ function configure(c: Scene) {
   Object.assign(S, { speed: c.speed ?? S.speed, radius: c.radius ?? S.radius, surface: c.surface ?? S.surface, wing: c.wing ?? S.wing });
   speedIn.value = String(S.speed); radiusIn.value = String(S.radius); press('surface', S.surface); press('wing', S.wing);
   (Object.keys(CONTROLS) as Control[]).forEach(k => { $(CONTROLS[k]).hidden = !c.open.includes(k); });
-  $('limit').hidden = !c.limit; $('graphBox').hidden = !c.graph; $('forcesBox').classList.toggle('graph-on', !!c.graph);
+  $('limit').hidden = !c.limit; $('graphBox').hidden = !c.graph; $('circleBox').hidden = !c.circle; $('forcesBox').classList.toggle('graph-on', !!(c.graph || c.circle));
   if (c.graph) gsize = fitCanvas(graph);
+  if (c.circle) { csize = fitCanvas(circle); setBrake(0); }
   clearRun();
 }
 const FREE: Scene = { open: ['speed', 'radius', 'surface', 'wing', 'go'], limit: true, graph: true };
@@ -132,8 +141,9 @@ radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(
 bindMode('surface', v => { S.surface = v as Surface; });
 bindMode('wing', v => { S.wing = v as Wing; });
 $('go').onclick = () => go();
+bindCircleDrag(circle, () => { const { mu, k } = cornerValues(S); return circleRadius(kmhToMs(S.speed), mu, k); }, setBrake);
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
-window.addEventListener('resize', () => { size = fitCanvas(stage); if (!$('graphBox').hidden) gsize = fitCanvas(graph); draw(); });
+window.addEventListener('resize', () => { size = fitCanvas(stage); if (!$('graphBox').hidden) gsize = fitCanvas(graph); if (!$('circleBox').hidden) csize = fitCanvas(circle); draw(); });
 const showNotes = () => { $('notes').innerHTML = '<h2>' + tr('이 모델이 뺀 것', 'What this model leaves out') + '</h2>' + notesHtml(); };
 onLangChange(() => { draw(); showNotes(); refreshCard(); });
 bindLangButton($('langBtn'));

@@ -9,6 +9,8 @@ export const STRINGS = {
   aStage: P('위에서 내려다본 코너', 'A corner seen from above'),
   aGraph: P('속도에 따른 힘 그래프', 'Force against speed graph'),
   aNotes: P('모델의 단순화', 'What the model simplifies'),
+  aCircle: P('마찰원', 'Friction circle'),
+  aBrake: P('제동 가속도', 'Braking'),
   aForces: P('힘 비교', 'Force comparison'),
   aPanel: P('조작 패널', 'Controls'),
   reqL: P('필요한 힘', 'Force needed'),

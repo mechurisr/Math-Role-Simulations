@@ -53,6 +53,9 @@ export const raceSteps = (g: Game): MissionStep[] => [
         + (s.note ? `<p class="fb bad">${s.note}</p>` : '')
         + (s.answered ? `<p class="fb ${last.ok ? 'good' : 'bad'}">${WHY[last.reason]?.() ?? ''}</p><p><button class="act" data-act="next">${s.i + 1 < CORNERS.length ? tr('다음 코너', 'Next corner') : tr('결과 보기', 'See results')}</button></p>` : '');
     } },
+];
+
+export const notesSteps = (g: Game): MissionStep[] => [
   { ch: CH5, title: P('이 모델이 뺀 것', 'What this model leaves out'),
     enter: () => g.configure({ open: [] }),
     body: () => '<p>' + tr('이 에피소드의 계산은 수학을 배우기 위한 단순 모델이며 실제 F1과 같지 않습니다.', 'The numbers here come from a simple model for learning the maths. It is not the same as real F1.') + '</p>' + notesHtml() },
