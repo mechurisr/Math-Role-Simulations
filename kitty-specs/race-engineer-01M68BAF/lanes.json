@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "mission_slug": "race-engineer-01M68BAF",
+  "mission_id": "01M68BAF5QGD7M8NPC5QYE2CRD",
+  "mission_branch": "kitty/mission-race-engineer-01M68BAF",
+  "target_branch": "mission/02-race-engineer",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "episodes/02-race-engineer/episode.json",
+        "episodes/02-race-engineer/index.html",
+        "episodes/02-race-engineer/package.json",
+        "episodes/02-race-engineer/src/main.ts",
+        "episodes/02-race-engineer/src/model/constants.ts",
+        "episodes/02-race-engineer/src/model/corner.ts",
+        "episodes/02-race-engineer/src/strings.ts",
+        "episodes/02-race-engineer/src/style.css",
+        "episodes/02-race-engineer/src/view/bars.ts",
+        "episodes/02-race-engineer/src/view/scene.ts",
+        "episodes/02-race-engineer/tests/corner.test.ts",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "engine/src/ui/formula.ts",
+        "engine/tests/formula.test.ts",
+        "episodes/02-race-engineer/src/missions/basic.ts",
+        "episodes/02-race-engineer/src/missions/index.ts",
+        "episodes/02-race-engineer/src/model/judge.ts",
+        "episodes/02-race-engineer/src/view/radio.ts",
+        "episodes/02-race-engineer/tests/judge.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "engine/src/ui/plot.ts",
+        "engine/tests/plot.test.ts",
+        "episodes/02-race-engineer/src/missions/downforce.ts",
+        "episodes/02-race-engineer/src/view/graph.ts",
+        "episodes/02-race-engineer/tests/graph-range.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-b"
+      ],
+      "parallel_group": 2
+    },
+    {
+      "lane_id": "lane-d",
+      "wp_ids": [
+        "WP04"
+      ],
+      "write_scope": [
+        "episodes/02-race-engineer/src/missions/race.ts",
+        "episodes/02-race-engineer/src/model/race-radio.ts",
+        "episodes/02-race-engineer/src/view/notes.ts",
+        "episodes/02-race-engineer/tests/race-radio.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-c"
+      ],
+      "parallel_group": 3
+    },
+    {
+      "lane_id": "lane-e",
+      "wp_ids": [
+        "WP05"
+      ],
+      "write_scope": [
+        "episodes/02-race-engineer/src/missions/braking.ts",
+        "episodes/02-race-engineer/src/model/friction-circle.ts",
+        "episodes/02-race-engineer/src/view/circle.ts",
+        "episodes/02-race-engineer/tests/friction-circle.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-d"
+      ],
+      "parallel_group": 4
+    },
+    {
+      "lane_id": "lane-f",
+      "wp_ids": [
+        "WP06"
+      ],
+      "write_scope": [
+        "e2e/mobile.spec.ts",
+        "e2e/race-engineer.spec.ts",
+        "playwright.config.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-e"
+      ],
+      "parallel_group": 5
+    }
+  ],
+  "computed_at": "2026-10-31T07:53:58.022967+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [],
+  "planning_commit_sha": "6e9bc68a4be630987874006c5b6da7fc9d2b5fd1"
+}
