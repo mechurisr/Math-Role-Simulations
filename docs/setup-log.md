@@ -298,3 +298,9 @@ spec-kitty 3.2.7은 **어떤 명령이든 실행할 때마다** (`--version` 포
 - 단계는 Spec Kitty 상태에서 읽지 않음: 기능 브랜치 구현이라 `status.json`이 비어 전부 0으로 나옴 (7단계 막힌 지점 5). 산출물 파일(작업 폴더 + `mission/*` 브랜치)·`feat(WPnn)` 커밋·PR·Issue 라벨·`logs/*.meta`에서 계산
 - 미션 ↔ Issue: PR이 닫는 Issue가 기준. `purpose_context`에는 지나간 Issue도 언급되므로(`#4 #9`), PR 전에는 열린 Issue만 연결. 가벼운 경로 판정(`light`)이 여기에 달려 있음
 - 의존성 없는 Node 스크립트. `--once`로 한 번 출력
+
+## 02 레이스 엔지니어 구현 (2026-10-31, Issue #24)
+
+- 엔진 추가: `ui/formula.ts`(MathML), `ui/plot.ts`(축척·축·곡선), 튜토리얼 `resume` 옵션. 01의 `view/chart.ts`는 게임 상태에 묶여 있어 옮기지 않음 (사람 결정)
+- 개발 의존성 fast-check 4.10.2. 설치 스크립트 없음, 잠금 파일 추가는 fast-check·pure-rand뿐. `check-boundaries`는 에피소드 `tests/` 안에서만 허용
+- 01의 44px 미만 승인 예외는 02에 적용되지 않아 슬라이더·세그먼트·언어 버튼을 02의 CSS에서 44px로 맞춤

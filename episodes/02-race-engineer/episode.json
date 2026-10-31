@@ -2,7 +2,7 @@
   "id": "race-engineer",
   "number": 2,
   "slug": "02-race-engineer",
-  "status": "draft",
+  "status": "published",
   "title": { "ko": "레이스 엔지니어", "en": "Race Engineer" },
   "role": { "ko": "레이스 엔지니어", "en": "Race engineer" },
   "summary": { "ko": "코너마다 미끄러지지 않는 최대 속도를 계산해 무전으로 알려 주세요", "en": "Work out the fastest safe speed for each corner and radio it to your driver" },
