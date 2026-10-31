@@ -41,7 +41,8 @@ for (const ep of readdirSync(episodesDir)) {
   const dir = join(episodesDir, ep);
   if (!statSync(dir).isDirectory()) continue;
   for (const f of files(dir))
-    check(f, t => inside(t, dir), s => s === '@series/engine' || s.startsWith('@series/engine/') || s === 'vitest',
+    // fast-check 는 vitest 처럼 테스트 전용 개발 의존성이라 tests/ 안에서만 허용
+    check(f, t => inside(t, dir), s => s === '@series/engine' || s.startsWith('@series/engine/') || s === 'vitest' || (s === 'fast-check' && inside(f, join(dir, 'tests'))),
       `에피소드 ${ep}는 자기 폴더와 @series/engine 만 import 할 수 있음`);
 }
 for (const f of files(join(ROOT, 'site')))

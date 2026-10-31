@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>레이스 엔지니어</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script type="module" src="./src/main.ts"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <button class="lang-btn" id="langBtn" type="button"></button>
+    <h1 data-i18n="title"></h1>
+    <p data-i18n="lead"></p>
+  </header>
+
+  <canvas id="stage" class="stage" data-i18n-aria="aStage"></canvas>
+
+  <section class="panel forces" data-i18n-aria="aForces">
+    <div class="bar-row"><span class="bar-name" data-i18n="reqL"></span><span class="bar-track"><span class="bar-fill req" id="barReq"></span></span><span class="val small-val" id="reqV"></span></div>
+    <div class="bar-row"><span class="bar-name" data-i18n="availL"></span><span class="bar-track"><span class="bar-fill avail" id="barAvail"></span></span><span class="val small-val" id="availV"></span></div>
+    <p class="status" id="status" role="status"></p>
+  </section>
+
+  <section class="panel" data-i18n-aria="aPanel">
+    <p class="stats" id="cond"></p>
+    <p class="limit" id="limit"></p>
+    <div class="ctl" id="speedCtl">
+      <div class="ctl-head"><label for="speed" data-i18n="speedL"></label><span class="val" id="speedV"></span></div>
+      <div class="row"><input type="range" id="speed" min="60" max="340" step="1" value="120"></div>
+    </div>
+    <div class="ctl" id="radiusCtl">
+      <div class="ctl-head"><label for="radius" data-i18n="radiusL"></label><span class="val" id="radiusV"></span></div>
+      <div class="row"><input type="range" id="radius" min="40" max="200" step="1" value="80"></div>
+    </div>
+    <div class="ctl" id="surfaceCtl">
+      <span class="ctl-name" id="surfaceL" data-i18n="surfaceL"></span>
+      <div class="mode" id="surface" role="group" aria-labelledby="surfaceL">
+        <button data-v="dry" aria-pressed="true" data-i18n="dry"></button><button data-v="wet" aria-pressed="false" data-i18n="wet"></button>
+      </div>
+    </div>
+    <div class="ctl" id="wingCtl">
+      <span class="ctl-name" id="wingL" data-i18n="wingL"></span>
+      <div class="mode" id="wing" role="group" aria-labelledby="wingL">
+        <button data-v="none" aria-pressed="true" data-i18n="wingNone"></button><button data-v="mid" aria-pressed="false" data-i18n="wingMid"></button><button data-v="high" aria-pressed="false" data-i18n="wingHigh"></button>
+      </div>
+    </div>
+    <div class="actions"><button class="btn-primary" id="go" data-i18n="go"></button></div>
+  </section>
+</div>
+</body>
+</html>

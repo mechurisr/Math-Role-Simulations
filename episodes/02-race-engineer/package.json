@@ -1,0 +1,8 @@
+{
+  "name": "@series/episode-02-race-engineer",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@series/engine": "workspace:*"
+  }
+}
