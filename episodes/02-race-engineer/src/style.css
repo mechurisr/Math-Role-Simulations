@@ -47,3 +47,6 @@ body.tut-open .forces.graph-on .bar-row,body.tut-open .forces.graph-on .status{d
 .circle .limit{font-size:12px}
 .corner-btns{display:flex;gap:8px;flex-wrap:wrap}
 .tut-body .o{color:var(--accent);font-weight:700}
+.resume[hidden]{display:none}
+.resume-q{margin:0;font-weight:500}
+.btn-sec{min-height:44px}

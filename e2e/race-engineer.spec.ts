@@ -10,6 +10,7 @@ test.use({ viewport: { width: 360, height: 800 }, hasTouch: true, isMobile: true
 const start = async (page: Page, done: string[] = []) => {
   if (done.length) await page.addInitScript(([k, v]) => { localStorage.setItem(k, v); }, [DONE, JSON.stringify(done)]);
   await page.goto(URL);
+  if (done.length && done.length < 8) await page.locator('#resumeGo').tap();
   await expect(page.locator('#tut')).toBeVisible();
 };
 const setRange = (page: Page, id: string, v: number) => page.locator('#' + id).evaluate((e, v) => { (e as HTMLInputElement).value = String(v); e.dispatchEvent(new Event('input', { bubbles: true })); }, v);
@@ -111,6 +112,30 @@ test('랜딩 목록에 공개됨 (FR-014)', async ({ page }) => {
 test('진행이 저장되어 끝낸 다음 미션부터 이어 감', async ({ page }) => {
   await start(page, ['M1', 'M2', 'M3']);
   await expect(page.locator('#tutTitle')).toHaveText('리어 윙이 하는 일');
+});
+
+test('진행 기록이 있으면 먼저 묻고, 처음부터를 고르면 기록을 지움', async ({ page }) => {
+  await page.addInitScript(([k, v]) => { if (!sessionStorage.getItem('set')) { localStorage.setItem(k, v); sessionStorage.setItem('set', '1'); } }, [DONE, '["M1","M2","M3"]']);
+  await page.goto(URL);
+  await expect(page.locator('#tut')).toBeHidden();
+  await expect(page.locator('#resumeGo')).toHaveText('이어서 하기 (M4부터)');
+  await touchSizes(page, '이어서 묻기');
+  await page.locator('#resumeNew').tap();
+  await expect(page.locator('#resumeBox')).toBeHidden();
+  await expect(page.locator('#tutTitle')).toHaveText('드라이버의 질문');
+  expect(await page.evaluate(k => localStorage.getItem(k), DONE)).toBe('[]');
+  await page.reload();
+  await expect(page.locator('#resumeBox')).toBeHidden();
+  await expect(page.locator('#tutTitle')).toHaveText('드라이버의 질문');
+});
+
+test('미션을 끝까지 하지 않고 나가도 미션 시작 버튼이 다시 물음', async ({ page }) => {
+  await start(page, ['M1']);
+  await page.locator('#tutSkip').tap();
+  await page.locator('#tutOpen').tap();
+  await expect(page.locator('#resumeGo')).toHaveText('이어서 하기 (M2부터)');
+  await page.locator('#resumeGo').tap();
+  await expect(page.locator('#tutTitle')).toHaveText('드라이버의 두 번째 질문');
 });
 
 test('깨진 저장값은 처음부터', async ({ page }) => {

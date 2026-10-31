@@ -13,3 +13,9 @@ export function resumeIndex(stepMissions: (string | undefined)[], done: string[]
   const i = stepMissions.findIndex(m => m !== undefined && !done.includes(m));
   return i < 0 ? 0 : i;
 }
+
+// 이어서 할 미션 이름. 시작 전이거나 모두 끝냈으면 null
+export function nextMission(stepMissions: (string | undefined)[], done: string[]): string | null {
+  if (!done.length) return null;
+  return stepMissions.find(m => m !== undefined && !done.includes(m)) ?? null;
+}

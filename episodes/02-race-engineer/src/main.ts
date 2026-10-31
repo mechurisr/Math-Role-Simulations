@@ -10,7 +10,7 @@ import { G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constan
 import { availableForce, cornerValues, gripLimit, holdsGrip, kmhToMs, msToKmh, requiredForce, type CornerSetup } from './model/corner';
 import { circleRadius, insideCircle, lateralAccel } from './model/friction-circle';
 import { graphRange } from './model/graph-range';
-import { parseDone, resumeIndex } from './model/progress';
+import { nextMission, parseDone, resumeIndex } from './model/progress';
 import { missionSteps, type Control, type Game, type MissionStep, type Scene } from './missions/index';
 import { drawBars } from './view/bars';
 import { bindCircleDrag, circleNote, drawCircle } from './view/circle';
@@ -123,7 +123,7 @@ function markDone(m: string) { if (!done.includes(m)) { done.push(m); save(DONE_
 
 const radio = createRadio(a => tut.emit('radio', a));
 const tut = createTutorial({
-  steps: STEPS, episode: 'race-engineer', ctrl: $('tutCtrl'), openButton: $('tutOpen'),
+  steps: STEPS, episode: 'race-engineer', ctrl: $('tutCtrl'),
   resume: () => resumeIndex(STEPS.map(s => s.mission), done),
   onEnd: () => configure(FREE),
   onAction: el => tut.emit('act', el.dataset.act),
@@ -136,6 +136,21 @@ const tut = createTutorial({
   },
 });
 
+// 진행 기록이 있으면 이어서 할지 묻고, 없으면 바로 시작
+const pending = () => nextMission(STEPS.map(s => s.mission), done);
+function askResume() {
+  const m = pending(); $('resumeBox').hidden = !m;
+  if (m) $('resumeGo').textContent = tr(`이어서 하기 (${m}부터)`, `Continue from ${m}`);
+  return !!m;
+}
+function openMissions(fresh: boolean) {
+  if (fresh) { done.length = 0; save(DONE_KEY, '[]'); save('race-engineer:m7', '[]'); }
+  $('resumeBox').hidden = true; tut.start();
+}
+$('tutOpen').onclick = () => { if (!askResume()) tut.start(); };
+$('resumeGo').onclick = () => openMissions(false);
+$('resumeNew').onclick = () => openMissions(true);
+
 speedIn.addEventListener('input', () => { S.speed = +speedIn.value; clearRun(); tut.emit('speed', S.speed); refreshCard(); });
 radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(); tut.emit('setup', gripLimit(cornerValues(S)).kind); refreshCard(); });
 bindMode('surface', v => { S.surface = v as Surface; });
@@ -145,8 +160,8 @@ bindCircleDrag(circle, () => { const { mu, k } = cornerValues(S); return circleR
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
 window.addEventListener('resize', () => { size = fitCanvas(stage); if (!$('graphBox').hidden) gsize = fitCanvas(graph); if (!$('circleBox').hidden) csize = fitCanvas(circle); draw(); });
 const showNotes = () => { $('notes').innerHTML = '<h2>' + tr('이 모델이 뺀 것', 'What this model leaves out') + '</h2>' + notesHtml(); };
-onLangChange(() => { draw(); showNotes(); refreshCard(); });
+onLangChange(() => { draw(); showNotes(); refreshCard(); if (!$('resumeBox').hidden) askResume(); });
 bindLangButton($('langBtn'));
 applyLang(); showNotes(); size = fitCanvas(stage);
 startFixedStepLoop({ dt: DT, active: () => stage.dataset.running === '1', step, frame: draw });
-tut.autoStart();
+if (!askResume()) tut.autoStart();

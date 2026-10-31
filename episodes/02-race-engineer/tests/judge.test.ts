@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { gripLimit, msToKmh } from '../src/model/corner';
 import { judgeDrive, judgeNumber, parsePositive } from '../src/model/judge';
-import { parseDone, resumeIndex } from '../src/model/progress';
+import { nextMission, parseDone, resumeIndex } from '../src/model/progress';
 
 const m1 = gripLimit({ radius: 80, mu: 1.6, k: 0 });
 const limit = m1.kind === 'finite' ? msToKmh(m1.speed) : NaN;
@@ -32,5 +32,8 @@ describe('진행 저장', () => {
   const steps = [undefined, 'M1', 'M2', 'M2', 'M3'];
   it('끝내지 않은 첫 미션으로', () => expect(resumeIndex(steps, ['M1'])).toBe(2));
   it('처음이면 소개부터', () => expect(resumeIndex(steps, [])).toBe(0));
+  it('이어서 할 미션', () => expect(nextMission(steps, ['M1'])).toBe('M2'));
+  it('시작 전이면 물어볼 것 없음', () => expect(nextMission(steps, [])).toBeNull());
+  it('모두 끝냈으면 물어볼 것 없음', () => expect(nextMission(steps, ['M1', 'M2', 'M3'])).toBeNull());
   it('모두 끝냈으면 처음부터', () => expect(resumeIndex(steps, ['M1', 'M2', 'M3'])).toBe(0));
 });
