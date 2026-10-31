@@ -1,0 +1,86 @@
+# Answers and Verification: 레이스 엔지니어 — 구심가속도와 마찰 한계
+
+검토 에이전트는 `spec.md`의 M1~M8을 먼저 직접 푼 뒤 이 파일과 비교할 것.
+
+## 공통 식
+
+- 필요한 힘: F_req = m v² / r
+- 낼 수 있는 힘: F_avail = μ N = μ (m g + k v²)
+- 다운포스 없음(k = 0): m v²/r ≤ μ m g → v_max = √(μ g r) (m이 약분됨)
+- 다운포스 있음: m v²/r = μ (m g + k v²) → v²(m/r − μ k) = μ m g → **v² = μ g r / (1 − μ k r / m)**
+- 존재 조건: 1 − μ k r / m > 0, 즉 **r < r_c = m / (μ k)**. r ≥ r_c면 모든 v에서 F_req ≤ F_avail이라 한계 없음
+- 두 힘 모두 v²의 일차식이라 v > 0에서 교점은 최대 1개
+- 마찰원: √(a_x² + a_y²) ≤ μ (g + k v²/m)
+
+## M1
+
+- Answer: 127.50 km/h (35.418 m/s). 통과 범위 122.50 ≤ v ≤ 127.50 km/h
+- Derivation: √(1.6 × 9.8 × 80) = √1254.4 = 35.418 m/s
+- Verification: 단위 테스트, k = 0의 닫힌 식과 비교
+
+## M2
+
+- Answer: 비율 √2 = 1.414 (r = 40 m: 90.16 km/h, r = 80 m: 127.50 km/h)
+- Derivation: v_max ∝ √r
+- Verification: 두 값의 비 = √2, 상대 오차 1e-9
+
+## M3
+
+- Answer: 100.80 km/h (28.000 m/s)
+- Derivation: √(1.0 × 9.8 × 80) = √784 = 28
+- Verification: 단위 테스트
+
+## M4
+
+- Answer: 258.80 km/h (71.890 m/s), 횡가속도 4.98 g. 다운포스 없는 같은 코너는 146.77 km/h (1.76배)
+- Derivation: μ k r / m = 1.6 × 3.2 × 106 / 800 = 0.6784. v² = 1662.08 / 0.3216 = 5168.2
+- Verification: 답을 식에 넣어 F_req = F_avail (상대 오차 1e-9). 이분법 수치해와 비교
+
+## M5
+
+- Answer: 비율 1.944 (r = 50 m: 122.24 km/h, r = 100 m: 237.59 km/h). M2의 1.414와 다르다
+- Derivation: r = 50: v² = 784 / 0.68 = 1152.9. r = 100: v² = 1568 / 0.36 = 4355.6
+- Verification: 단위 테스트
+
+## M6
+
+- Answer: r_c = 156.25 m
+- Derivation: 800 / (1.6 × 3.2) = 800 / 5.12
+- Verification: r_c 이상에서 "한계 없음", r_c − 1 m에서 값 또는 "최고 속도 초과". 임의 v에서 F_req ≤ F_avail를 속성 기반으로 확인
+- 참고: r = 150 m는 873 km/h, r = 120 m는 324.21 km/h로 경계 근처에서 값이 폭증
+
+## M7
+
+| 코너 | r | μ | k | 답 | 통과 범위 (97%~100%) |
+|---|---|---|---|---|---|
+| 1 | 60 | 1.6 | 1.6 | 122.84 km/h | 119.16 ~ 122.84 |
+| 2 | 120 | 1.6 | 3.2 | 324.21 km/h | 314.48 ~ 324.21 |
+| 3 | 90 | 1.0 | 1.6 | 118.07 km/h | 114.53 ~ 118.07 |
+| 4 | 200 | 1.6 | 3.2 | 한계 없음 (r_c = 156.25 m) | "한계 없음" 선택 |
+| 5 | 70 | 1.0 | 3.2 | 111.12 km/h | 107.79 ~ 111.12 |
+
+- Verification: 표 전체를 단위 테스트로
+
+## M8 (심화)
+
+- Answer: 최대 제동 a_x = 20.19 m/s²
+- Derivation: v = 55.556 m/s. a_y = v²/r = 29.12. 한계 = 1.6 × (9.8 + 3.2 × 3086.4 / 800) = 35.43. a_x = √(35.43² − 29.12²)
+- Verification: √(a_x² + a_y²) = 한계, 상대 오차 1e-9
+- 주의: 이 값은 속도를 고정한 순간값이다. 제동하면 속도가 줄어 한계도 달라지지만 미션에서는 200 km/h 순간만 본다
+
+## Physical values
+
+| Quantity | Value | Unit | Source | Status |
+|---|---|---|---|---|
+| 중력가속도 g | 9.8 | m/s² | 표준중력 9.80665 (CGPM 1901, NIST SP 330)를 교과서 관례대로 반올림. 01 에피소드 `constants.ts`와 같은 값 | verified |
+| 차 질량 m | 800 | kg | 팩트체크 교차검증 조합 | game value |
+| 건조 마찰계수 μ | 1.6 | - | 출처 없음. 사람 결정, 팩트체크 조합 | game value |
+| 젖은 노면 마찰계수 μ | 1.0 | - | OpenStax 표 6.1 고무–콘크리트 건조 1.0 / 젖음 0.5~0.7의 비율(약 0.6)을 1.6에 적용 후 반올림 | game value |
+| 윙 높음 k | 3.2 | kg/m | 팩트체크 조합. k = ½ρC_L A | game value |
+| 윙 중간 k | 1.6 | kg/m | 높음의 절반 | game value |
+| 윙 없음 k | 0 | kg/m | 정의 | game value |
+| 차 최고 속도 | 340 | km/h | 없음 | game value |
+| 스즈카 1번 코너 정점 횡가속도 | 5 초과 | g | https://mercedesamgf1.com/news/g-force-and-formula-one-explained | verified (팀 자료, 하한) |
+| 스즈카 1번 코너 통과 속도 | 260 초과 | km/h | 위와 같음 | verified (팀 자료, 하한) |
+| M4 코너 반지름 | 106 | m | 위 두 하한으로 역산 r = v²/a. 실제 코너 반지름이 아니고 하한인지 상한인지 정할 수 없음 | needs verification — 화면에 "역산값"으로 표기 |
+| OpenStax 예제 6.15 | r = 500.0 m, v = 25.00 m/s → μs = 0.13 | - | https://openstax.org/books/university-physics-volume-1/pages/6-3-centripetal-force | verified (식 검증 사례로 테스트에 사용) |
