@@ -5,7 +5,8 @@ import { save } from '@series/engine/ui';
 import type { RadioAnswer, Verdict } from '../model/judge';
 import { CORNERS, judgeCorner, NO_LIMIT_CORNER, racePassed } from '../model/race-radio';
 import { notesHtml } from '../view/notes';
-import { condLine } from './basic';
+import { workBox } from './basic';
+import { limitFormula } from './downforce';
 import type { Game, MissionStep } from './index';
 
 const CH7 = P('7장 레이스', 'Ch.7 Race');
@@ -59,7 +60,7 @@ export const raceSteps = (g: Game): MissionStep[] => [
       if (s.i >= CORNERS.length) return resultTable(s) + (s.ok ? `<p class="fb good">${tr('완주했습니다. 드라이버가 고맙다고 합니다.', 'Race finished. Your driver says thanks.')}</p>`
         : `<p class="fb bad">${(s.vs as Verdict[])[NO_LIMIT_CORNER].ok ? tr('코너 4개 이상 성공해야 합니다.', 'You need at least four corners.') : tr('코너 4의 판단을 맞혀야 합니다. 경계 반지름을 다시 생각해 보세요.', 'You must get corner 4 right. Think about the boundary radius again.')}</p><p><button class="act" data-act="retry">${tr('다시 하기', 'Try again')}</button></p>`);
       const last = (s.vs as Verdict[])[s.i];
-      return `<p><b>${tr('코너', 'Corner')} ${s.i + 1} / ${CORNERS.length}</b></p>` + condLine(g) + '<p>' + tr('드라이버가 묻습니다. 그립 한계 속도를 부르세요. 차의 최고 속도가 아니라 그립의 한계를 묻습니다. 한계가 없으면 "한계 없음"을 고르세요.', 'The driver asks. Call the grip limit speed: the limit of the grip, not the top speed of the car. If there is no limit, pick "No limit".') + '</p>'
+      return `<p><b>${tr('코너', 'Corner')} ${s.i + 1} / ${CORNERS.length}</b></p>` + workBox(g, limitFormula(), ['v', 'mu', 'm', 'g', 'k', 'r']) + '<p>' + tr('드라이버가 묻습니다. 그립 한계 속도를 부르세요. 차의 최고 속도가 아니라 그립의 한계를 묻습니다. 한계가 없으면 "한계 없음"을 고르세요.', 'The driver asks. Call the grip limit speed: the limit of the grip, not the top speed of the car. If there is no limit, pick "No limit".') + '</p>'
         + (s.note ? `<p class="fb bad">${s.note}</p>` : '')
         + (s.answered ? `<p class="fb ${last.ok ? 'good' : 'bad'}">${WHY[last.reason]?.() ?? ''}</p><p><button class="act" data-act="next">${s.i + 1 < CORNERS.length ? tr('다음 코너', 'Next corner') : tr('결과 보기', 'See results')}</button></p>` : '');
     } },

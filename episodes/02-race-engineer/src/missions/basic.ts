@@ -5,6 +5,7 @@ import { quizStep, type StepState } from '@series/engine/tutorial';
 import { frac, math, mi, mn, mo, root, row, sup } from '@series/engine/ui';
 import { gripLimit, msToKmh } from '../model/corner';
 import { judgeDrive, judgeNumber, type RadioAnswer, type Verdict } from '../model/judge';
+import { formulaBox, type Sym } from '../view/symbols';
 import type { Drive, Game, MissionStep } from './index';
 
 export const limitKmh = (radius: number, mu: number, k: number) => {
@@ -27,6 +28,8 @@ export function radioOn(check: (raw: string) => Verdict) {
   return { radio: (s: StepState, a?: unknown) => { const r = a as RadioAnswer; s.v = r.kind === 'number' ? check(r.raw) : { ok: false, reason: 'tooHigh' }; s.ok = s.ok || s.v.ok; } };
 }
 export const condLine = (g: Game) => `<p class="stats">${g.condition()}</p>`;
+// 무전 단계 공통: 쓸 식과 기호 뜻, 지금 조건
+export const workBox = (g: Game, formula: string, syms: Sym[]) => formulaBox(formula, syms, g.values()) + condLine(g);
 const v2 = sup(mi('v'), mn(2));
 const NARROW = 40, WIDE = 80;
 const kmh1 = (r: number) => limitKmh(r, 1.6, 0).toFixed(1);
@@ -131,7 +134,7 @@ export const basicSteps = (g: Game): MissionStep[] => [
     radio: { label: P('젖은 노면의 그립 한계', 'Grip limit on a wet track'), unit: 'km/h' },
     gate: s => !!s.ok, waitLabel: P('속도를 무전으로 보내세요', 'Radio in the speed'),
     on: radioOn(raw => judgeNumber(raw, limitKmh(80, 1, 0), 2)),
-    body: s => '<p>' + tr('비가 내려 노면이 젖었습니다. 같은 코너지만 μ가 1.0으로 내려갔습니다. 드라이버가 다시 묻습니다. 풀이 예시와 같은 순서로 계산해 보내세요.', 'It has started to rain. Same corner, but μ is now 1.0. The driver asks again. Work it out the same way and send it.') + '</p>' + condLine(g)
+    body: s => '<p>' + tr('비가 내려 노면이 젖었습니다. 같은 코너지만 μ가 1.0으로 내려갔습니다. 드라이버가 다시 묻습니다. 풀이 예시와 같은 순서로 계산해 보내세요.', 'It has started to rain. Same corner, but μ is now 1.0. The driver asks again. Work it out the same way and send it.') + '</p>' + workBox(g, math(mi('v'), mo('='), root(mi('μ'), mi('g'), mi('r'))), ['v', 'mu', 'g', 'r'])
       + feedback(s.v, tr('맞습니다. 약 100.8 km/h입니다.', 'Right, about 100.8 km/h.'), tr('μ × g × r의 제곱근을 구하고 3.6을 곱합니다.', 'Take the square root of μ × g × r, then multiply by 3.6.')) },
   { ch: CH3, title: P('M3 이 숫자가 뜻하는 것', 'M3 What the number means'), mission: 'M3',
     enter: () => g.configure({ radius: 80, surface: 'wet', wing: 'none', open: [] }),

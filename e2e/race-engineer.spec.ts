@@ -24,7 +24,7 @@ const drive = async (page: Page, kmh: number, outcome: string) => {
 const noHScroll = async (page: Page) => expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
 // 지금 보이는 모든 조작 요소가 44×44 이상인지. 재는 요소가 없으면 실패
 async function touchSizes(page: Page, where: string) {
-  const sizes = await page.locator('button:visible, input:visible').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return { id: e.id || e.textContent, w: r.width, h: r.height }; }));
+  const sizes = await page.locator('button:not(.info):visible, input:visible').evaluateAll(els => els.map(e => { const r = e.getBoundingClientRect(); return { id: e.id || e.textContent, w: r.width, h: r.height }; }));
   expect(sizes.length, where).toBeGreaterThan(0);
   for (const s of sizes) { expect(s.w, `${where} ${s.id} 폭`).toBeGreaterThanOrEqual(44); expect(s.h, `${where} ${s.id} 높이`).toBeGreaterThanOrEqual(44); }
   await noHScroll(page);
@@ -120,6 +120,22 @@ test('윙이 있으면 속도를 올릴 때 파랑 막대가 실제로 길어지
   for (const v of [100, 150, 200, 300]) { await setRange(page, 'speed', v); widths.push(await blue()); }
   console.log('파랑 막대 폭', none100, widths);
   for (let i = 1; i < widths.length; i++) expect(widths[i]).toBeGreaterThan(widths[i - 1]);
+});
+
+test('무전 단계에 식이 있고 (i)로 기호 뜻을 볼 수 있음, 터치 영역 44px', async ({ page }) => {
+  await start(page, ['M1', 'M2']);
+  await next(page); await next(page); await next(page);
+  await expect(page.locator('#tutTitle')).toHaveText('M3 비가 온다');
+  await expect(page.locator('.formula math')).toBeVisible();
+  const tip = page.locator('.formula .tip');
+  await expect(tip).toBeHidden();
+  const b = (await page.locator('.formula .info').boundingBox())!;
+  await page.touchscreen.tap(b.x + b.width / 2 - 20, b.y + b.height / 2);   // 보이는 원 밖, 44px 터치 영역 안
+  await expect(tip).toBeVisible();
+  await expect(tip).toContainText('마찰계수'); await expect(tip).toContainText('지금 1'); await expect(tip).toContainText('도로 폭이 아님');
+  const tipBox = (await tip.boundingBox())!;
+  expect(tipBox.x).toBeGreaterThanOrEqual(0); expect(tipBox.x + tipBox.width).toBeLessThanOrEqual(360);
+  await noHScroll(page);
 });
 
 test('진행이 저장되어 끝낸 다음 미션부터 이어 감', async ({ page }) => {

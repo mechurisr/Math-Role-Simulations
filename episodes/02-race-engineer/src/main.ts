@@ -3,7 +3,7 @@ import '@series/engine/css/ui/theme.css';
 import '@series/engine/css/ui/components.css';
 import '@series/engine/css/tutorial/tutorial.css';
 import { applyLang, bindLangButton, defineStrings, onLangChange, tr } from '@series/engine/i18n';
-import { byId as $, fitCanvas, load, onThemeChange, readCssVars, save, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
+import { bindInfoTips, byId as $, fitCanvas, load, onThemeChange, readCssVars, save, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
 import { startFixedStepLoop } from '@series/engine/sim';
 import { createTutorial } from '@series/engine/tutorial';
 import { DOWNFORCE, G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constants';
@@ -115,6 +115,7 @@ function configure(c: Scene) {
 const FREE: Scene = { open: ['speed', 'radius', 'surface', 'wing', 'go'], limit: true, graph: true };
 const game: Game = {
   configure, condition,
+  values: () => cornerValues(S),
   clearRadio: () => radio.clear(),
   drive(kmh, slide) { S.speed = Math.max(60, Math.min(340, kmh)); speedIn.value = String(S.speed); go(slide); },
   target: c => c === 'stage' ? stage : c === 'forces' ? $('forcesBox') : $(CONTROLS[c]),
@@ -160,6 +161,7 @@ radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(
 bindMode('surface', v => { S.surface = v as Surface; });
 bindMode('wing', v => { S.wing = v as Wing; tut.emit('wing', v); });
 $('go').onclick = () => go();
+bindInfoTips($('tut'));
 bindCircleDrag(circle, () => { const { mu, k } = cornerValues(S); return circleRadius(kmhToMs(S.speed), mu, k); }, setBrake);
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
 window.addEventListener('resize', () => { size = fitCanvas(stage); if (!$('graphBox').hidden) gsize = fitCanvas(graph); if (!$('circleBox').hidden) csize = fitCanvas(circle); draw(); });

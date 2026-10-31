@@ -1,10 +1,10 @@
 // M8 심화: 마찰원. 이 파일과 missions/index.ts의 한 줄을 빼도 M1~M7은 완결됨 (C-007). 풀이: answers.md M8
 import { P, tr } from '@series/engine/i18n';
-import { math, mi, mn, mo, root, subsup } from '@series/engine/ui';
+import { math, mi, mn, mo, root, sub, subsup, sup } from '@series/engine/ui';
 import { kmhToMs } from '../model/corner';
 import { maxBraking } from '../model/friction-circle';
 import { judgeNumber } from '../model/judge';
-import { feedback, radioOn } from './basic';
+import { feedback, radioOn, workBox } from './basic';
 import type { Game, MissionStep } from './index';
 
 const CH8 = P('심화 브레이크 밟으며 돌기', 'Extra Braking in the corner');
@@ -42,6 +42,7 @@ export const brakingSteps = (g: Game): MissionStep[] => [
     gate: s => !!s.ok, waitLabel: P('제동 가속도를 무전으로 보내세요', 'Radio in the braking'),
     on: radioOn(raw => judgeNumber(raw, maxBraking(kmhToMs(BRAKE_KMH), CORNER)!, 1)),
     body: s => '<p>' + tr('점을 위로 끌어 원에 닿는 곳을 찾고, 그 제동 가속도를 보내세요. 원 밖으로 나가면 미끄러집니다.', 'Drag the dot up to the circle and send that braking. Past the circle the car slides.') + '</p>'
+      + workBox(g, math(sub(mi('a'), mi('x')), mo('='), root(sup(mi('R'), mn(2)), mo('−'), sq('y'))), ['ax', 'R', 'ay'])
       + feedback(s.v, tr('맞습니다. 약 20.2 m/s²입니다.', 'Right, about 20.2 m/s².'), tr('점 옆의 숫자를 읽어 보세요. 계산하려면 35.4² − 29.1²의 제곱근을 구합니다.', 'Read the number beside the dot. To calculate, take the square root of 35.4² − 29.1².')) },
   { ch: CH8, title: P('M8 이 숫자가 뜻하는 것', 'M8 What the number means'), mission: 'M8',
     enter: () => g.configure({ ...SETUP, open: [], circle: true }),

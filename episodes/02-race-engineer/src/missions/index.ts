@@ -12,6 +12,7 @@ export interface Scene { speed?: number; radius?: number; surface?: Surface; win
 export interface Game {
   configure(s: Scene): void;
   condition(): string;      // 지금 조건 m·g·μ·k·r (FR-015)
+  values(): { mu: number; k: number; radius: number };
   target(c: Control | 'stage' | 'forces'): Element;
   drive(kmh: number, slide: boolean): void;   // 판정이 정한 결과를 차로 보여 줌
   clearRadio(): void;

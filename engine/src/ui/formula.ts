@@ -9,5 +9,6 @@ export const row = (...parts: string[]) => `<mrow>${parts.join('')}</mrow>`;
 export const frac = (top: string, bottom: string) => `<mfrac>${top}${bottom}</mfrac>`;
 export const root = (...parts: string[]) => `<msqrt>${parts.join('')}</msqrt>`;
 export const sup = (base: string, exp: string) => `<msup>${base}${exp}</msup>`;
+export const sub = (base: string, s: string) => `<msub>${base}${s}</msub>`;
 export const subsup = (base: string, sub: string, exp: string) => `<msubsup>${base}${sub}${exp}</msubsup>`;
 export const math = (...parts: string[]) => `<math display="block">${parts.join('')}</math>`;

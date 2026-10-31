@@ -5,7 +5,7 @@ import { quizStep } from '@series/engine/tutorial';
 import { frac, math, mi, mn, mo, row, sup } from '@series/engine/ui';
 import { MASS } from '../model/constants';
 import { judgeNumber } from '../model/judge';
-import { condLine, feedback, limitKmh, radioOn } from './basic';
+import { feedback, limitKmh, radioOn, workBox } from './basic';
 import type { Game, MissionStep } from './index';
 
 const CH4 = P('4장 빠를수록 붙는다', 'Ch.4 The faster, the stickier');
@@ -15,6 +15,8 @@ const MU = 1.6, K = 3.2;   // M4~M6 조건: 건조, 윙 높음
 const SMALL = 50, BIG = 100;
 const v2 = sup(mi('v'), mn(2));
 const kmh1 = (r: number) => limitKmh(r, MU, K).toFixed(1);
+// v²에 대해 푼 한계의 식 (answers.md 공통 식과 같은 값: μmg ÷ (m/r − μk))
+export const limitFormula = () => math(v2, mo('='), frac(row(mi('μ'), mi('m'), mi('g')), row(frac(mi('m'), mi('r')), mo('−'), mi('μ'), mi('k'))));
 const balance = () => math(frac(row(mi('m'), v2), mi('r')), mo('='), mi('μ'), mo('('), mi('m'), mi('g'), mo('+'), mi('k'), v2, mo(')'));
 
 export const downforceSteps = (g: Game): MissionStep[] => [
@@ -53,7 +55,7 @@ export const downforceSteps = (g: Game): MissionStep[] => [
     radio: { label: P('반지름 106 m의 그립 한계', 'Grip limit at 106 m'), unit: 'km/h' },
     gate: s => !!s.ok, waitLabel: P('속도를 무전으로 보내세요', 'Radio in the speed'),
     on: radioOn(raw => judgeNumber(raw, limitKmh(106, MU, K), 3)),
-    body: s => '<p>' + tr('풀이 예시와 같은 순서로 r = 106 m를 풀어 드라이버에게 보내세요. 달라지는 것은 m/r뿐입니다.', 'Follow the same steps for r = 106 m and send it to the driver. Only m/r changes.') + '</p>' + condLine(g)
+    body: s => '<p>' + tr('풀이 예시와 같은 순서로 r = 106 m를 풀어 드라이버에게 보내세요. 달라지는 것은 m/r뿐입니다.', 'Follow the same steps for r = 106 m and send it to the driver. Only m/r changes.') + '</p>' + workBox(g, limitFormula(), ['v', 'mu', 'm', 'g', 'k', 'r'])
       + feedback(s.v, tr('맞습니다. 약 258.8 km/h입니다.', 'Right, about 258.8 km/h.'), tr('m/r = 800 ÷ 106 ≈ 7.55입니다. 여기서 5.12를 뺀 값으로 12544를 나눕니다.', 'm/r = 800 ÷ 106 ≈ 7.55. Subtract 5.12, then divide 12544 by that.')) },
   { ch: CH4, title: P('M4 그래프로 보기', 'M4 See it on a graph'), mission: 'M4',
     enter: () => g.configure({ radius: 106, surface: 'dry', wing: 'high', open: [], limit: true, graph: true }),
@@ -126,7 +128,7 @@ export const downforceSteps = (g: Game): MissionStep[] => [
     radio: { label: P('윙 높음의 경계 반지름', 'Boundary radius on high wing'), unit: 'm' },
     gate: s => !!s.ok, waitLabel: P('반지름을 무전으로 보내세요', 'Radio in the radius'),
     on: radioOn(raw => judgeNumber(raw, MASS / (MU * K), 2)),
-    body: s => '<p>' + tr('이번에는 윙 높음입니다. 경계 반지름을 구해 보내세요.', 'Now high wing. Find the boundary radius and send it.') + '</p>' + condLine(g)
+    body: s => '<p>' + tr('이번에는 윙 높음입니다. 경계 반지름을 구해 보내세요.', 'Now high wing. Find the boundary radius and send it.') + '</p>' + workBox(g, math(mi('r'), mo('='), frac(mi('m'), row(mi('μ'), mi('k')))), ['r', 'm', 'mu', 'k'])
       + feedback(s.v, tr('맞습니다. 156.25 m입니다.', 'Right, 156.25 m.'), tr('r = m ÷ (μk)입니다. 여기서 μk = 5.12입니다.', 'r = m ÷ (μk). Here μk = 5.12.')) },
   { ch: CH6, title: P('M6 이 숫자가 뜻하는 것', 'M6 What the number means'), mission: 'M6',
     enter: () => g.configure({ radius: 200, surface: 'dry', wing: 'high', open: [] }),
