@@ -12,7 +12,8 @@ export const slipAt = (ratio: number) => Math.min(1, ratio) * ENTRY;
 
 export interface SceneRun { p: number; slipP: number | null; slide: number }   // p: 호 위 진행도 0~1, slide: 미끄러진 거리 비율
 
-export function drawScene(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, radius: number, run: SceneRun | null) {
+// pull: 필요한 힘 / 두 힘 중 큰 값. 차에서 코너 중심으로 향하는 화살표 길이
+export function drawScene(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, radius: number, run: SceneRun | null, pull = 0) {
   const { w, h, d } = size;
   cx.setTransform(d, 0, 0, d, 0, 0); cx.fillStyle = C.sky; cx.fillRect(0, 0, w, h);
   const ox = w * .12, oy = h * .94, span = Math.min(w * .78, h * .82);
@@ -26,13 +27,21 @@ export function drawScene(cx: CanvasRenderingContext2D, size: CanvasSize, C: The
   cx.strokeStyle = C.muted; cx.beginPath(); cx.moveTo(ox, oy); cx.lineTo(ox + R * Math.SQRT1_2, oy - R * Math.SQRT1_2); cx.stroke();
   cx.fillStyle = C.ink; cx.font = '500 14px "IBM Plex Mono",monospace'; cx.fillText('r = ' + radius + ' m', ox + R + lane, oy - 10);
   cx.fillStyle = C.muted; cx.font = '11px "IBM Plex Sans KR",sans-serif'; cx.fillText(tr('도식 (축척 아님)', 'Schematic, not to scale'), 8, 16);
-  if (!run) { car(cx, ox + R, oy, -Math.PI / 2, C.accent); return; }
+  if (!run) { arrow(cx, ox + R, oy, ox, oy, pull * R * .55, C.accent); car(cx, ox + R, oy, -Math.PI / 2, C.accent); return; }
   const at = run.slipP ?? run.p, th = -at * Math.PI / 2, px = ox + R * Math.cos(th), py = oy + R * Math.sin(th), head = th - Math.PI / 2;
-  if (run.slipP === null) { car(cx, px, py, head, C.accent); return; }
+  if (run.slipP === null) { arrow(cx, px, py, ox, oy, pull * R * .55, C.accent); car(cx, px, py, head, C.accent); return; }
   // 그 지점의 접선 방향으로 곧게 미끄러짐
   const dist = run.slide * (w + h), x = px + dist * Math.cos(head), y = py + dist * Math.sin(head);
   cx.strokeStyle = C.bad; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(px, py); cx.lineTo(x, y); cx.stroke();
   car(cx, x, y, head + run.slide * .8, C.bad);
+}
+
+// (x, y)에서 (tx, ty) 쪽으로 길이 len인 화살표: 차를 코너 안쪽으로 당기는 힘
+function arrow(cx: CanvasRenderingContext2D, x: number, y: number, tx: number, ty: number, len: number, color: string) {
+  if (len < 4) return;
+  const a = Math.atan2(ty - y, tx - x), ex = x + len * Math.cos(a), ey = y + len * Math.sin(a);
+  cx.strokeStyle = cx.fillStyle = color; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(x, y); cx.lineTo(ex, ey); cx.stroke();
+  cx.beginPath(); cx.moveTo(ex + 8 * Math.cos(a), ey + 8 * Math.sin(a)); cx.lineTo(ex + 7 * Math.cos(a + 2.2), ey + 7 * Math.sin(a + 2.2)); cx.lineTo(ex + 7 * Math.cos(a - 2.2), ey + 7 * Math.sin(a - 2.2)); cx.fill();
 }
 
 function car(cx: CanvasRenderingContext2D, x: number, y: number, heading: number, color: string) {

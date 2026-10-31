@@ -37,35 +37,51 @@ const corner = async (page: Page, v: string | null, result: string) => {
 
 test('M1~M8을 터치로 완주', async ({ page }) => {
   await start(page); await touchSizes(page, '소개'); await next(page);
+  // 1장: 왜 힘이 필요한가
+  await page.locator('[data-q="1"]').tap(); await next(page); await next(page);
+  await expect(page.locator('#tutNext')).toBeDisabled();
+  await setRange(page, 'speed', 120); await expect(feedback(page)).toContainText('4배'); await next(page);
   // M1: 한계를 넘으면 미끄러지고, 한계 안쪽이면 통과
   await expect(page.locator('#tutNext')).toBeDisabled();
   await drive(page, 128, 'slid'); await expect(feedback(page)).toContainText('미끄러졌습니다'); await expect(page.locator('#tutNext')).toBeDisabled();
   await drive(page, 120, 'pass'); await expect(feedback(page)).toContainText('시간을 잃었습니다');
-  await drive(page, 127, 'pass'); await touchSizes(page, 'M1'); await next(page);
-  // M2: 방향이 고정된 비율 + 관계 선택
+  await drive(page, 127, 'pass'); await touchSizes(page, 'M1'); await next(page); await next(page);
+  // M2: 예상 → 재기 → 비율 → 이유 → 적용
+  await expect(page.locator('#tutNext')).toBeDisabled();
+  await page.locator('[data-q="0"]').tap(); await next(page);
   await expect(page.locator('#limit')).toHaveText('그립 한계: 90.2 km/h');
-  await setRange(page, 'radius', 80); await expect(page.locator('#limit')).toHaveText('그립 한계: 127.5 km/h');
+  await expect(page.locator('#tutNext')).toBeDisabled();
+  await page.locator('[data-act=wide]').tap(); await expect(page.locator('#limit')).toHaveText('그립 한계: 127.5 km/h');
+  await expect(page.locator('#tutBody table')).toContainText('127.5 km/h'); await touchSizes(page, 'M2 재기'); await next(page);
   await radio(page, '0.71'); await expect(feedback(page)).toContainText('너무 낮습니다');
   await radio(page, 'abc'); await expect(feedback(page)).toContainText('양수를');
   await radio(page, '1.41'); await touchSizes(page, 'M2'); await next(page);
+  await expect(page.locator('#tutBody')).toContainText('180 km/h'); await next(page);
   await page.locator('[data-q="0"]').tap(); await expect(page.locator('#tutNext')).toBeDisabled();
   await page.locator('[data-q="1"]').tap(); await next(page);
-  await expect(page.locator('#tutBody math')).toHaveCount(2); await next(page);
+  // M3: 식과 풀이 예시 뒤 계산
+  await next(page); await expect(page.locator('#tutBody math')).toHaveCount(2); await next(page); await next(page);
   await radio(page, '100.8'); await next(page); await next(page);
-  // M4와 그래프
+  // M4: 윙 관찰 → 풀이 예시 → 계산 → 그래프
+  await next(page); await expect(page.locator('#tutNext')).toBeDisabled();
+  await page.locator('#wing button[data-v=high]').tap(); await setRange(page, 'speed', 200);
+  await expect(feedback(page)).toContainText('빠를수록'); await next(page); await next(page); await next(page);
   await radio(page, '258.8'); await next(page);
-  await expect(page.locator('#graphNote')).toHaveText('교점 258.8 km/h'); await noHScroll(page); await next(page);
+  await expect(page.locator('#graphNote')).toHaveText('교점 258.8 km/h'); await noHScroll(page); await next(page); await next(page);
   // M5
+  await page.locator('[data-q="0"]').tap(); await next(page); await page.locator('[data-act=big]').tap(); await next(page);
   await radio(page, '1.94'); await next(page); await page.locator('[data-q="0"]').tap(); await next(page);
-  // M6: 세 상태를 차례로
+  // M6: v²이 음수가 되는 이유 → 세 상태 → 경계
+  await expect(page.locator('#tutBody')).toContainText('음수'); await next(page); await next(page);
   await setRange(page, 'radius', 122); await expect(page.locator('#limit')).toContainText('336.3');
   await setRange(page, 'radius', 123); await expect(page.locator('#limit')).toContainText('그립 한계 > 최고 속도'); await expect(page.locator('#limit')).not.toContainText('342');
   await setRange(page, 'radius', 152); await expect(page.locator('#graphNote')).toContainText('축 밖');
   await expect(page.locator('#tutNext')).toBeDisabled();
   await setRange(page, 'radius', 157); await expect(page.locator('#graphNote')).toContainText('교점 없음'); await expect(page.locator('#limit')).toContainText('한계 없음');
-  await touchSizes(page, 'M6'); await next(page);
-  await radio(page, '156'); await next(page);
+  await touchSizes(page, 'M6'); await next(page); await next(page);
+  await radio(page, '156'); await next(page); await next(page);
   // M7: 코너 4를 틀리면 불통과, 다시 해서 통과
+  await next(page);
   await corner(page, '122.8', '성공'); await corner(page, '324.21', '성공'); await corner(page, '118', '성공');
   await corner(page, '340', '한계 없는 코너'); await corner(page, '111', '성공');
   await expect(feedback(page)).toContainText('코너 4의 판단'); await expect(page.locator('#tutNext')).toBeDisabled();
@@ -74,10 +90,11 @@ test('M1~M8을 터치로 완주', async ({ page }) => {
   await touchSizes(page, 'M7'); await corner(page, null, '성공'); await corner(page, '111', '성공');
   await expect(feedback(page)).toContainText('완주'); await next(page);
   // M8: 끌기는 페이지를 스크롤하지 않음
+  await next(page); await next(page); await next(page);
   await expect(page.locator('#circle')).toHaveCSS('touch-action', 'none');
   await setRange(page, 'brake', 20); await expect(page.locator('#circleNote')).toContainText('원 안');
   await setRange(page, 'brake', 22); await expect(page.locator('#circleNote')).toContainText('원 밖');
-  await touchSizes(page, 'M8'); await radio(page, '20.2'); await next(page);
+  await touchSizes(page, 'M8'); await radio(page, '20.2'); await next(page); await next(page);
   await expect(page.locator('#tutTitle')).toHaveText('이 모델이 뺀 것'); await next(page);
   await expect(page.locator('#tut')).toBeHidden();
   expect(JSON.parse(await page.evaluate(k => localStorage.getItem(k)!, DONE))).toEqual(['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8']);
@@ -93,7 +110,7 @@ test('랜딩 목록에 공개됨 (FR-014)', async ({ page }) => {
 
 test('진행이 저장되어 끝낸 다음 미션부터 이어 감', async ({ page }) => {
   await start(page, ['M1', 'M2', 'M3']);
-  await expect(page.locator('#tutTitle')).toHaveText('M4 빠를수록 붙는다');
+  await expect(page.locator('#tutTitle')).toHaveText('리어 윙이 하는 일');
 });
 
 test('깨진 저장값은 처음부터', async ({ page }) => {
@@ -103,10 +120,11 @@ test('깨진 저장값은 처음부터', async ({ page }) => {
 });
 
 test('영어: 한글이 남지 않고 입력값이 유지됨', async ({ page }) => {
-  await start(page, ['M1']);
-  await page.locator('#radioIn').fill('1.41');
+  await start(page, ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7']);
+  await next(page); await next(page); await next(page);
+  await page.locator('#radioIn').fill('20');
   await page.locator('#langBtn').tap();
-  await expect(page.locator('#radioIn')).toHaveValue('1.41');
+  await expect(page.locator('#radioIn')).toHaveValue('20');
   await expect(page.locator('#radioGo')).toHaveText('Radio it in');
   const text = await page.locator('body').evaluate(b => [...b.querySelectorAll<HTMLElement>('*')].filter(e => e.offsetParent && !['SCRIPT', 'STYLE', 'BUTTON'].includes(e.tagName) && e.id !== 'langBtn').map(e => [...e.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('')).join(' '));
   expect(text).not.toMatch(/[가-힣]/);

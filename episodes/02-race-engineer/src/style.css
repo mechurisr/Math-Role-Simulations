@@ -45,3 +45,5 @@ body.tut-open .forces.graph-on .bar-row,body.tut-open .forces.graph-on .status{d
 .circle[hidden]{display:none}
 .circle canvas{display:block;width:100%;height:230px;touch-action:none;cursor:grab}
 .circle .limit{font-size:12px}
+.corner-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tut-body .o{color:var(--accent);font-weight:700}

@@ -8,7 +8,7 @@ import { notesHtml } from '../view/notes';
 import { condLine } from './basic';
 import type { Game, MissionStep } from './index';
 
-const CH5 = P('5장 레이스', 'Ch.5 Race');
+const CH7 = P('7장 레이스', 'Ch.7 Race');
 const WHY: Partial<Record<Verdict['reason'], () => string>> = {
   pass: () => tr('성공', 'Good'), slid: () => tr('미끄러짐', 'Slid'), tooSlow: () => tr('시간 손실', 'Lost time'),
   wantedNoLimit: () => tr('한계 없는 코너', 'No limit here'), tooHigh: () => tr('한계가 있는 코너', 'This corner has a limit'),
@@ -22,7 +22,17 @@ function resultTable(s: StepState) {
 }
 
 export const raceSteps = (g: Game): MissionStep[] => [
-  { ch: CH5, title: P('M7 레이스 무전', 'M7 Race radio'), mission: 'M7', ctrl: true,
+  { ch: CH7, title: P('레이스 전날 밤', 'The night before the race'), mission: 'M7',
+    enter: () => g.configure({ radius: 60, surface: 'dry', wing: 'mid', open: [] }),
+    body: () => '<p>' + tr('내일 레이스에서는 코너 다섯 개를 혼자 판단합니다. 코너마다 노면과 윙이 정해져 있습니다. 항력이 없는 이 모델에서는 윙이 높을수록 늘 유리해서, 윙은 팀이 정해 줍니다.', 'Tomorrow you judge five corners alone. Each has a set surface and wing. With no drag in this model more wing always helps, so the team sets the wing for you.') + '</p>'
+      + '<p>' + tr('코너를 받으면 이 순서로 판단하세요.', 'For each corner, work in this order.') + '</p>'
+      + '<table>'
+      + `<tr><td>1</td><td>${tr('μ와 k를 확인합니다', 'Check μ and k')}</td></tr>`
+      + `<tr><td>2</td><td>${tr('m/r과 μk를 비교합니다. m/r이 μk 이하이면 한계 없음입니다', 'Compare m/r with μk. If m/r is μk or less, there is no limit')}</td></tr>`
+      + `<tr><td>3</td><td>${tr('아니면 v² = μmg ÷ (m/r − μk)를 계산합니다', 'Otherwise, v² = μmg ÷ (m/r − μk)')}</td></tr>`
+      + `<tr><td>4</td><td>${tr('제곱근을 구하고 3.6을 곱합니다', 'Take the square root and multiply by 3.6')}</td></tr></table>`
+      + '<p>' + tr('한계를 넘으면 차가 밀려납니다. 한계의 97%보다 낮게 부르면 시간을 잃어 실패입니다. 5개 중 4개를 맞혀야 하고, 한계가 없는 코너의 판단은 반드시 맞혀야 합니다.', 'Over the limit, the car slides. Below 97% of the limit, you lose time and it counts as a miss. You need four of five, and the no-limit corner must be right.') + '</p>' },
+  { ch: CH7, title: P('M7 레이스 무전', 'M7 Race radio'), mission: 'M7', ctrl: true,
     enter: s => reset(g, s),
     radio: { label: P('그립 한계 속도', 'Grip limit speed'), unit: 'km/h', noLimit: true },
     radioHidden: s => !!s.answered || s.i >= CORNERS.length,
@@ -49,14 +59,14 @@ export const raceSteps = (g: Game): MissionStep[] => [
       if (s.i >= CORNERS.length) return resultTable(s) + (s.ok ? `<p class="fb good">${tr('완주했습니다. 드라이버가 고맙다고 합니다.', 'Race finished. Your driver says thanks.')}</p>`
         : `<p class="fb bad">${(s.vs as Verdict[])[NO_LIMIT_CORNER].ok ? tr('코너 4개 이상 성공해야 합니다.', 'You need at least four corners.') : tr('코너 4의 판단을 맞혀야 합니다. 경계 반지름을 다시 생각해 보세요.', 'You must get corner 4 right. Think about the boundary radius again.')}</p><p><button class="act" data-act="retry">${tr('다시 하기', 'Try again')}</button></p>`);
       const last = (s.vs as Verdict[])[s.i];
-      return `<p><b>${tr('코너', 'Corner')} ${s.i + 1} / ${CORNERS.length}</b></p>` + condLine(g) + '<p>' + tr('미끄러지지 않는 그립 한계 속도를 부르세요. 차의 최고 속도가 아니라 그립의 한계를 묻습니다. 한계가 없다고 판단하면 "한계 없음"을 고르세요.', 'Call the grip limit speed. We want the limit of the grip, not the top speed of the car. If you think there is no limit, pick "No limit".') + '</p>'
+      return `<p><b>${tr('코너', 'Corner')} ${s.i + 1} / ${CORNERS.length}</b></p>` + condLine(g) + '<p>' + tr('드라이버가 묻습니다. 그립 한계 속도를 부르세요. 차의 최고 속도가 아니라 그립의 한계를 묻습니다. 한계가 없으면 "한계 없음"을 고르세요.', 'The driver asks. Call the grip limit speed: the limit of the grip, not the top speed of the car. If there is no limit, pick "No limit".') + '</p>'
         + (s.note ? `<p class="fb bad">${s.note}</p>` : '')
         + (s.answered ? `<p class="fb ${last.ok ? 'good' : 'bad'}">${WHY[last.reason]?.() ?? ''}</p><p><button class="act" data-act="next">${s.i + 1 < CORNERS.length ? tr('다음 코너', 'Next corner') : tr('결과 보기', 'See results')}</button></p>` : '');
     } },
 ];
 
 export const notesSteps = (g: Game): MissionStep[] => [
-  { ch: CH5, title: P('이 모델이 뺀 것', 'What this model leaves out'),
+  { ch: P('마무리', 'Wrap-up'), title: P('이 모델이 뺀 것', 'What this model leaves out'),
     enter: () => g.configure({ open: [] }),
     body: () => '<p>' + tr('이 에피소드의 계산은 수학을 배우기 위한 단순 모델이며 실제 F1과 같지 않습니다.', 'The numbers here come from a simple model for learning the maths. It is not the same as real F1.') + '</p>' + notesHtml() },
 ];

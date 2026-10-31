@@ -149,3 +149,13 @@ T027 `playwright.config.ts` testMatch, `episode.json` status published (WP06)
 T028 전체 확인: quickstart 절차, `pnpm check`, `pnpm test:e2e`, `pnpm build` (WP06)
 
 **Risks**: WebKit의 MathML 표시, 긴 e2e 시간.
+
+## 구현 뒤 보강: 설명 다시 쓰기 (사람 요청, 2026-10-31)
+
+첫 빌드를 본 사람이 문제의 뜻과 계산의 의미를 알 수 없다고 판단해 FR-017·FR-018을 추가했다. 계산·정답·판정은 바꾸지 않았다.
+
+T029 M1~M8을 상황 → 직접 보기 → 의미 → 계산 → 왜 중요한가 순서로 다시 쓰고 풀이 예시 추가 (FR-017)
+T030 장면에 힘 화살표 추가 (FR-018)
+T031 표현 정리: 넓은 코너 → 반지름이 두 배, 급한·완만한 코너. M2·M5 재기를 버튼으로
+T032 완주 e2e를 새 흐름에 맞춤
+

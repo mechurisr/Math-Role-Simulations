@@ -45,9 +45,9 @@ const condition = () => { const { mu, k } = cornerValues(S); return `m = ${MASS}
 
 function draw() {
   if (!size) return;
-  drawScene(ctx, size, C, S.radius, run);
-  const { req, avail } = forces();
-  drawBars(req, avail, run ? req * rampAt(run.slipP ?? run.p) : req);
+  const { req, avail } = forces(), shownReq = run ? req * rampAt(run.slipP ?? run.p) : req;
+  drawScene(ctx, size, C, S.radius, run, shownReq / Math.max(req, avail));
+  drawBars(req, avail, shownReq);
   $('speedV').textContent = S.speed + ' km/h'; $('radiusV').textContent = S.radius + ' m';
   $('cond').textContent = condition();
   $('limit').textContent = limitText();
@@ -136,10 +136,10 @@ const tut = createTutorial({
   },
 });
 
-speedIn.addEventListener('input', () => { S.speed = +speedIn.value; clearRun(); refreshCard(); });
+speedIn.addEventListener('input', () => { S.speed = +speedIn.value; clearRun(); tut.emit('speed', S.speed); refreshCard(); });
 radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(); tut.emit('setup', gripLimit(cornerValues(S)).kind); refreshCard(); });
 bindMode('surface', v => { S.surface = v as Surface; });
-bindMode('wing', v => { S.wing = v as Wing; });
+bindMode('wing', v => { S.wing = v as Wing; tut.emit('wing', v); });
 $('go').onclick = () => go();
 bindCircleDrag(circle, () => { const { mu, k } = cornerValues(S); return circleRadius(kmhToMs(S.speed), mu, k); }, setBrake);
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
