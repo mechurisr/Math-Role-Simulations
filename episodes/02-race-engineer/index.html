@@ -14,11 +14,12 @@
     <button class="lang-btn" id="langBtn" type="button"></button>
     <h1 data-i18n="title"></h1>
     <p data-i18n="lead"></p>
+    <button class="tut-btn" id="tutOpen" data-i18n="tutOpen"></button>
   </header>
 
   <canvas id="stage" class="stage" data-i18n-aria="aStage"></canvas>
 
-  <section class="panel forces" data-i18n-aria="aForces">
+  <section class="panel forces" id="forcesBox" data-i18n-aria="aForces">
     <div class="bar-row"><span class="bar-name" data-i18n="reqL"></span><span class="bar-track"><span class="bar-fill req" id="barReq"></span></span><span class="val small-val" id="reqV"></span></div>
     <div class="bar-row"><span class="bar-name" data-i18n="availL"></span><span class="bar-track"><span class="bar-fill avail" id="barAvail"></span></span><span class="val small-val" id="availV"></span></div>
     <p class="status" id="status" role="status"></p>
@@ -47,8 +48,14 @@
         <button data-v="none" aria-pressed="true" data-i18n="wingNone"></button><button data-v="mid" aria-pressed="false" data-i18n="wingMid"></button><button data-v="high" aria-pressed="false" data-i18n="wingHigh"></button>
       </div>
     </div>
-    <div class="actions"><button class="btn-primary" id="go" data-i18n="go"></button></div>
+    <div class="actions" id="goCtl"><button class="btn-primary" id="go" data-i18n="go"></button></div>
   </section>
+</div>
+
+<div class="tut-ctrl radio" id="tutCtrl" hidden>
+  <label for="radioIn" id="radioL"></label>
+  <div class="radio-row"><input id="radioIn" inputmode="decimal" autocomplete="off"><span id="radioU"></span></div>
+  <div class="radio-acts"><button class="btn-primary" id="radioGo" type="button"></button><button class="btn-sec" id="radioNone" type="button" hidden></button></div>
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@ export function drawScene(cx: CanvasRenderingContext2D, size: CanvasSize, C: The
   cx.beginPath(); cx.arc(ox, oy, R, 0, -Math.PI / 2, true); cx.stroke(); cx.setLineDash([]);
   // 반지름 표시
   cx.strokeStyle = C.muted; cx.beginPath(); cx.moveTo(ox, oy); cx.lineTo(ox + R * Math.SQRT1_2, oy - R * Math.SQRT1_2); cx.stroke();
-  cx.fillStyle = C.ink; cx.font = '500 14px "IBM Plex Mono",monospace'; cx.fillText('r = ' + radius + ' m', ox + 36, oy - 8);
+  cx.fillStyle = C.ink; cx.font = '500 14px "IBM Plex Mono",monospace'; cx.fillText('r = ' + radius + ' m', ox + R + lane, oy - 10);
   cx.fillStyle = C.muted; cx.font = '11px "IBM Plex Sans KR",sans-serif'; cx.fillText(tr('도식 (축척 아님)', 'Schematic, not to scale'), 8, 16);
   if (!run) { car(cx, ox + R, oy, -Math.PI / 2, C.accent); return; }
   const at = run.slipP ?? run.p, th = -at * Math.PI / 2, px = ox + R * Math.cos(th), py = oy + R * Math.sin(th), head = th - Math.PI / 2;

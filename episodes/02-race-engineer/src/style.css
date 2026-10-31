@@ -17,3 +17,17 @@
 .mode button{min-height:44px}
 .btn-primary{min-height:44px}
 .lang-btn{min-height:44px}
+.limit[hidden]{display:none}
+/* 조건은 튜토리얼 중 카드에 표시 */
+body.tut-open #cond{display:none}
+.tut-body .stats{margin:0 0 8px;font-size:12px}
+.tut-body math{font-size:1.2em;margin:6px 0 10px}
+.radio{display:grid;gap:6px}
+.radio[hidden]{display:none}
+.radio label{font-weight:500}
+.radio-row{display:flex;align-items:center;gap:8px}
+.radio-row input{flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:18px}
+.radio-acts{display:flex;gap:8px;flex-wrap:wrap}
+.radio-acts button{min-height:44px}
+.radio-acts [hidden]{display:none}
+#goCtl[hidden]{display:none}

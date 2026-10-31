@@ -3,11 +3,15 @@ import '@series/engine/css/ui/theme.css';
 import '@series/engine/css/ui/components.css';
 import '@series/engine/css/tutorial/tutorial.css';
 import { applyLang, bindLangButton, defineStrings, onLangChange, tr } from '@series/engine/i18n';
-import { byId as $, fitCanvas, onThemeChange, readCssVars, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
+import { byId as $, fitCanvas, load, onThemeChange, readCssVars, save, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
 import { startFixedStepLoop } from '@series/engine/sim';
+import { createTutorial } from '@series/engine/tutorial';
 import { G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constants';
 import { availableForce, cornerValues, gripLimit, holdsGrip, kmhToMs, msToKmh, requiredForce, type CornerSetup } from './model/corner';
+import { parseDone, resumeIndex } from './model/progress';
+import { missionSteps, type Control, type Game, type MissionStep, type Scene } from './missions/index';
 import { drawBars } from './view/bars';
+import { createRadio } from './view/radio';
 import { drawScene, rampAt, slipAt, type SceneRun } from './view/scene';
 import { STRINGS } from './strings';
 import './style.css';
@@ -32,13 +36,15 @@ function limitText() {
   return tr('그립 한계: ', 'Grip limit: ') + msToKmh(l.speed).toFixed(1) + ' km/h';
 }
 
+const condition = () => { const { mu, k } = cornerValues(S); return `m = ${MASS} kg · g = ${G} m/s² · μ = ${mu} · k = ${k} kg/m · r = ${S.radius} m`; };
+
 function draw() {
   if (!size) return;
   drawScene(ctx, size, C, S.radius, run);
-  const { req, avail } = forces(), { mu, k } = cornerValues(S);
+  const { req, avail } = forces();
   drawBars(req, avail, run ? req * rampAt(run.slipP ?? run.p) : req);
   $('speedV').textContent = S.speed + ' km/h'; $('radiusV').textContent = S.radius + ' m';
-  $('cond').textContent = `m = ${MASS} kg · g = ${G} m/s² · μ = ${mu} · k = ${k} kg/m · r = ${S.radius} m`;
+  $('cond').textContent = condition();
   $('limit').textContent = limitText();
 }
 
@@ -59,7 +65,7 @@ function go() {
 function step() {
   if (!run) return false;
   if (run.slipP !== null && run.p >= run.slipP) run.slide += DT / SLIDE; else run.p += DT / LAP;
-  if (run.p >= 1 || run.slide >= 1) { setResult(passed ? 'pass' : 'slid'); stage.dataset.running = ''; return false; }
+  if (run.p >= 1 || run.slide >= 1) { setResult(passed ? 'pass' : 'slid'); stage.dataset.running = ''; tut.emit('drive', { kmh: S.speed, slid: !passed }); return false; }
   return true;
 }
 
@@ -73,14 +79,50 @@ function bindMode(id: string, pick: (v: string) => void) {
 }
 const clearRun = () => { run = null; setResult(''); stage.dataset.running = ''; draw(); };
 
-speedIn.addEventListener('input', () => { S.speed = +speedIn.value; clearRun(); });
-radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(); });
+const CONTROLS: Record<Control, string> = { speed: 'speedCtl', radius: 'radiusCtl', surface: 'surfaceCtl', wing: 'wingCtl', go: 'goCtl' };
+const press = (id: string, v: string) => $(id).querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+const refreshCard = () => { if (tut.current()) tut.render(false); };
+
+// 미션이 정한 조건을 넣고, 바꿀 수 없는 조작은 숨김 (360px에서 장면과 조작이 함께 보이게)
+function configure(c: Scene) {
+  Object.assign(S, { speed: c.speed ?? S.speed, radius: c.radius ?? S.radius, surface: c.surface ?? S.surface, wing: c.wing ?? S.wing });
+  speedIn.value = String(S.speed); radiusIn.value = String(S.radius); press('surface', S.surface); press('wing', S.wing);
+  (Object.keys(CONTROLS) as Control[]).forEach(k => { $(CONTROLS[k]).hidden = !c.open.includes(k); });
+  $('limit').hidden = !c.limit; clearRun();
+}
+const FREE: Scene = { open: ['speed', 'radius', 'surface', 'wing', 'go'], limit: true };
+const game: Game = {
+  configure, condition,
+  target: c => c === 'stage' ? stage : c === 'forces' ? $('forcesBox') : $(CONTROLS[c]),
+};
+
+const DONE_KEY = 'race-engineer:done';
+const done = parseDone(load(DONE_KEY));
+const STEPS = missionSteps(game);
+function markDone(m: string) { if (!done.includes(m)) { done.push(m); save(DONE_KEY, JSON.stringify(done)); } }
+
+const radio = createRadio(a => tut.emit('radio', a));
+const tut = createTutorial({
+  steps: STEPS, episode: 'race-engineer', ctrl: $('tutCtrl'), openButton: $('tutOpen'),
+  resume: () => resumeIndex(STEPS.map(s => s.mission), done),
+  onEnd: () => configure(FREE),
+  onRender: () => {
+    const c = tut.current(); if (!c) return;
+    const step = c.step as MissionStep;
+    radio.show(step.radio);
+    if (step.mission && step.done?.(c.state)) markDone(step.mission);
+  },
+});
+
+speedIn.addEventListener('input', () => { S.speed = +speedIn.value; clearRun(); refreshCard(); });
+radiusIn.addEventListener('input', () => { S.radius = +radiusIn.value; clearRun(); refreshCard(); });
 bindMode('surface', v => { S.surface = v as Surface; });
 bindMode('wing', v => { S.wing = v as Wing; });
 $('go').onclick = go;
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
 window.addEventListener('resize', () => { size = fitCanvas(stage); draw(); });
-onLangChange(draw);
+onLangChange(() => { draw(); refreshCard(); });
 bindLangButton($('langBtn'));
 applyLang(); size = fitCanvas(stage);
 startFixedStepLoop({ dt: DT, active: () => stage.dataset.running === '1', step, frame: draw });
+tut.autoStart();
