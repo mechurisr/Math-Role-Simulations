@@ -31,3 +31,9 @@ body.tut-open #cond{display:none}
 .radio-acts button{min-height:44px}
 .radio-acts [hidden]{display:none}
 #goCtl[hidden]{display:none}
+.graph{display:grid;gap:4px}
+.graph[hidden]{display:none}
+.graph canvas{display:block;width:100%;height:170px}
+/* 360px: 그래프 단계에서는 막대를 접어 한 화면에 들어오게 */
+body.tut-open .forces.graph-on .bar-row,body.tut-open .forces.graph-on .status{display:none}
+.tut-body td{font-size:13px}

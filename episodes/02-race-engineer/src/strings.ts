@@ -7,6 +7,7 @@ export const STRINGS = {
   lead: P('드라이버가 묻습니다. "얼마까지 밟아도 돼?" 타이어의 한계를 계산해 무전으로 알려 주세요.', 'Your driver asks, "How fast can I take it?" Work out the limit of the tyres and radio it in.'),
   tutOpen: P('미션 시작', 'Start missions'),
   aStage: P('위에서 내려다본 코너', 'A corner seen from above'),
+  aGraph: P('속도에 따른 힘 그래프', 'Force against speed graph'),
   aForces: P('힘 비교', 'Force comparison'),
   aPanel: P('조작 패널', 'Controls'),
   reqL: P('필요한 힘', 'Force needed'),

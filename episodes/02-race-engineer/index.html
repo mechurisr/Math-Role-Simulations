@@ -20,6 +20,10 @@
   <canvas id="stage" class="stage" data-i18n-aria="aStage"></canvas>
 
   <section class="panel forces" id="forcesBox" data-i18n-aria="aForces">
+    <div class="graph" id="graphBox" hidden>
+      <canvas id="graph" data-i18n-aria="aGraph"></canvas>
+      <p class="limit" id="graphNote"></p>
+    </div>
     <div class="bar-row"><span class="bar-name" data-i18n="reqL"></span><span class="bar-track"><span class="bar-fill req" id="barReq"></span></span><span class="val small-val" id="reqV"></span></div>
     <div class="bar-row"><span class="bar-name" data-i18n="availL"></span><span class="bar-track"><span class="bar-fill avail" id="barAvail"></span></span><span class="val small-val" id="availV"></span></div>
     <p class="status" id="status" role="status"></p>
@@ -50,6 +54,7 @@
     </div>
     <div class="actions" id="goCtl"><button class="btn-primary" id="go" data-i18n="go"></button></div>
   </section>
+
 </div>
 
 <div class="tut-ctrl radio" id="tutCtrl" hidden>

@@ -4,3 +4,4 @@ export * from './canvas';
 export * from './tooltip';
 export * from './storage';
 export * from './formula';
+export * from './plot';
