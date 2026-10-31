@@ -58,14 +58,16 @@ engine/tests/        # plot 축척, formula 단위 테스트
 episodes/02-race-engineer/
 ├── episode.json · index.html · package.json
 ├── src/
-│   ├── main.ts · strings.ts · missions.ts · style.css
+│   ├── main.ts · strings.ts · style.css
+│   ├── missions/           # index, basic(M1~3), downforce(M4~6), race(M7), braking(M8)
 │   ├── model/
 │   │   ├── constants.ts        # 물리값
 │   │   ├── corner.ts           # 필요한 힘·낼 수 있는 힘·한계 상태
-│   │   ├── judge.ts            # 미션별 판정
+│   │   ├── judge.ts            # 공통 판정
+│   │   ├── race-radio.ts       # M7 코너 판정
 │   │   └── friction-circle.ts  # 마찰원
 │   └── view/
-│       ├── scene.ts · bars.ts · graph.ts · circle.ts
+│       ├── scene.ts · bars.ts · radio.ts · graph.ts · circle.ts · notes.ts
 └── tests/           # model 단위·속성 테스트
 e2e/race-engineer.spec.ts · e2e/mobile.spec.ts(주소 추가)
 playwright.config.ts # testMatch 추가
@@ -97,7 +99,7 @@ playwright.config.ts # testMatch 추가
 
 - **Purpose**: 무전 판정과 M1~M7 진행을 만든다
 - **Relevant requirements**: FR-005, FR-008~010, FR-012, FR-016, NFR-004, NFR-005
-- **Affected surfaces**: `model/judge.ts`, `missions.ts`, `strings.ts`, `main.ts`
+- **Affected surfaces**: `model/judge.ts`, `model/race-radio.ts`, `missions/`, `view/radio.ts`, `view/notes.ts`, `strings.ts`, `main.ts`
 - **Sequencing/depends-on**: IC-02
 - **Risks**: 판정은 입력 원값 비교, 0.01 km/h 여유는 M7 상한에만. 분량이 커서 미션 묶음으로 나눌 수 있음
 
@@ -113,7 +115,7 @@ playwright.config.ts # testMatch 추가
 
 - **Purpose**: M8을 추가한다
 - **Relevant requirements**: FR-013, C-007
-- **Affected surfaces**: `model/friction-circle.ts`, `view/circle.ts`, `missions.ts`
+- **Affected surfaces**: `model/friction-circle.ts`, `view/circle.ts`, `missions/braking.ts`
 - **Sequencing/depends-on**: IC-03
 - **Risks**: 끌기 중 페이지 스크롤 방지. 이 관심사를 빼도 나머지가 완결돼야 함
 
