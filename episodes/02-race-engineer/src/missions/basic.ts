@@ -36,7 +36,7 @@ export const basicSteps = (g: Game): MissionStep[] => [
     enter: () => g.configure({ speed: 120, radius: 80, surface: 'dry', wing: 'none', open: [] }),
     target: () => [g.target('stage')],
     body: () => '<p>' + tr('당신은 레이스 엔지니어입니다. 코너를 앞두고 드라이버가 무전으로 묻습니다. <b>"얼마까지 밟아도 돼?"</b>', 'You are the race engineer. Before a corner your driver asks over the radio, <b>"How fast can I take it?"</b>') + '</p>'
-      + '<p>' + tr('너무 빠르면 차가 코너 밖으로 밀려나고, 너무 느리면 시간을 잃습니다. 당신의 일은 이 코너에서 가장 빠른 안전한 속도를 <b>숫자 하나</b>로 알려 주는 것입니다.', 'Too fast and the car slides off. Too slow and you lose time. Your job is to give the fastest safe speed for this corner as <b>one number</b>.') + '</p>'
+      + '<p>' + tr('너무 빠르면 차가 코너 밖으로 밀려나고, 너무 느리면 시간을 잃습니다. 당신의 임무는 이 코너에서 가장 빠른 안전한 속도를 <b>숫자 하나</b>로 알려 주는 것입니다.', 'Too fast and the car slides off. Too slow and you lose time. Your mission is to give the fastest safe speed for this corner as <b>one number</b>.') + '</p>'
       + '<p>' + tr('그 숫자를 찾으려면 먼저 코너에서 무슨 일이 벌어지는지 알아야 합니다.', 'To find that number, first look at what happens in a corner.') + '</p>' },
   { ...quizStep({ ch: CH1, title: P('코너를 돌려면 힘이 필요합니다', 'Turning takes a force'),
     intro: () => '<p>' + tr('끈에 공을 묶어 빙빙 돌린다고 생각해 보세요. 손이 끈을 <b>안쪽으로</b> 계속 당기고 있어서 공이 원을 그립니다. 이렇게 원의 중심 쪽으로 당기는 힘을 <b>구심력</b>이라고 합니다.', 'Imagine swinging a ball on a string. Your hand keeps pulling the string <b>inward</b>, so the ball travels in a circle. A force pulling toward the centre of the circle is called <b>centripetal force</b>.') + '</p>',
