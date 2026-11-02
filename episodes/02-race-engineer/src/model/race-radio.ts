@@ -28,13 +28,13 @@ export interface CornerWork {
   radius: number; mu: number; k: number;
   mOverR: number; muK: number;
   solved: { muMg: number; gap: number; v2: number; ms: number; kmh: number } | null;   // 한계가 없으면 null
-  boundary: number;   // 경계 반지름 r_c = m / (μk)
+  boundary: number | null;   // 경계 반지름 r_c = m / (μk). 윙이 없으면(k = 0) 경계가 없음
 }
 
 export function cornerWork(setup: CornerSetup): CornerWork {
   const { radius, mu, k } = cornerValues(setup), limit = gripLimit({ radius, mu, k });
   const mOverR = MASS / radius, muK = mu * k, muMg = mu * MASS * G;
-  const base = { radius, mu, k, mOverR, muK, boundary: MASS / muK };
+  const base = { radius, mu, k, mOverR, muK, boundary: muK > 0 ? MASS / muK : null };
   if (limit.kind === 'none') return { ...base, solved: null };
   const gap = mOverR - muK;
   return { ...base, solved: { muMg, gap, v2: muMg / gap, ms: limit.speed, kmh: msToKmh(limit.speed) } };

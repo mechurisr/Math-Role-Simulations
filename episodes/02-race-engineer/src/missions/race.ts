@@ -1,7 +1,6 @@
 // M7 레이스 무전: 코너 5개를 한 단계에서 차례로. 규칙: model/race-radio.ts
 import { P, tr } from '@series/engine/i18n';
 import type { StepState } from '@series/engine/tutorial';
-import { save } from '@series/engine/ui';
 import type { RadioAnswer, Verdict } from '../model/judge';
 import { CORNERS, cornerWork, judgeCorner, NO_LIMIT_CORNER, racePassed } from '../model/race-radio';
 import { notesHtml } from '../view/notes';
@@ -27,7 +26,10 @@ function cornerSolution(i: number) {
   const w = cornerWork(CORNERS[i]), s = w.solved;
   const given = `r = ${w.radius} m, μ = ${w.mu}, k = ${w.k}. m/r = ${w.mOverR.toFixed(4)}, μk = ${w.muK.toFixed(2)}`;
   const head = `<p class="solution"><b>${tr('코너', 'Corner')} ${i + 1} ${tr('풀이', 'solution')}</b><br>${given}<br>`;
-  if (!s) return head + tr(`m/r이 μk 이하입니다. 속도를 올려도 낼 수 있는 힘이 필요한 힘보다 늘 커서 <b>한계 없음</b>입니다. 경계 반지름은 m ÷ μk = ${w.boundary.toFixed(2)} m이고, 이 코너는 그보다 넓습니다.`, `m/r is μk or less. However fast you go, the force available stays above the force needed, so there is <b>no limit</b>. The boundary radius is m ÷ μk = ${w.boundary.toFixed(2)} m, and this corner is wider.`) + '</p>';
+  if (!s) {   // 한계가 없으려면 μk > 0이라 경계 반지름이 늘 있음
+    const rc = w.boundary!.toFixed(2);
+    return head + tr(`m/r이 μk 이하입니다. 속도를 올려도 낼 수 있는 힘이 필요한 힘보다 늘 커서 <b>한계 없음</b>입니다. 경계 반지름은 m ÷ μk = ${rc} m이고, 이 코너는 그보다 넓습니다.`, `m/r is μk or less. However fast you go, the force available stays above the force needed, so there is <b>no limit</b>. The boundary radius is m ÷ μk = ${rc} m, and this corner is wider.`) + '</p>';
+  }
   return head + tr('m/r이 μk보다 커서 한계가 있습니다. 속도를 올리면 필요한 힘이 그립보다 빨리 늘어나기 때문입니다.', 'm/r is greater than μk, so there is a limit: as speed rises, the force needed grows faster than the grip.')
     + `<br>v² = ${s.muMg.toFixed(0)} ÷ ${s.gap.toFixed(4)} = ${s.v2.toFixed(1)}<br>v = √${s.v2.toFixed(1)} = ${s.ms.toFixed(3)} m/s<br>${s.ms.toFixed(3)} × 3.6 = <b>${s.kmh.toFixed(2)} km/h</b></p>`;
 }
@@ -63,7 +65,6 @@ export const raceSteps = (g: Game): MissionStep[] => [
         s.i++; s.answered = false;
         if (s.i < CORNERS.length) { setCorner(g, s); return; }
         s.ok = racePassed(results(s));
-        save('race-engineer:m7', JSON.stringify(results(s)));
         g.configure({ open: [] });
       },
     },

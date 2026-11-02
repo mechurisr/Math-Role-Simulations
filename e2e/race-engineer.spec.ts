@@ -97,6 +97,7 @@ test('M1~M8을 터치로 완주', async ({ page }) => {
   await expect(page.locator('#circle')).toHaveCSS('touch-action', 'none');
   await setRange(page, 'brake', 20); await expect(page.locator('#circleNote')).toContainText('원 안');
   await setRange(page, 'brake', 22); await expect(page.locator('#circleNote')).toContainText('원 밖');
+  await setRange(page, 'brake', 35.4); await expect(page.locator('#circleNote')).toContainText('제동 35.4');
   await touchSizes(page, 'M8'); await radio(page, '20.2'); await next(page); await next(page);
   await expect(page.locator('#tutTitle')).toHaveText('이 모델이 뺀 것'); await next(page);
   await expect(page.locator('#tut')).toBeHidden();
@@ -117,6 +118,7 @@ test('윙이 있으면 속도를 올릴 때 파랑 막대가 실제로 길어지
   await setRange(page, 'speed', 100); const none100 = await blue();
   await setRange(page, 'speed', 200); expect(await blue()).toBeCloseTo(none100, 1);
   await page.locator('#wing button[data-v=high]').tap();
+  await expect(page.locator('#tutNext')).toBeEnabled();   // 속도를 먼저 움직여도 다음으로 갈 수 있음
   await setRange(page, 'speed', 200); expect(await blue()).toBeGreaterThan(none100);
   const widths: number[] = [];
   for (const v of [100, 150, 200, 300]) { await setRange(page, 'speed', v); widths.push(await blue()); }

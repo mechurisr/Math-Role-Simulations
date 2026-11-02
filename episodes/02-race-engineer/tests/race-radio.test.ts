@@ -39,6 +39,10 @@ describe('cornerWork: answers.md M7 표', () => {
     const w = cornerWork(CORNERS[NO_LIMIT_CORNER]);
     expect(w.solved).toBeNull(); expect(w.boundary).toBeCloseTo(156.25, 10); expect(w.mOverR).toBeLessThanOrEqual(w.muK);
   });
+  it('윙이 없으면(k = 0) 경계 반지름이 없고 풀이는 있음', () => {
+    const w = cornerWork({ radius: 60, surface: 'dry', wing: 'none' });
+    expect(w.boundary).toBeNull(); expect(w.solved!.gap).toBeCloseTo(800 / 60, 10);
+  });
 });
 
 describe('racePassed', () => {

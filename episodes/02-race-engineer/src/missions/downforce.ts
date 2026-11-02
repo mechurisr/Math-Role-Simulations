@@ -29,7 +29,7 @@ export const downforceSteps = (g: Game): MissionStep[] => [
   { ch: CH4, title: P('윙을 세워 보기', 'Raise the wing'), mission: 'M4',
     enter: () => g.configure({ speed: 120, radius: 80, surface: 'dry', wing: 'none', open: ['speed', 'wing'] }),
     target: () => [g.target('forces'), g.target('speed'), g.target('wing')],
-    on: { wing: (s, w) => { if (w === 'high') s.high = true; }, speed: s => { if (s.high) s.moved = true; } },
+    on: { wing: (s, w) => { if (w === 'high') s.high = true; }, speed: s => { s.moved = true; } },
     gate: s => !!(s.high && s.moved), waitLabel: P('윙을 높음으로 하고 속도를 바꿔 보세요', 'Set high wing, then change the speed'),
     body: s => '<p>' + tr('지금은 윙이 없어 파랑 막대가 12.5 kN입니다. 리어 윙을 <b>높음</b>으로 바꾼 뒤 속도를 움직이면서 파랑 막대를 보세요.', 'With no wing the blue bar is 12.5 kN. Set the rear wing to <b>High</b>, then move the speed and watch the blue bar.') + '</p>'
       + (s.high && s.moved ? '<p class="fb good">' + tr('윙이 없을 때 파랑 막대는 속도와 상관없이 그대로였습니다. 윙이 있으면 <b>빠를수록 파랑 막대가 커집니다.</b> 빠를수록 타이어가 더 세게 눌리기 때문입니다.', 'With no wing, the blue bar did not depend on speed. With a wing, <b>the faster you go, the bigger it gets</b>, because the tyres are pressed harder.') + '</p>' : '') },

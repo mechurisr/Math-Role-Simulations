@@ -98,7 +98,8 @@ const clearRun = () => { run = null; setResult(''); stage.dataset.running = ''; 
 
 const CONTROLS: Record<Control, string> = { speed: 'speedCtl', radius: 'radiusCtl', surface: 'surfaceCtl', wing: 'wingCtl', go: 'goCtl' };
 const press = (id: string, v: string) => $(id).querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
-const setBrake = (v: number) => { brake = Math.min(30, v); $<HTMLInputElement>('brake').value = String(brake); draw(); };
+// 상한은 M8 원의 반지름 35.4보다 조금 위까지. index.html의 #brake max와 같은 값
+const setBrake = (v: number) => { brake = Math.min(36, v); $<HTMLInputElement>('brake').value = String(brake); draw(); };
 const refreshCard = () => { if (tut.current()) tut.render(false); };
 
 // 미션이 정한 조건을 넣고, 바꿀 수 없는 조작은 숨김 (360px에서 장면과 조작이 함께 보이게)
@@ -149,7 +150,7 @@ function askResume() {
   return !!m;
 }
 function openMissions(fresh: boolean) {
-  if (fresh) { done.length = 0; save(DONE_KEY, '[]'); save('race-engineer:m7', '[]'); }
+  if (fresh) { done.length = 0; save(DONE_KEY, '[]'); }
   $('resumeBox').hidden = true; tut.start();
 }
 $('tutOpen').onclick = () => { if (!askResume()) tut.start(); };
