@@ -1,0 +1,16 @@
+{
+  "coordination_branch": "kitty/mission-race-engineer-01M68BAF",
+  "created_at": "2026-10-31T06:45:59.131889+00:00",
+  "flattened": false,
+  "friendly_name": "레이스 엔지니어 — 구심가속도와 마찰 한계",
+  "mission_id": "01M68BAF5QGD7M8NPC5QYE2CRD",
+  "mission_number": null,
+  "mission_slug": "race-engineer-01M68BAF",
+  "mission_type": "software-dev",
+  "pr_bound": true,
+  "purpose_context": "학습자가 레이스 엔지니어 역할로 구심가속도, 최대 정지마찰, 다운포스, 마찰원을 직접 조작하며 속도 상한을 식으로 구하는 새 에피소드. 새 에피소드라 정식 경로(Issue #24).",
+  "purpose_tldr": "두 번째 에피소드: 레이스 엔지니어가 되어 코너별 미끄러지지 않는 최대 속도를 계산해 무전으로 알려 준다",
+  "slug": "race-engineer-01M68BAF",
+  "target_branch": "mission/02-race-engineer",
+  "topology": "coord"
+}

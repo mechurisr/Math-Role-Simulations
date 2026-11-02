@@ -1,0 +1,59 @@
+.stage{display:block;width:100%;aspect-ratio:16/10;border:1px solid var(--line);border-radius:6px;background:var(--sky);touch-action:manipulation}
+.bar-row{display:grid;grid-template-columns:88px 1fr 70px;align-items:center;gap:8px}
+.bar-name{font-size:13px;font-weight:500}
+.bar-track{height:14px;background:var(--bg);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.bar-fill{display:block;height:100%;width:0}
+.bar-fill.req{background:var(--accent)}
+.bar-fill.req.over{background:var(--bad)}
+.bar-fill.avail{background:var(--blue)}
+.small-val{font-size:13px;text-align:right}
+.status{margin:0;min-height:1.55em;font-size:14px;font-weight:500}
+.stats{margin:0}
+.limit{margin:0;font-family:var(--mono);font-size:14px}
+.ctl-name{font-weight:500}
+.ctl[hidden]{display:none}
+/* 터치 대상 44px (헌장 PRJ-004): 01의 승인된 예외는 이 에피소드에 적용되지 않음 */
+.row input[type=range]{height:44px}
+.mode button{min-height:44px}
+.btn-primary{min-height:44px}
+.lang-btn{min-height:44px}
+.limit[hidden]{display:none}
+/* 조건은 튜토리얼 중 카드에 표시 */
+body.tut-open #cond{display:none}
+.tut-body .stats{margin:0 0 8px;font-size:12px}
+.tut-body math{font-size:1.2em;margin:6px 0 10px}
+.radio{display:grid;gap:6px}
+.radio[hidden]{display:none}
+.radio label{font-weight:500}
+.radio-row{display:flex;align-items:center;gap:8px}
+.radio-row input{flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:18px}
+.radio-acts{display:flex;gap:8px;flex-wrap:wrap}
+.radio-acts button{min-height:44px}
+.radio-acts [hidden]{display:none}
+#goCtl[hidden]{display:none}
+.graph{display:grid;gap:4px}
+.graph[hidden]{display:none}
+.graph canvas{display:block;width:100%;height:170px}
+/* 360px: 그래프 단계에서는 막대를 접어 한 화면에 들어오게 */
+body.tut-open .forces.graph-on .bar-row,body.tut-open .forces.graph-on .status{display:none}
+.tut-body td{font-size:13px}
+.tut-body td.good{color:var(--good);font-weight:500}
+.tut-body td.bad{color:var(--bad);font-weight:500}
+.note-list{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.tut-body .note-list{font-size:13px}
+.circle{display:grid;gap:4px}
+.circle[hidden]{display:none}
+.circle canvas{display:block;width:100%;height:230px;touch-action:none;cursor:grab}
+.circle .limit{font-size:12px}
+.corner-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tut-body .o{color:var(--accent);font-weight:700}
+.resume[hidden]{display:none}
+.resume-q{margin:0;font-weight:500}
+.btn-sec{min-height:44px}
+/* 식 상자. 카드는 transform이라 position:fixed 팝업이 카드에 잘리므로, 기호 뜻은 식 아래로 펼침 */
+.formula{display:flex;flex-wrap:wrap;align-items:center;gap:0 6px;background:var(--bg);border-radius:4px;padding:2px 10px;margin:0 0 8px}
+.tut-body .formula math{margin:4px 0;flex:0 1 auto}
+.formula .info-wrap{display:contents}
+.formula .info{margin-left:auto}
+.tut .formula .tip{position:static;flex-basis:100%;width:auto!important;margin:2px 0 8px;box-shadow:none;z-index:auto}
+.sym{font-family:var(--mono);margin-right:4px;color:var(--blue)}

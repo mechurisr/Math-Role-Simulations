@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 3 });
 
-for (const url of ['/', '/episodes/01-calculus-howitzer/']) {
+for (const url of ['/', '/episodes/01-calculus-howitzer/', '/episodes/02-race-engineer/']) {
   test(`가로 스크롤 없음: ${url}`, async ({ page }) => {
     await page.goto(url);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
