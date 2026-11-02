@@ -86,9 +86,11 @@ test('M1~M8을 터치로 완주', async ({ page }) => {
   await corner(page, '122.8', '성공'); await corner(page, '324.21', '성공'); await corner(page, '118', '성공');
   await corner(page, '340', '한계 없는 코너'); await corner(page, '111', '성공');
   await expect(feedback(page)).toContainText('코너 4의 판단'); await expect(page.locator('#tutNext')).toBeDisabled();
+  await expect(page.locator('.solution')).toHaveCount(1); await expect(page.locator('.solution')).toContainText('코너 4 풀이'); await expect(page.locator('.solution')).toContainText('156.25 m');
   await page.locator('[data-act=retry]').tap();
   await corner(page, '122.8', '성공'); await corner(page, '400', '미끄러짐'); await corner(page, '118', '성공');
   await touchSizes(page, 'M7'); await corner(page, null, '성공'); await corner(page, '111', '성공');
+  await expect(page.locator('.solution')).toHaveCount(1); await expect(page.locator('.solution')).toContainText('코너 2 풀이'); await expect(page.locator('.solution')).toContainText('× 3.6 = 324.21 km/h');
   await expect(feedback(page)).toContainText('완주'); await next(page);
   // M8: 끌기는 페이지를 스크롤하지 않음
   await next(page); await next(page); await next(page);

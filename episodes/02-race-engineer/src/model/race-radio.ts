@@ -1,5 +1,5 @@
 // M7 레이스 무전 판정. 코너와 규칙: spec.md M7, 정답: answers.md
-import type { Surface, Wing } from './constants';
+import { G, MASS, type Surface, type Wing } from './constants';
 import { cornerValues, gripLimit, msToKmh, type CornerSetup } from './corner';
 import { parsePositive, type RadioAnswer, type Verdict } from './judge';
 
@@ -23,4 +23,21 @@ export function judgeCorner(setup: CornerSetup, a: RadioAnswer): Verdict {
   return n < kmh * LOWER ? { ok: false, reason: 'tooSlow' } : { ok: true, reason: 'pass' };
 }
 
-export const racePassed = (results: boolean[]) => results.length === CORNERS.length && results[NO_LIMIT_CORNER] && results.filter(Boolean).length >= PASS_COUNT;
+// 틀린 코너의 풀이 표시용. 순서: race.ts 전날 밤 단계의 1~4번
+export interface CornerWork {
+  radius: number; mu: number; k: number;
+  mOverR: number; muK: number;
+  solved: { muMg: number; gap: number; v2: number; ms: number; kmh: number } | null;   // 한계가 없으면 null
+  boundary: number;   // 경계 반지름 r_c = m / (μk)
+}
+
+export function cornerWork(setup: CornerSetup): CornerWork {
+  const { radius, mu, k } = cornerValues(setup), limit = gripLimit({ radius, mu, k });
+  const mOverR = MASS / radius, muK = mu * k, muMg = mu * MASS * G;
+  const base = { radius, mu, k, mOverR, muK, boundary: MASS / muK };
+  if (limit.kind === 'none') return { ...base, solved: null };
+  const gap = mOverR - muK;
+  return { ...base, solved: { muMg, gap, v2: muMg / gap, ms: limit.speed, kmh: msToKmh(limit.speed) } };
+}
+
+export const racePassed =(results: boolean[]) => results.length === CORNERS.length && results[NO_LIMIT_CORNER] && results.filter(Boolean).length >= PASS_COUNT;
