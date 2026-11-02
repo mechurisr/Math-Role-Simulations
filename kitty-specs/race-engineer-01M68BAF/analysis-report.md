@@ -4,12 +4,12 @@ artifact_type: spec-kitty.analysis-report
 command: /spec-kitty.analyze
 mission_slug: race-engineer-01M68BAF
 mission_id: 01M68BAF5QGD7M8NPC5QYE2CRD
-generated_at: '2026-11-02T12:36:02.921201+00:00'
+generated_at: '2026-11-02T13:21:10.635070+00:00'
 analyzer_agent: unknown
 input_artifacts:
   spec.md:
     path: kitty-specs/race-engineer-01M68BAF/spec.md
-    sha256: 2ab42b25df628da819c82601d3cc4e993e842399ee17d12e05acf028b5bd67c3
+    sha256: e0f29a5bfdd58d4ed7bc9d1755c3bea4bcf8d9800847a19431474f95f7725f9e
   plan.md:
     path: kitty-specs/race-engineer-01M68BAF/plan.md
     sha256: 2683f7d8d1fa0468c5ac237c764cfaf82e204183d16aa778cdf2f5c7f58397b2
@@ -21,11 +21,11 @@ input_artifacts:
     sha256: 4fd37ecfe82fe44cda789fa2ae53b2395f4ab27ec47373f903fd8d01689e3a99
 verdict: unknown
 issue_counts:
+  low:
   info:
-  critical:
   high:
   medium:
-  low:
+  critical:
 findings: []
 ---
 
