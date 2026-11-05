@@ -1,0 +1,76 @@
+{
+  "entries": [
+    {
+      "created_at": "2026-11-05T11:11:48.221798Z",
+      "decision_id": "01M6NPGSFXFAAYK5HWHVS7XX1Q",
+      "final_answer": "\ucd08\uc548\ub300\ub85c (3\uc7a5 \ud45c\ud604\ub9cc 'mv\u00b2/r\uc744 m\uc73c\ub85c \ub098\ub204\uba74 v\u00b2/r'\ub85c \uc815\uc815)",
+      "input_key": "wording_draft",
+      "mission_id": "01M6NPGF0B11YBBT9V81DMQF2M",
+      "mission_slug": "race-engineer-m8-wording-01M6NPGF",
+      "opened_by": "cli",
+      "options": [
+        "\ucd08\uc548\ub300\ub85c",
+        "\uc218\uc815 \ud6c4",
+        "Other"
+      ],
+      "origin_flow": "specify",
+      "other_answer": false,
+      "question": "M8 \ub2e4\uc12f \ub2e8\uacc4 \ubb38\uad6c\ub97c \uc81c\uc548\ud55c \ucd08\uc548\ub300\ub85c \uace0\uce60\uae4c?",
+      "rationale": null,
+      "resolved_at": "2026-11-05T11:11:51.026634Z",
+      "resolved_by": null,
+      "slot_key": "specify.scope.wording",
+      "status": "resolved",
+      "step_id": null,
+      "summary_json": null
+    },
+    {
+      "created_at": "2026-11-05T11:11:53.812287Z",
+      "decision_id": "01M6NPGYYMJRMJSXM5KRER3VH5",
+      "final_answer": "\ub123\ub294\ub2e4",
+      "input_key": "axis_labels",
+      "mission_id": "01M6NPGF0B11YBBT9V81DMQF2M",
+      "mission_slug": "race-engineer-m8-wording-01M6NPGF",
+      "opened_by": "cli",
+      "options": [
+        "\ub123\ub294\ub2e4",
+        "\ub123\uc9c0 \uc54a\ub294\ub2e4"
+      ],
+      "origin_flow": "specify",
+      "other_answer": false,
+      "question": "\ub9c8\ucc30\uc6d0 \uce94\ubc84\uc2a4\uc5d0 \ucd95 \uc774\ub984(\uc606 \u2192, \uc81c\ub3d9 \u2191)\uc744 \ub123\uc744\uae4c?",
+      "rationale": null,
+      "resolved_at": "2026-11-05T11:11:56.424415Z",
+      "resolved_by": null,
+      "slot_key": "specify.ui.axis_labels",
+      "status": "resolved",
+      "step_id": null,
+      "summary_json": null
+    },
+    {
+      "created_at": "2026-11-05T11:11:59.217267Z",
+      "decision_id": "01M6NPH47HJARXEVZP6JB0213R",
+      "final_answer": "light",
+      "input_key": "track",
+      "mission_id": "01M6NPGF0B11YBBT9V81DMQF2M",
+      "mission_slug": "race-engineer-m8-wording-01M6NPGF",
+      "opened_by": "cli",
+      "options": [
+        "light",
+        "\uc815\uc2dd"
+      ],
+      "origin_flow": "specify",
+      "other_answer": false,
+      "question": "\uacbd\ub85c\ub294 \uac00\ubcbc\uc6b4 \uacbd\ub85c(light)\ub85c \ud560\uae4c?",
+      "rationale": null,
+      "resolved_at": "2026-11-05T11:12:02.005344Z",
+      "resolved_by": null,
+      "slot_key": "specify.process.track",
+      "status": "resolved",
+      "step_id": null,
+      "summary_json": null
+    }
+  ],
+  "mission_id": "01M6NPGF0B11YBBT9V81DMQF2M",
+  "version": 1
+}
