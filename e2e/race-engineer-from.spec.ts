@@ -42,6 +42,14 @@ test('M1~M3 기록에서 ?from=M6: 6장 첫 단계, 기록 그대로, 닫고 다
   await expect(title(page)).toHaveText('리어 윙이 하는 일');
 });
 
+test('이미 끝낸 미션도 ?from=M8로 그 장의 첫 단계, 기록 그대로', async ({ page }) => {
+  const all = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8'];
+  await open(page, '?from=M8', all);
+  await expect(page.locator('#resumeBox')).toBeHidden();
+  await expect(title(page)).toHaveText('드라이버의 마지막 질문');
+  expect(JSON.parse((await record(page))!)).toEqual(all);
+});
+
 for (const [query, expected] of [['?from=m3', '재지 않고 계산하기'], ['?from=M1', '드라이버의 질문'], ['?from=M8&x=1', '드라이버의 마지막 질문']] as const) {
   test(`${query}: ${expected}`, async ({ page }) => {
     await open(page, query, ['M1', 'M2', 'M3', 'M4', 'M5']);
