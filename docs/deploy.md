@@ -44,3 +44,16 @@ GitHub → Settings → Branches → `main` 규칙: "Require a pull request befo
 `idea` → (스펙 검토 반영) `spec-ready` → `building` → (PR) `review` → (머지) `deployed`.
 스펙에 수학 오류·모호함이 있으면 언제든 `needs-clarification`.
 `deployed`만 워크플로가 자동으로 달고, 나머지는 메인 세션이 `gh issue edit`로 바꿉니다.
+
+## 휴대폰에서 확인하기: 바로가기 주소
+
+배포 사이트(또는 PR 미리보기 주소)에 `?from=<미션>`을 붙이면 그 미션이 있는 장의 첫 단계로 튜토리얼이 바로 열립니다. 화면 어디에도 링크하지 않는 확인용입니다.
+
+| 에피소드 | 예 | 받는 값 |
+|---|---|---|
+| 레이스 엔지니어 | `https://math-role-sims.pages.dev/episodes/02-race-engineer/?from=M8` | `M1`~`M8` (소문자 가능) |
+
+- 진행 기록은 바꾸지 않습니다. 그 미션을 실제로 끝내면 평소처럼 그 미션만 기록됩니다
+- 첫 시작에만 적용됩니다. 튜토리얼을 닫고 다시 열면 기록대로 "이어서 하기"를 묻습니다
+- 모르는 값은 무시하고 평소처럼 시작합니다
+- 출처: Issue #34, `kitty-specs/race-engineer-from-url-01M6X3KZ/spec.md`

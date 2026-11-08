@@ -125,12 +125,22 @@ const game: Game = {
 const DONE_KEY = 'race-engineer:done';
 const done = parseDone(load(DONE_KEY));
 const STEPS = missionSteps(game);
+const MISSIONS = [...new Set(STEPS.map(s => s.mission).filter((m): m is string => !!m))];
+// 확인용 바로가기 ?from=M8 (Issue #34, 링크 없음): 첫 시작만 그 미션이 있는 장의 첫 단계로 엶.
+// 앞 미션을 끝낸 것으로 친 목록은 시작 위치 계산에만 쓰고 저장하지 않음. 모르는 값은 무시
+const fromParam = new URLSearchParams(location.search).get('from')?.trim().toUpperCase() ?? '';
+let from = MISSIONS.includes(fromParam) ? fromParam : null;
+function startIndex() {
+  const missions = STEPS.map(s => s.mission);
+  if (!from) return resumeIndex(missions, done);
+  const i = resumeIndex(missions, MISSIONS.slice(0, MISSIONS.indexOf(from))); from = null; return i;
+}
 function markDone(m: string) { if (!done.includes(m)) { done.push(m); save(DONE_KEY, JSON.stringify(done)); } }
 
 const radio = createRadio(a => tut.emit('radio', a));
 const tut = createTutorial({
   steps: STEPS, episode: 'race-engineer', ctrl: $('tutCtrl'),
-  resume: () => resumeIndex(STEPS.map(s => s.mission), done),
+  resume: startIndex,
   onEnd: () => configure(FREE),
   onAction: el => tut.emit('act', el.dataset.act),
   onRender: () => {
@@ -171,4 +181,4 @@ onLangChange(() => { draw(); showNotes(); refreshCard(); if (!$('resumeBox').hid
 bindLangButton($('langBtn'));
 applyLang(); showNotes(); size = fitCanvas(stage);
 startFixedStepLoop({ dt: DT, active: () => stage.dataset.running === '1', step, frame: draw });
-if (!askResume()) tut.autoStart();
+if (from) tut.start(); else if (!askResume()) tut.autoStart();
