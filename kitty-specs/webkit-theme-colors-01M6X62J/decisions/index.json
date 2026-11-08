@@ -1,0 +1,30 @@
+{
+  "entries": [
+    {
+      "created_at": "2026-11-08T08:59:50.386059Z",
+      "decision_id": "01M6X65A7HJMHMEX8VTA6K2MSC",
+      "final_answer": "\uc774\ub300\ub85c \uc9c4\ud589: \uc5d4\uc9c4 onThemeChange\uc5d0\uc11c \uc2a4\ud0c0\uc77c\uc2dc\ud2b8 \ub85c\ub4dc \ub4a4 \ud55c \ubc88 \ub354 \uc0c9\uc744 \uc77d\uc5b4 \uc138 \uacf3(01, 02, _template)\uc744 \ud568\uaed8 \uace0\uce58\uace0, firefox\u00b7webkit CI\uc5d0\uc11c race-engineer*.spec.ts \uc804\ubd80 \uc2e4\ud589. \uce94\ubc84\uc2a4 \ud06c\uae30 \ubb38\uc81c\ub294 \ubc94\uc704 \ubc16",
+      "input_key": "intent_summary_confirm",
+      "mission_id": "01M6X62JQXCPP588D9BKE3E1PG",
+      "mission_slug": "webkit-theme-colors-01M6X62J",
+      "opened_by": "cli",
+      "options": [
+        "\uc774\ub300\ub85c \uc9c4\ud589",
+        "\uc218\uc815",
+        "Other"
+      ],
+      "origin_flow": "specify",
+      "other_answer": false,
+      "question": "Intent Summary: WebKit\uc5d0\uc11c \ucc98\uc74c \uc5f4 \ub54c(\uce90\uc2dc \uc5c6\uc74c) \ub450 \uc5d0\ud53c\uc18c\ub4dc\uc640 \ud15c\ud50c\ub9bf\uc758 \ubaa8\ub4e0 \uce94\ubc84\uc2a4\uac00 \ud14c\ub9c8 \uc0c9 \ub300\uc2e0 \uac80\uc815\uc73c\ub85c \uadf8\ub824\uc9c4\ub2e4. \uc5d4\uc9c4\uc758 \ud14c\ub9c8 \ubcc0\uacbd \ucc98\ub9ac\uc5d0\uc11c \uc2a4\ud0c0\uc77c\uc2dc\ud2b8\uac00 \ub2e4 \uc77d\ud78c \ub4a4 \ud55c \ubc88 \ub354 \uc0c9\uc744 \uc77d\uace0 \ub2e4\uc2dc \uadf8\ub9ac\uac8c \ud574 \uc138 \uacf3\uc744 \ud568\uaed8 \uace0\uce5c\ub2e4. firefox\u00b7webkit CI\uc5d0\uc11c race-engineer*.spec.ts\ub97c \ubaa8\ub450 \ub3cc\ub9b0\ub2e4. \uc774\ub300\ub85c \uc2a4\ud399\uc744 \uc4f8\uae4c\uc694?",
+      "rationale": null,
+      "resolved_at": "2026-11-08T09:01:22.930768Z",
+      "resolved_by": null,
+      "slot_key": "specify.intent.summary-confirm",
+      "status": "resolved",
+      "step_id": null,
+      "summary_json": null
+    }
+  ],
+  "mission_id": "01M6X62JQXCPP588D9BKE3E1PG",
+  "version": 1
+}
