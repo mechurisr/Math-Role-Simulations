@@ -1,0 +1,16 @@
+{
+  "coordination_branch": "kitty/mission-race-engineer-m8-wording-01M6NPGF",
+  "created_at": "2026-11-05T11:11:37.504322+00:00",
+  "flattened": false,
+  "friendly_name": "레이스 엔지니어 M8 마찰원 문구 보강과 축 이름",
+  "mission_id": "01M6NPGF0B11YBBT9V81DMQF2M",
+  "mission_number": null,
+  "mission_slug": "race-engineer-m8-wording-01M6NPGF",
+  "mission_type": "software-dev",
+  "pr_bound": true,
+  "purpose_context": "M8은 수식과 숫자는 맞지만 코너 안에서 제동하는 상황, 화면 읽는 법, 힘에서 가속도로 바꾸는 이유, 원의 반지름 R의 유도와 숫자 출처, 주황 선이 고정인 이유가 빠져 있어 학습자가 계산의 뜻을 따라가기 어렵다. 자주포 튜토리얼 수준으로 설명을 채우고 캔버스에 축 이름을 단다. 계산·물리값·단계 수·진행 조건은 그대로라 가벼운 경로(light, Issue #32).",
+  "purpose_tldr": "레이스 엔지니어 M8(마찰원)의 다섯 단계 설명을 보강하고 마찰원 그림에 축 이름을 넣는다 (가벼운 경로)",
+  "slug": "race-engineer-m8-wording-01M6NPGF",
+  "target_branch": "mission/02-race-engineer-m8-wording",
+  "topology": "coord"
+}
