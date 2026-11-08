@@ -18,7 +18,8 @@ export function drawCircle(cx: CanvasRenderingContext2D, size: CanvasSize, C: Th
   cx.fillStyle = c.inside ? C.good : C.bad; cx.beginPath(); cx.arc(x, y, 9, 0, 7); cx.fill();
   cx.fillStyle = C.ink; cx.font = '500 13px "IBM Plex Mono",monospace'; cx.textAlign = 'right'; cx.fillText(c.brake.toFixed(1), x - 14, y + 4);
   // 축 이름: 세로는 축 위쪽 끝의 왼편(점과 숫자는 오른편), 가로는 축 오른쪽 끝 아래. 원과 겹치면 오른쪽 아래 구석으로
-  cx.font = '600 12px system-ui,sans-serif'; cx.fillText(tr('제동 ↑', 'Braking ↑'), ox - 6, 13);
+  // 글꼴은 본문(--body)과 같게. 캔버스는 CSS 변수를 못 써서 이름을 직접 씀 (engine/src/ui/theme.css)
+  cx.font = '600 12px "IBM Plex Sans KR",system-ui,sans-serif'; cx.textAlign = 'right'; cx.fillText(tr('제동 ↑', 'Braking ↑'), ox - 6, 13);
   const side = tr('옆 →', 'Sideways →'), right = w - 8, clear = right - cx.measureText(side).width > ox + c.radius * px + 4;
   cx.fillText(side, right, clear ? oy + 16 : h - 8); cx.textAlign = 'left';
 }

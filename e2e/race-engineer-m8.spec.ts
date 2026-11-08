@@ -37,8 +37,8 @@ async function lastFrame(page: Page) {
   const all = await page.evaluate(() => (window as unknown as { labels: Label[] }).labels);
   return all.slice(-3);
 }
-// 글자 상자 (12~13px 글꼴, 기준선 위 11px·아래 3px)
-const box = (l: Label) => { const left = l.align === 'right' ? l.x - l.w : l.x; return { left, right: left + l.w, top: l.y - 11, bottom: l.y + 3 }; };
+// 글자 상자: 12~13px 글꼴에서 기준선 위 약 10px(대문자·한글 높이)·아래 약 3px(내림)에 여유 2px씩. 정확한 높이는 글꼴마다 달라 어림값
+const box = (l: Label) => { const left = l.align === 'right' ? l.x - l.w : l.x; return { left: left - 2, right: left + l.w + 2, top: l.y - 12, bottom: l.y + 5 }; };
 const overlap = (a: ReturnType<typeof box>, b: ReturnType<typeof box>) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
 async function checkAxes(page: Page, braking: string, sideways: string) {
@@ -72,11 +72,13 @@ test('M8 다섯 단계 설명과 축 이름 (한국어)', async ({ page }) => {
   await expect(page.locator('#circle')).toHaveAttribute('aria-label', '마찰원: 가로축은 옆 가속도, 세로축은 제동 가속도');
   await checkAxes(page, '제동 ↑', '옆 →');
   await next(page);
-  await expect(body(page)).toContainText('v² = 55.6² ≈ 3086');
+  await expect(body(page)).toContainText('v² = (200 ÷ 3.6)² ≈ 3086.4');
   await expect(body(page)).toContainText('원의 반지름을 R이라고 부릅니다');
   await expect(body(page)).toContainText('R = μN/m = μ(mg + kv²)/m = μ(g + kv²/m)');
-  await expect(body(page)).toContainText('3.2 × 3086 ÷ 800 ≈ 12.35');
+  await expect(body(page)).toContainText('3.2 × 3086.4 ÷ 800 ≈ 12.35');
   await expect(body(page)).toContainText('1.6 × (9.8 + 12.35) ≈ 35.4');
+  await expect(body(page)).toContainText('차 질량은 m = 800 kg(게임용 값)');
+  await expect(body(page)).toContainText('3086.4 ÷ 106 ≈ 29.1');
   await expect(body(page)).toContainText('주황 점선은');
   await expect(body(page)).toContainText('바깥으로 밀려납니다');
   await next(page);
@@ -106,10 +108,11 @@ test('M8 다섯 단계 설명과 축 이름 (영어)', async ({ page }) => {
   await expect(page.locator('#circle')).toHaveAttribute('aria-label', 'Friction circle: horizontal axis is sideways acceleration, vertical axis is braking acceleration');
   await checkAxes(page, 'Braking ↑', 'Sideways →');
   await next(page);
-  await expect(body(page)).toContainText('v² = 55.6² ≈ 3086');
+  await expect(body(page)).toContainText('v² = (200 ÷ 3.6)² ≈ 3086.4');
   await expect(body(page)).toContainText('Call the circle radius R');
+  await expect(body(page)).toContainText('The car mass is m = 800 kg (a game value)');
   await expect(body(page)).toContainText('R = μN/m = μ(mg + kv²)/m = μ(g + kv²/m)');
-  await expect(body(page)).toContainText('3.2 × 3086 ÷ 800 ≈ 12.35');
+  await expect(body(page)).toContainText('3.2 × 3086.4 ÷ 800 ≈ 12.35');
   await expect(body(page)).toContainText('The orange dashed line');
   await next(page);
   await expect(body(page)).toContainText('the most you can brake without sliding');

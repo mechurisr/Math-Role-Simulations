@@ -33,12 +33,12 @@ export const brakingSteps = (g: Game): MissionStep[] => [
   { ch: CH8, title: P('풀이 예시: 원과 선의 값', 'Worked example: circle and line'), mission: 'M8',
     enter: () => g.configure({ ...SETUP, open: [], circle: true }),
     target: () => [g.target('forces')],
-    body: () => '<p>' + tr('200 km/h ÷ 3.6 ≈ 55.6 m/s이고, v² = 55.6² ≈ 3086입니다. 이 순간의 값을 구해 봅시다.', '200 km/h ÷ 3.6 ≈ 55.6 m/s, so v² = 55.6² ≈ 3086. Work out this instant.') + '</p>'
-      + '<p>' + tr('<b>원의 반지름</b>을 R이라고 부릅니다. N = mg + kv²(무게 + 다운포스)이므로 R = μN/m = μ(mg + kv²)/m = μ(g + kv²/m)입니다. m = 800 kg은 위 조건 표시의 차 질량입니다.', 'Call the <b>circle radius</b> R. N = mg + kv² (weight + downforce), so R = μN/m = μ(mg + kv²)/m = μ(g + kv²/m). m = 800 kg is the car mass shown in the conditions above.') + '</p>'
+    body: () => '<p>' + tr('200 km/h ÷ 3.6 ≈ 55.6 m/s이고, v² = (200 ÷ 3.6)² ≈ 3086.4입니다. 반올림한 55.6을 제곱하면 3091이 되어 조금 어긋나므로 나누기 전의 값으로 제곱합니다. 이 순간의 값을 구해 봅시다.', '200 km/h ÷ 3.6 ≈ 55.6 m/s, so v² = (200 ÷ 3.6)² ≈ 3086.4. Squaring the rounded 55.6 gives 3091, slightly off, so square before rounding. Work out this instant.') + '</p>'
+      + '<p>' + tr('<b>원의 반지름</b>을 R이라고 부릅니다. N = mg + kv²(무게 + 다운포스)이므로 R = μN/m = μ(mg + kv²)/m = μ(g + kv²/m)입니다. 차 질량은 m = 800 kg(게임용 값)입니다.', 'Call the <b>circle radius</b> R. N = mg + kv² (weight + downforce), so R = μN/m = μ(mg + kv²)/m = μ(g + kv²/m). The car mass is m = 800 kg (a game value).') + '</p>'
       + '<table>'
-      + `<tr><td>${tr('다운포스 몫', 'Downforce part')}</td><td>kv²/m = 3.2 × 3086 ÷ 800 ≈ 12.35</td></tr>`
+      + `<tr><td>${tr('다운포스 몫', 'Downforce part')}</td><td>kv²/m = 3.2 × 3086.4 ÷ 800 ≈ 12.35</td></tr>`
       + `<tr><td>${tr('원의 반지름 R', 'Circle radius R')}</td><td>1.6 × (9.8 + 12.35) ≈ 35.4</td></tr>`
-      + `<tr><td>${tr('옆 가속도 a<sub>y</sub>', 'Sideways a<sub>y</sub>')}</td><td>v²/r = 3086 ÷ 106 ≈ 29.1</td></tr></table>`
+      + `<tr><td>${tr('옆 가속도 a<sub>y</sub>', 'Sideways a<sub>y</sub>')}</td><td>v²/r = 3086.4 ÷ 106 ≈ 29.1</td></tr></table>`
       + '<p>' + tr('주황 점선은 a<sub>y</sub> = 29.1인 선입니다. 이 속도로 반지름 106 m 코너를 따라가려면 옆 가속도가 꼭 29.1이어야 하고, 이보다 작으면 차가 바깥으로 밀려납니다. 그래서 점은 이 선 위에서만 위아래로 움직입니다.', 'The orange dashed line is a<sub>y</sub> = 29.1. To follow a 106 m corner at this speed the sideways acceleration must be exactly 29.1; any less and the car runs wide. So the dot moves only up and down this line.') + '</p>'
       + '<p>' + tr('R에 다운포스가 들어 있어 속도가 바뀌면 원의 크기도 바뀝니다. 그래서 200 km/h인 <b>순간</b>만 봅니다.', 'R contains downforce, so the circle changes with speed. That is why we look only at the <b>instant</b> of 200 km/h.') + '</p>' },
   { ch: CH8, title: P('M8 남은 제동 찾기', 'M8 Find the braking left'), mission: 'M8', ctrl: true,
