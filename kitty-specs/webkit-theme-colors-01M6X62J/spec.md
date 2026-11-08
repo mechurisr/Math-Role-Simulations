@@ -67,7 +67,7 @@
 ## Success Criteria *(mandatory)*
 
 - **SC-001**: WebKit에서 캐시 없이 처음 연 두 에피소드의 캔버스에 테마 색이 아닌 검정으로만 그린 그림이 0개다
-- **SC-002**: 레이스 엔지니어 브라우저 테스트 파일 3개가 모두 세 엔진에서 실행된다 (지금 1개)
+- **SC-002**: 레이스 엔지니어 브라우저 테스트 파일 2개(`race-engineer.spec.ts`, `race-engineer-m8.spec.ts`)와 새 테마 색 테스트(`theme-colors.spec.ts`)가 모두 세 엔진에서 실행된다 (지금 레이스 엔지니어 1개)
 - **SC-003**: Chrome·Firefox의 기존 화면·테스트 변화 0
 
 ## Assumptions
