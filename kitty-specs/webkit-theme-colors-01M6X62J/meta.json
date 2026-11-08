@@ -1,0 +1,16 @@
+{
+  "coordination_branch": "kitty/mission-webkit-theme-colors-01M6X62J",
+  "created_at": "2026-11-08T08:58:20.820917+00:00",
+  "flattened": false,
+  "friendly_name": "WebKit 캔버스 테마 색과 레이스 엔지니어 e2e 세 엔진",
+  "mission_id": "01M6X62JQXCPP588D9BKE3E1PG",
+  "mission_number": null,
+  "mission_slug": "webkit-theme-colors-01M6X62J",
+  "mission_type": "software-dev",
+  "pr_bound": true,
+  "purpose_context": "WebKit은 페이지 스크립트가 실행될 때 CSS 색 변수가 아직 비어 있어, 그 시점에 한 번만 색을 읽는 캔버스가 기본색(검정)으로 그려진다. 레이스 엔지니어 M8 마찰원 다크 테마에서 확인했다. 색을 제때 다시 읽게 고치고, firefox·webkit에서 race-engineer*.spec.ts가 모두 돌게 한다. 계산·물리값과 무관 (light, Issue #36).",
+  "purpose_tldr": "WebKit에서 캔버스 테마 색이 비어 검정으로 그려지는 문제를 고치고 레이스 엔지니어 e2e를 CI 세 엔진에서 돌린다 (가벼운 경로)",
+  "slug": "webkit-theme-colors-01M6X62J",
+  "target_branch": "mission/engine-webkit-theme-colors",
+  "topology": "coord"
+}
