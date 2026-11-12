@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "mission_slug": "floating-calculator-01M755VB",
+  "mission_id": "01M755VBKP6S48Z1T5C937EZCP",
+  "mission_branch": "kitty/mission-floating-calculator-01M755VB",
+  "target_branch": "mission/engine-floating-calculator",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "engine/package.json",
+        "engine/src/calculator/calculator.css",
+        "engine/src/calculator/index.ts",
+        "engine/src/math/expression.ts",
+        "engine/src/math/index.ts",
+        "engine/src/tutorial/tutorial.css",
+        "engine/tests/expression.test.ts",
+        "episodes/02-race-engineer/index.html",
+        "episodes/02-race-engineer/src/main.ts",
+        "episodes/02-race-engineer/src/style.css",
+        "episodes/02-race-engineer/src/view/radio.ts"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "e2e/calculator.spec.ts",
+        "playwright.config.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    }
+  ],
+  "computed_at": "2026-11-12T11:13:43.756320+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [],
+  "planning_commit_sha": "60180ebf89f8caff9a6b62464abf82cf52e650f5"
+}

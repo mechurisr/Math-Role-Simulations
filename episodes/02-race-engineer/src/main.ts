@@ -2,10 +2,12 @@
 import '@series/engine/css/ui/theme.css';
 import '@series/engine/css/ui/components.css';
 import '@series/engine/css/tutorial/tutorial.css';
+import '@series/engine/css/calculator/calculator.css';
 import { applyLang, bindLangButton, defineStrings, onLangChange, tr } from '@series/engine/i18n';
 import { bindInfoTips, byId as $, fitCanvas, load, onThemeChange, readCssVars, save, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
 import { startFixedStepLoop } from '@series/engine/sim';
 import { createTutorial } from '@series/engine/tutorial';
+import { createCalculator } from '@series/engine/calculator';
 import { DOWNFORCE, G, MASS, TOP_SPEED_KMH, type Surface, type Wing } from './model/constants';
 import { availableForce, cornerValues, gripLimit, holdsGrip, kmhToMs, msToKmh, requiredForce, type CornerSetup } from './model/corner';
 import { circleRadius, insideCircle, lateralAccel } from './model/friction-circle';
@@ -141,16 +143,23 @@ const radio = createRadio(a => tut.emit('radio', a));
 const tut = createTutorial({
   steps: STEPS, episode: 'race-engineer', ctrl: $('tutCtrl'),
   resume: startIndex,
-  onEnd: () => configure(FREE),
+  // 튜토리얼이 끝난 뒤 자유 조작에서도 계산기를 보임 (kitty-specs/floating-calculator-01M755VB spec 5절)
+  onEnd: () => { configure(FREE); calc.setAvailable(true); },
   onAction: el => tut.emit('act', el.dataset.act),
   onRender: () => {
     const c = tut.current(); if (!c) return;
     const step = c.step as MissionStep;
     radio.show(step.radio);
-    if (step.radioHidden?.(c.state)) $('tutCtrl').hidden = true;
+    const hidden = !!step.radioHidden?.(c.state);
+    if (hidden) $('tutCtrl').hidden = true;
+    // 계산기는 무전 입력란이 보이는 단계에서만 (spec 5절, research R8)
+    calc.setAvailable(!!step.radio && !hidden);
     if (step.mission && step.done?.(c.state)) markDone(step.mission);
   },
 });
+// 떠 있는 계산기: 카드 위에 버튼, 펼치면 카드 안 무전 상자가 보이게 스크롤. 결과는 입력란 위에 한 번 더 (FR-013)
+const calc = createCalculator({ avoid: () => $('tut'), reveal: () => $('tutCtrl') });
+calc.onResult(radio.setCalcResult);
 
 // 진행 기록이 있으면 이어서 할지 묻고, 없으면 바로 시작
 const pending = () => nextMission(STEPS.map(s => s.mission), done);
