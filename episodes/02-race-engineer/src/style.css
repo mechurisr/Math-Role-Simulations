@@ -26,6 +26,11 @@ body.tut-open #cond{display:none}
 .radio[hidden]{display:none}
 .radio label{font-weight:500}
 .radio-row{display:flex;align-items:center;gap:8px}
+/* 입력란 위 계산기 결과 (kitty-specs/floating-calculator-01M755VB FR-013) */
+.radio-calc{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 10px;border-radius:4px;background:var(--bg);border-left:3px solid var(--blue)}
+.radio-calc[hidden]{display:none}
+.radio-calc span{font-size:13px;color:var(--muted)}
+.radio-calc b{font-family:var(--mono);font-size:24px;overflow-wrap:anywhere}
 .radio-row input{flex:1;min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:18px}
 .radio-acts{display:flex;gap:8px;flex-wrap:wrap}
 .radio-acts button{min-height:44px}

@@ -1,5 +1,5 @@
 // 무전 입력 상자. 튜토리얼 카드에 붙어 있어 카드를 다시 그려도(언어 전환 포함) 입력값이 유지됨
-import { tr, tx, type Text } from '@series/engine/i18n';
+import { onLangChange, tr, tx, type Text } from '@series/engine/i18n';
 import { byId as $ } from '@series/engine/ui';
 import type { RadioAnswer } from '../model/judge';
 
@@ -12,8 +12,19 @@ export function createRadio(onSend: (a: RadioAnswer) => void) {
   $('radioGo').onclick = send;
   input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
   none.onclick = () => onSend({ kind: 'noLimit' });
+  // 계산기 결과를 입력란 바로 위에 크게 한 번 더 (kitty-specs/floating-calculator-01M755VB FR-013, 스펙 검토 R5 선택지 c).
+  // 휴대폰 키보드가 올라와 계산기가 밀려나도 보이게. 값을 입력란에 넣지는 않음 (학습 목표 2)
+  const calcLine = document.createElement('div'); calcLine.id = 'radioCalc'; calcLine.className = 'radio-calc'; calcLine.hidden = true;
+  input.closest('.radio-row')!.before(calcLine);
+  let calcValue: string | null = null;
+  const drawCalc = () => {
+    calcLine.hidden = calcValue == null;
+    calcLine.innerHTML = calcValue == null ? '' : `<span>${tr('계산기 결과', 'Calculator result')}</span><b>${calcValue}</b>`;
+  };
+  onLangChange(drawCalc);
   return {
     clear() { input.value = ''; },
+    setCalcResult(v: string | null) { calcValue = v; drawCalc(); },
     // 단계가 바뀔 때만 입력을 비움
     show(spec: RadioSpec | undefined) {
       if (spec !== owner) { input.value = ''; owner = spec ?? null; }
