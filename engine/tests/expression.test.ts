@@ -121,7 +121,9 @@ describe('기호와 문구', () => {
     expect(value('√(1.0×9.8×80)')).toBe(28);
     expect(value('√1.0×9.8×80')).toBeCloseTo(784, 9);  // 괄호 없이 쓰면 √는 한 항만 (스펙 2절 규칙 2)
     expect(value('√4−1')).toBe(1);
-    expect(value('√9^2')).toBe(9);                       // √ 가 ^ 보다 먼저 (규칙 2 > 규칙 3)
+    // √ 가 ^ 보다 먼저 (규칙 2 > 규칙 3): √(-4)^2 = (√(-4))^2 → 실수 아님. 순서가 뒤집히면 √((-4)^2) = 4 가 됨.
+    // √9^2 는 밑이 양수라 순서와 무관하게 9 여서 이 순서를 검증하지 못했음 (PR #38 크로스체크)
+    expect(evaluate('√(-4)^2')).toEqual({ ok: false, reason: 'notReal' });
   });
   it('오류 문구 6종이 한/영 모두 있음 (스펙 2절 표)', () => {
     expect(Object.keys(CALC_ERROR_TEXT).sort()).toEqual(['brackets', 'divZero', 'negBase', 'notReal', 'syntax', 'tooLarge']);

@@ -23,11 +23,12 @@ export function createRadio(onSend: (a: RadioAnswer) => void) {
   };
   onLangChange(drawCalc);
   return {
-    clear() { input.value = ''; },
+    // 새 문제(단계·M7 코너)로 바뀌면 이전 계산 결과 줄도 숨김. 다음 '=' 때 다시 보임 (크로스체크 PR #38)
+    clear() { input.value = ''; calcValue = null; drawCalc(); },
     setCalcResult(v: string | null) { calcValue = v; drawCalc(); },
     // 단계가 바뀔 때만 입력을 비움
     show(spec: RadioSpec | undefined) {
-      if (spec !== owner) { input.value = ''; owner = spec ?? null; }
+      if (spec !== owner) { input.value = ''; owner = spec ?? null; calcValue = null; drawCalc(); }
       if (!spec) return;
       $('radioL').textContent = tx(spec.label); $('radioU').textContent = tx(spec.unit);
       $('radioGo').textContent = tr('무전 보내기', 'Radio it in'); none.textContent = tr('한계 없음', 'No limit');

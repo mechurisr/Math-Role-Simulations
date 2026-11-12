@@ -153,6 +153,23 @@ test.describe('배치와 가림 (NFR-002, SC-003)', () => {
     await expect.poll(async () => { const c = await box(page, '#tut'), b = await box(page, '#calcFab'); return Math.abs(c.top - 8 - b.bottom) <= 1; }).toBe(true);
     await expect(fab(page)).toHaveAttribute('aria-label', 'Open calculator');
   });
+
+  test('언어를 바꾸면 키 이름·오류 문구·결과 줄이 바뀌고 식은 남음 (spec Edge Cases)', async ({ page }) => {
+    await openAt(page, 'M3'); await toRadio(page);
+    await fab(page).tap();
+    await keys(page, '(−8)^(1÷3)=');
+    await expect(page.locator('#calcRes')).toHaveText('밑이 음수이고 지수가 정수가 아니면 여기서는 계산하지 않습니다');
+    await page.locator('.lang-btn').tap();
+    await expect(page.locator('#calcRes')).toHaveText("A negative base with a non-integer exponent isn't evaluated here");
+    await expect(page.locator('#calcExpr')).toHaveText('(−8)^(1÷3)');
+    await expect(page.locator('.calc-keys [data-key="√"]')).toHaveAttribute('aria-label', 'Square root');
+    await expect(page.locator('#calcClose')).toHaveAttribute('aria-label', 'Close calculator');
+    await keys(page, 'C2+2=');
+    await expect(page.locator('#radioCalc')).toContainText('Calculator result');
+    await page.locator('.lang-btn').tap();
+    await expect(page.locator('#radioCalc')).toContainText('계산기 결과');
+    await expect(page.locator('.calc-keys [data-key="√"]')).toHaveAttribute('aria-label', '제곱근');
+  });
 });
 
 test.describe('M3를 계산기로 풀기 (US1, FR-011, FR-013)', () => {
@@ -172,6 +189,24 @@ test.describe('M3를 계산기로 풀기 (US1, FR-011, FR-013)', () => {
     await page.locator('#radioIn').fill('100.8'); await page.locator('#radioGo').tap();
     await expect(page.locator('#tutBody .fb')).toHaveClass(/good/);
     await expect(page.locator('#tutNext')).toBeEnabled();
+  });
+
+  test('다른 무전 단계(M2)로 가면 이전 결과 줄은 숨고, 계산기 안 식은 남음. = 를 누르면 다시 보임', async ({ page }) => {
+    await openAt(page, 'M3'); await toRadio(page);
+    await fab(page).tap();
+    await keys(page, '√1.0×9.8×80)×3.6=');
+    await expect(page.locator('#radioCalc b')).toHaveText('100.8');
+    await fab(page).tap();
+    // "이전"은 진행 조건 없이 움직이므로 M2 무전 단계까지 되돌아감 (M4로 가는 길은 조작 조건이 걸린 단계가 있음)
+    for (let i = 0; i < 10 && !((await page.locator('#tutTitle').textContent()) ?? '').startsWith('M2 몇 배'); i++) await page.locator('#tutPrev').tap();
+    await expect(page.locator('#tutTitle')).toHaveText('M2 몇 배 빨라졌나요?');
+    await expect(page.locator('#radioIn')).toBeVisible();
+    await expect(page.locator('#radioCalc')).toBeHidden();
+    await fab(page).tap();
+    await expect(page.locator('#calcExpr')).toHaveText('√(1.0×9.8×80)×3.6');
+    await expect(page.locator('#calcRes')).toHaveText('100.8');
+    await keys(page, '=');
+    await expect(page.locator('#radioCalc b')).toHaveText('100.8');
   });
 
   test('오류 식은 새 문구, 입력란 위 결과 줄은 숨김. 식을 고치면 결과가 비워짐', async ({ page }) => {
