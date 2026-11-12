@@ -100,8 +100,10 @@ test.describe('접기·식 유지·Esc (US4)', () => {
 });
 
 test.describe('배치와 가림 (NFR-002, SC-003)', () => {
-  for (const h of [640, 568]) test(`360×${h}: 버튼은 카드 위, 펼치면 입력란·보내기·버튼이 가리지 않음, 44px, 가로 스크롤 0`, async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: h });
+  // 뷰포트는 test.use 로 정함: Firefox 에서 페이지를 열기 전 setViewportSize 는 isMobile 과 함께 멈춤 (CI run 43222913502)
+  for (const h of [640, 568]) test.describe(`360×${h}`, () => {
+  test.use({ viewport: { width: 360, height: h } });
+  test(`360×${h}: 버튼은 카드 위, 펼치면 입력란·보내기·버튼이 가리지 않음, 44px, 가로 스크롤 0`, async ({ page }) => {
     await openAt(page, 'M3'); await toRadio(page);
     const card0 = await box(page, '#tut'), fab0 = await box(page, '#calcFab');
     note('closed', { card0, fab0 });
@@ -129,6 +131,7 @@ test.describe('배치와 가림 (NFR-002, SC-003)', () => {
     expect(sizes.length).toBe(25);                                         // 키 23 + 닫기 + 원형 버튼
     for (const s of sizes) { expect(s.w, s.k).toBeGreaterThanOrEqual(44); expect(s.h, s.k).toBeGreaterThanOrEqual(44); }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+  });
   });
 
   test('펼친 채 화면이 360×640 → 360×568로 낮아져도 보내기 버튼이 보임', async ({ page }) => {
