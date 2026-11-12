@@ -136,7 +136,8 @@ export function createCalculator(o: CalculatorOptions = {}): Calculator {
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape' && open) { e.stopPropagation(); setOpen(false); }
   }, { capture: true });
-  window.addEventListener('resize', schedule);
+  // 펼친 채 화면 크기가 바뀌면(휴대폰 회전 등) 카드 높이(38vh)도 바뀌므로 입력란을 다시 보이게
+  window.addEventListener('resize', () => { schedule(); if (open) revealSoon(); });
   const ro = new ResizeObserver(schedule);
   ro.observe(panel);
   const watchCard = () => { const c = o.avoid?.(); if (c) { ro.observe(c); mo.observe(c, { attributes: true, attributeFilter: ['hidden'] }); } };

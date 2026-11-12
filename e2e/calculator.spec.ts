@@ -120,6 +120,7 @@ test.describe('배치와 가림 (NFR-002, SC-003)', () => {
     expect(calc.right).toBeLessThanOrEqual(f.left - 8 + 0.5);              // 버튼 왼쪽
     if (h === 640) expect(overlapArea(card, calc)).toBe(0);                // 360×640: 겹침 0
     for (const s of ['#radioIn', '#radioGo', '#calcFab']) expect(await onTop(page, s), s).toBe(true);
+    for (const s of ['#radioIn', '#radioGo']) { const g = await box(page, s); expect(g.bottom, s + ' 아래가 카드 밖').toBeLessThanOrEqual(card.bottom + 0.5); }
     // 다음 버튼은 카드 안에서 스크롤하면 보이고 계산기에 가리지 않음
     await page.locator('#tutNext').evaluate(e => e.scrollIntoView({ block: 'nearest' }));
     await expect.poll(() => onTop(page, '#tutNext'), { message: '다음 버튼' }).toBe(true);
@@ -128,6 +129,18 @@ test.describe('배치와 가림 (NFR-002, SC-003)', () => {
     expect(sizes.length).toBe(25);                                         // 키 23 + 닫기 + 원형 버튼
     for (const s of sizes) { expect(s.w, s.k).toBeGreaterThanOrEqual(44); expect(s.h, s.k).toBeGreaterThanOrEqual(44); }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(360);
+  });
+
+  test('펼친 채 화면이 360×640 → 360×568로 낮아져도 보내기 버튼이 보임', async ({ page }) => {
+    await openAt(page, 'M3'); await toRadio(page);
+    await fab(page).tap();
+    await keys(page, '√1.0×9.8×80)×3.6=');
+    await expect.poll(() => onTop(page, '#radioGo')).toBe(true);
+    await page.setViewportSize({ width: 360, height: 568 });
+    // 가운데 점만이 아니라 버튼 전체가 카드의 보이는 영역 안에 있어야 함 (아래가 잘리면 실패)
+    await expect.poll(async () => { const c = await box(page, '#tut'), g = await box(page, '#radioGo'); return g.bottom <= c.bottom + 0.5 && g.top >= c.top; },
+      { message: '크기를 바꾼 뒤 보내기 버튼 전체가 카드 안에 보임' }).toBe(true);
+    expect(await onTop(page, '#radioGo')).toBe(true);
   });
 
   test('English로 바꿔 카드 높이가 바뀌어도 버튼은 카드 위', async ({ page }) => {
