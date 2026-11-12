@@ -23,6 +23,9 @@ requirement_refs:
 - FR-013
 - NFR-001
 - NFR-004
+planning_base_branch: mission/engine-floating-calculator
+merge_target_branch: mission/engine-floating-calculator
+branch_strategy: Planning artifacts for this mission were generated on mission/engine-floating-calculator. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into mission/engine-floating-calculator unless the human explicitly redirects the landing branch.
 subtasks:
 - T001
 - T002
@@ -34,10 +37,9 @@ subtasks:
 - T008
 phase: Phase 1 - MVP
 history:
-- !!omap
-  - at: '2026-11-12T11:30:00Z'
-  - actor: system
-  - action: Prompt generated via /spec-kitty.tasks
+- at: '2026-11-12T11:30:00Z'
+  actor: system
+  action: Prompt generated via /spec-kitty.tasks
 agent_profile: ''
 authoritative_surface: engine/src/calculator/
 create_intent:
