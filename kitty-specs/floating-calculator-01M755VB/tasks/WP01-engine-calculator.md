@@ -157,7 +157,8 @@ tracker_refs: []
 2. `place()` (R6): `const c = o.avoid?.()`; 카드가 보이면(`!c.hidden && rect.height>0`) 버튼 `bottom = innerHeight − rect.top + 8`, 아니면 `max(12px, safe-area)`. 오른쪽 여백은 카드 오른쪽 끝과 맞춤(카드가 없으면 12px)
 3. 계산기 패널: `right = 버튼 right + 버튼 폭 + 8`, `bottom = 버튼 bottom`, 폭은 `min(284px, 남는 폭)`. 패널 높이 h에 대해 `innerHeight − bottom − h < 8`이면 `bottom = innerHeight − 8 − h` (R8: 카드 위쪽에 겹침)
 4. 호출 시점: `ResizeObserver`(카드·패널), `resize`, 펼침·접힘, 카드 `hidden` 변화(`MutationObserver` attributes `hidden`). `requestAnimationFrame` 한 번으로 묶기
-5. 360×640 기대값: 카드 위 384.8, 버튼 아래 끝 376.8, 패널 위 끝 ≈24.8 (answers Physical values) — 개발 중 콘솔로 한 번 출력해 확인
+5. 펼칠 때 카드 안 무전 입력란이 보이게 스크롤 (분석 U1, spec 4절): 엔진은 에피소드가 정하는 요소를 모르므로 `createCalculator({ avoid, reveal?: () => HTMLElement | null })` 옵션을 받아, 펼친 뒤 배치가 끝나면 `reveal()?.scrollIntoView({ block: 'nearest' })` (카드 `overflow:auto` 안에서만 움직이도록 `block:'nearest'`). 02는 `reveal: () => $('tutCtrl')`
+6. 360×640 기대값: 카드 위 384.8, 버튼 아래 끝 376.8, 패널 위 끝 ≈24.8 (answers Physical values) — 개발 중 콘솔로 한 번 출력해 확인
 
 ### T007 공개 경로와 의존 규칙
 

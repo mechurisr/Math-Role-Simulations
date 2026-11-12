@@ -82,8 +82,9 @@ WP01의 계산기를 실제 브라우저에서 단언한다: 단계별 표시(US
 1. 360×640, M3 무전 단계: 펼치기 전 `#calcFab`이 `#tut` 위(버튼 아래 끝 ≤ 카드 위 끝 − 8 ± 1)이고 가운데 점 `elementFromPoint`가 버튼
 2. 펼친 뒤: `#calc`와 `#tut`의 교집합 넓이 0, 카드 높이 ≤ 0.38×640 + 1, 패널 위 끝 ≥ 8. 측정값을 `test.info().annotations`로 남김
 3. 360×640과 360×568에서 `#radioIn`, `#radioGo`, `#tutNext`, `#calcFab` 각각 가운데 점 `elementFromPoint`가 그 요소(또는 자손) — `expect.poll`로 배치 안정 대기
-4. 모든 키·버튼·닫기 44×44 이상, `scrollWidth ≤ 360`
-5. 언어를 English로 바꿔도 카드 높이 변화 뒤 버튼이 카드 위에 있음
+4. 본문이 긴 단계(M3)에서 펼친 직후 `#radioIn`·`#radioGo`가 카드 보이는 영역 안에 있음 (분석 U1)
+5. 모든 키·버튼·닫기 44×44 이상, `scrollWidth ≤ 360`
+6. 언어를 English로 바꿔도 카드 높이 변화 뒤 버튼이 카드 위에 있음
 
 ### T012 M3 완주
 

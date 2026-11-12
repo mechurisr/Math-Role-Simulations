@@ -46,6 +46,7 @@ const CALC_ERROR_TEXT: Record<CalcError, Text>; // P(ko, en), 스펙 2절 표 �
 ```ts
 interface CalculatorOptions {
   avoid?: () => HTMLElement | null;   // 피해야 할 아래 고정 카드 (02: 튜토리얼 카드 #tut)
+  reveal?: () => HTMLElement | null;  // 펼칠 때 카드 안에서 보이게 스크롤할 요소 (02: 무전 상자 #tutCtrl)
 }
 interface Calculator {
   setAvailable(on: boolean): void;    // false: 접고 버튼 숨김, 식 유지

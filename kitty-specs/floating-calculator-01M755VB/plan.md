@@ -80,7 +80,7 @@ playwright.config.ts             # CI testMatch에 calculator 추가
 - **D1 식 해석**: 문자 단위 토큰화 → 재귀 하강 파서 → 값 계산. 문법은 data-model.md. `-`와 `−`, `*`/`×`, `/`/`÷`는 같은 토큰. 오류는 예외가 아닌 `{ ok:false, reason }` 반환
 - **D2 정수 지수 판정**: 음수 밑일 때 계산된 지수에 `Number.isInteger` (P25, E17)
 - **D3 Esc**: 계산기가 `window`에 캡처 단계 keydown을 걸고, 펼쳐져 있으면 접은 뒤 `stopPropagation()`. 튜토리얼의 `document` 버블 단계 리스너에 닿지 않는다. 튜토리얼 JS 수정 없음
-- **D4 배치**: 카드(`#tut`)를 `ResizeObserver`로 보고, 카드가 보이면 버튼 `bottom = innerHeight − card.top + 8`. 계산기는 버튼 왼쪽, 아래 끝을 버튼 아래 끝에 맞추고 `top < 8`이면 `top = 8`로 내린다(R8). 카드 높이 축소는 `body.calc-open` 클래스 + 튜토리얼 CSS. 카드를 찾는 방법은 `createCalculator({ avoid: () => HTMLElement | null })` 옵션으로 받아 엔진 모듈끼리 직접 묶지 않는다
+- **D4 배치**: 카드(`#tut`)를 `ResizeObserver`로 보고, 카드가 보이면 버튼 `bottom = innerHeight − card.top + 8`. 계산기는 버튼 왼쪽, 아래 끝을 버튼 아래 끝에 맞추고 `top < 8`이면 `top = 8`로 내린다(R8). 카드 높이 축소는 `body.calc-open` 클래스 + 튜토리얼 CSS. 펼칠 때 카드 안에서 무전 입력란이 보이게 `reveal()` 요소를 `scrollIntoView({block:'nearest'})` (분석 U1). 카드와 보일 요소는 `createCalculator({ avoid, reveal })` 옵션으로 받아 엔진 모듈끼리 직접 묶지 않는다
 - **D5 단계별 켜고 끄기**: 엔진은 `setAvailable(boolean)`만 제공. `false`면 접고 버튼 숨김, 식 유지(FR-009). 02는 `onRender`에서 `step.radio && !step.radioHidden?.(state)`, `onEnd`(자유 조작)에서 `true`. 첫 화면(튜토리얼 시작 전, 완료 후 재방문 포함)은 `false`
 - **D6 결과 알림**: `onResult(cb)`로 "값 결과 문자열 또는 null"을 알림. 02의 `radio.ts`가 `#radioCalc`에 "계산기 결과 100.8"로 표시(FR-013). 오류·빈 결과는 null → 줄 숨김
 - **D7 휴대폰 키보드 차단**: 식 표시줄은 입력 요소가 아닌 `output`(`aria-live="polite"`)이라 OS 키보드가 뜨지 않는다. 키는 `<button>`
