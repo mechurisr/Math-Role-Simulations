@@ -6,6 +6,7 @@ import type { AnswerSpec } from '../view/answer';
 import type { MapScene } from '../view/map';
 import { circleSteps } from './circles';
 import { epicentreSteps } from './epicenter';
+import { gyeongjuSteps } from './gyeongju';
 import { distanceSteps } from './distance';
 
 export type Control = 'dist' | 'rB';
@@ -20,7 +21,7 @@ export interface Game {
 }
 export type MissionStep = TutStep & { mission?: string; answer?: AnswerSpec; done?: (s: StepState) => boolean };
 
-export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g), ...circleSteps(g), ...epicentreSteps(g)];
+export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g), ...circleSteps(g), ...epicentreSteps(g), ...gyeongjuSteps(g)];
 
 // 답 판정 결과 문구. 틀리면 방향과 힌트 (FR-007)
 export function feedback(v: Verdict | undefined, good: string, hint: string) {

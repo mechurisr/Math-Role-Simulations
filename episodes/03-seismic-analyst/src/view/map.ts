@@ -3,6 +3,7 @@
 import { tr } from '@series/engine/i18n';
 import type { CanvasSize, ThemeColors } from '@series/engine/ui';
 import { intersect, type Circle, type Intersection } from '../model/circles';
+import { COASTLINE } from '../model/coastline';
 import type { Point } from '../model/constants';
 import type { Line } from '../model/line';
 
@@ -14,22 +15,43 @@ export interface MapPoint { p: Point; label?: string; kind: 'candidate' | 'cross
 export interface MapScene {
   stations: MapStation[]; circles: MapCircle[]; lines?: MapLine[]; points?: MapPoint[];
   crossings?: [number, number];   // 교점을 깜빡여 보여 줄 두 원의 번호
+  coast?: boolean;                 // M7: 해안선 층 (원점 35.0°N 128.0°E, model/geo.ts와 같은 환산)
+  note?: string;                   // 지도 아래 문구 (교점 문구가 없을 때)
 }
 export interface MapView { x0: number; x1: number; y0: number; y1: number; grid: number }
 export const FULL_VIEW: MapView = { x0: 0, x1: 200, y0: 0, y1: 200, grid: 20 };
 
 const toneColor = (C: ThemeColors, t: Tone) => t === 'a' ? C.blue : t === 'b' ? C.accent : t === 'c' ? C.good : C.ink;
 
+// 지도 사각형의 위치와 크기 (그리기와 탭 위치 변환이 같은 값을 씀)
+const PAD = { L: 30, T: 8, R: 8, B: 24 };
+const box = ({ w, h }: CanvasSize) => ({ ox: PAD.L, oy: PAD.T, side: Math.min(w - PAD.L - PAD.R, h - PAD.T - PAD.B) });
+
+// 탭한 위치(캔버스 CSS px) → 지도 km. 지도 밖이면 null
+export function pickAt(size: CanvasSize, px: number, py: number, view: MapView = FULL_VIEW): Point | null {
+  const { ox, oy, side } = box(size);
+  if (side <= 0 || px < ox || px > ox + side || py < oy || py > oy + side) return null;
+  return { x: view.x0 + (px - ox) / side * (view.x1 - view.x0), y: view.y0 + (oy + side - py) / side * (view.y1 - view.y0) };
+}
+
 export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, scene: MapScene, view: MapView = FULL_VIEW) {
-  const { w, h, d } = size, L = 30, T = 8, R = 8, B = 24;
-  const side = Math.min(w - L - R, h - T - B), ox = L, oy = T;
+  const { w, h, d } = size, R = PAD.R, { ox, oy, side } = box(size);
   if (side <= 0) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
   const sx = (x: number) => ox + (x - view.x0) / (view.x1 - view.x0) * side;
   const sy = (y: number) => oy + side - (y - view.y0) / (view.y1 - view.y0) * side;
   const k = side / (view.x1 - view.x0);   // km → px
   cx.setTransform(d, 0, 0, d, 0, 0);
   cx.fillStyle = C.panel; cx.fillRect(0, 0, w, h);
-  cx.fillStyle = C.bg; cx.fillRect(ox, oy, side, side);
+  cx.fillStyle = scene.coast ? C.sky : C.bg; cx.fillRect(ox, oy, side, side);
+  if (scene.coast) {
+    // 육지: 바다보다 조금 진하게 (evenodd), 해안선은 얇은 선
+    cx.save(); cx.beginPath(); cx.rect(ox, oy, side, side); cx.clip();
+    cx.beginPath();
+    for (const r of COASTLINE) { cx.moveTo(sx(r[0]), sy(r[1])); for (let i = 2; i < r.length; i += 2) cx.lineTo(sx(r[i]), sy(r[i + 1])); cx.closePath(); }
+    cx.globalAlpha = 0.3; cx.fillStyle = C.ground; cx.fill('evenodd'); cx.globalAlpha = 1;
+    cx.strokeStyle = C.ground2; cx.lineWidth = 1; cx.stroke();
+    cx.restore();
+  }
   const font = getComputedStyle(document.body).fontFamily;
   cx.font = '10px ' + font; cx.fillStyle = C.muted; cx.strokeStyle = C.line; cx.lineWidth = 1;
   for (let v = view.x0; v <= view.x1 + 1e-9; v += view.grid) {

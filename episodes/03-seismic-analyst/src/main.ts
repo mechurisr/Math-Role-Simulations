@@ -15,7 +15,8 @@ import { recordFor } from './model/seismogram';
 import { sArrival } from './model/waves';
 import { missionSteps, type Control, type Game, type MissionStep, type Panel, type Scene } from './missions/index';
 import { createAnswer } from './view/answer';
-import { crossingNote, drawMap, type MapScene } from './view/map';
+import { crossingNote, drawMap, pickAt, type MapScene } from './view/map';
+import { notesHtml } from './view/notes';
 import { drawRace, raceNote } from './view/race';
 import { createSeismogram } from './view/seismogram';
 import { STRINGS } from './strings';
@@ -39,7 +40,7 @@ function draw() {
   if (ksize && S.panel === 'record') { seis.draw(ksize, C); $('recordNote').textContent = seis.note(); }
   if (msize && S.panel === 'map' && S.map) {
     drawMap(mctx, msize, C, S.map);
-    const x = S.map.crossings, note = x ? crossingNote(intersect(S.map.circles[x[0]].circle, S.map.circles[x[1]].circle)) : '';
+    const x = S.map.crossings, note = x ? crossingNote(intersect(S.map.circles[x[0]].circle, S.map.circles[x[1]].circle)) : S.map.note ?? '';
     if ($('mapNote').textContent !== note) $('mapNote').textContent = note;
     $('rBV').textContent = rBIn.value + ' km';
   }
@@ -116,13 +117,16 @@ $('resumeGo').onclick = () => openMissions(false);
 $('resumeNew').onclick = () => openMissions(true);
 
 rBIn.addEventListener('input', () => tut.emit('rB', +rBIn.value));
+// 지도 탭: km 좌표를 현재 단계에 전달 (M7 진앙 고르기)
+mapCv.addEventListener('click', e => { if (!msize) return; const r = mapCv.getBoundingClientRect(), p = pickAt(msize, e.clientX - r.left, e.clientY - r.top); if (p) tut.emit('pick', { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10 }); });
 distIn.addEventListener('input', () => { S.distance = +distIn.value; replay(); draw(); tut.emit('dist', S.distance); });
 bindInfoTips($('tut'));
 // 테마 색: 시스템·data-theme 전환과, 스타일이 늦게 적용되는 첫 로드(WebKit, Issue #36) 모두에서 다시 읽음
 onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
 window.addEventListener('resize', () => { if (S.panel === 'race') rsize = fitCanvas(race); if (S.panel === 'record') ksize = fitCanvas(recordCv); if (S.panel === 'map') msize = fitCanvas(mapCv); draw(); });
-onLangChange(() => { draw(); if (tut.current()) tut.render(false); if (!$('resumeBox').hidden) askResume(); });
+const showNotes = () => { $('notes').innerHTML = '<h2>' + tr('이 모델이 단순화한 것', 'What this model simplifies') + '</h2>' + notesHtml(); };
+onLangChange(() => { draw(); showNotes(); if (tut.current()) tut.render(false); if (!$('resumeBox').hidden) askResume(); });
 bindLangButton($('langBtn'));
-applyLang(); rsize = fitCanvas(race); distIn.value = String(S.distance);
+applyLang(); showNotes(); rsize = fitCanvas(race); distIn.value = String(S.distance);
 startFixedStepLoop({ dt: DT, active: () => race.dataset.running === '1', step, frame: draw });
 if (!askResume()) tut.autoStart();

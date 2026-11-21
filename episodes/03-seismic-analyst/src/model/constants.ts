@@ -4,6 +4,7 @@
 
 export type Point = { x: number; y: number };   // km, 지도 평면 (x 동쪽, y 북쪽)
 export type Station = { id: string; pos: Point; spTime: number };   // spTime: 정답용 S-P 시간 (s)
+export type GeoPoint = { lat: number; lon: number };   // 도
 
 // P파 속도 6.0 km/s [game value]: 지각 고체 암석 3.0~6.5 km/s 범위 안에서 고름.
 // S파 속도 3.5 km/s [game value]: 고체 암석 1.5~3.8 km/s 범위 안에서 고름. Vp/Vs = 1.71
@@ -28,3 +29,11 @@ export const MAP_SIZE_KM = 200;
 export const M3_CANDIDATES: readonly Point[] = [{ x: 121, y: 77 }, { x: 79, y: 161 }, { x: 16, y: 182 }, { x: 100, y: 100 }, { x: 40, y: 183 }];
 // M4 탐색 슬라이더 범위 (km) [game value]. 접하는 경계 21·189가 들어가게
 export const M4_SLIDER_MAX = 250;
+
+// M7: 2016-09-12 경주 지진 진앙과 깊이. USGS 이벤트 us10006p1f (QuakeML preferred origin, 2016-09-12T11:32:55.770Z)
+// https://earthquake.usgs.gov/earthquakes/eventpage/us10006p1f — 수평 오차 5 km, 깊이 13 ± 1.7 km, 규모 Mw 5.4 (mww)
+export const GYEONGJU_EPICENTER: GeoPoint = { lat: 35.7808, lon: 129.2162 };
+export const GYEONGJU_DEPTH_KM = 13;
+export const GYEONGJU_MW = 5.4;
+// M7 가상 관측소 (지도 km 좌표) [game value]: 실제 기상청 관측소가 아니다. 육지 위로 고름 (answers.md)
+export const M7_STATIONS: readonly Point[] = [{ x: 30, y: 40 }, { x: 110, y: 30 }, { x: 80, y: 170 }];

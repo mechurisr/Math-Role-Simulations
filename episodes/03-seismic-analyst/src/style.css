@@ -67,3 +67,6 @@ body.tut-open #cond{display:none}
 .eq-name.c{color:var(--good)}
 .tut-body math{max-width:100%;overflow-x:auto}
 .sys{font-family:var(--mono);background:var(--bg);border-radius:4px;padding:6px 10px;margin:4px 0}
+.note-list{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.notes h2{margin:0;font-size:17px}
+.map canvas{cursor:crosshair}
