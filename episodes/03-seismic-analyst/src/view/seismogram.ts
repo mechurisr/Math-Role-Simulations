@@ -29,7 +29,7 @@ export function createSeismogram(canvas: HTMLCanvasElement, onChange: () => void
   }
 
   function draw(size: CanvasSize, C: ThemeColors) {
-    if (!rec) return;
+    if (!rec || size.w < 60 || size.h < 60) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
     const { w, h, d } = size, mid = h * 0.45, amp = h * 0.38;
     cx.setTransform(d, 0, 0, d, 0, 0); cx.fillStyle = C.panel; cx.fillRect(0, 0, w, h);
     // 시간 눈금: 1 s마다, 5 s마다 숫자

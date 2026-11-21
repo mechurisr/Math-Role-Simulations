@@ -23,6 +23,7 @@ const toneColor = (C: ThemeColors, t: Tone) => t === 'a' ? C.blue : t === 'b' ? 
 export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, scene: MapScene, view: MapView = FULL_VIEW) {
   const { w, h, d } = size, L = 30, T = 8, R = 8, B = 24;
   const side = Math.min(w - L - R, h - T - B), ox = L, oy = T;
+  if (side <= 0) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
   const sx = (x: number) => ox + (x - view.x0) / (view.x1 - view.x0) * side;
   const sy = (y: number) => oy + side - (y - view.y0) / (view.y1 - view.y0) * side;
   const k = side / (view.x1 - view.x0);   // km → px

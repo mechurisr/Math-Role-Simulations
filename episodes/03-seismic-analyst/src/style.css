@@ -66,3 +66,4 @@ body.tut-open #cond{display:none}
 .eq-name.b{color:var(--accent)}
 .eq-name.c{color:var(--good)}
 .tut-body math{max-width:100%;overflow-x:auto}
+.sys{font-family:var(--mono);background:var(--bg);border-radius:4px;padding:6px 10px;margin:4px 0}

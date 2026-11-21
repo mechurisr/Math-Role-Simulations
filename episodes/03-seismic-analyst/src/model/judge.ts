@@ -1,6 +1,8 @@
 // 판정. 학습자가 보내는 최종 답은 입력 원값 그대로 정답과 비교한다 (spec Edge Cases).
 // 허용 오차는 미션 표(spec Staged Missions)와 answers.md를 따른다.
-export type Reason = 'tooHigh' | 'tooLow' | 'notSameLine' | 'invalid';
+import type { Point } from './constants';
+
+export type Reason = 'tooHigh' | 'tooLow' | 'notSameLine' | 'far' | 'invalid';
 export type Verdict = { ok: true; confirmed?: number } | { ok: false; reason: Reason };
 
 export interface ParseOptions { positive?: boolean }
@@ -24,4 +26,10 @@ export function judgeValue(raw: string, answer: number, tol: number, o: ParseOpt
 export function judgeIntermediate(value: number | 'invalid', answer: number, tol: number): Verdict {
   if (value === 'invalid' || !Number.isFinite(value)) return { ok: false, reason: 'invalid' };
   return value > answer + tol ? { ok: false, reason: 'tooHigh' } : value < answer - tol ? { ok: false, reason: 'tooLow' } : { ok: true, confirmed: answer };
+}
+
+// 좌표 답: 정답과의 평면 거리 ≤ tol (경계 포함)
+export function judgePoint(p: Point | null, answer: Point, tol: number): Verdict {
+  if (!p) return { ok: false, reason: 'invalid' };
+  return Math.hypot(p.x - answer.x, p.y - answer.y) <= tol ? { ok: true } : { ok: false, reason: 'far' };
 }

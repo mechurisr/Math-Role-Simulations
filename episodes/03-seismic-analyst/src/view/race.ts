@@ -10,6 +10,7 @@ const T_MAX = 90;   // 시간 축 끝 (s). 300 km에서 S파 도착 85.7 s가 �
 // t: 애니메이션 중인 지진 발생 뒤 시각 (s). null이면 다 끝난 상태(두 파 모두 도착)
 export function drawRace(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, d: number, t: number | null) {
   const { w, h, d: dpr } = size;
+  if (w < 60 || h < 60) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
   cx.setTransform(dpr, 0, 0, dpr, 0, 0);
   cx.fillStyle = C.panel; cx.fillRect(0, 0, w, h);
   const pad = 22, sceneH = h * 0.56, x0 = pad, x1 = w - pad, gy = sceneH * 0.62;

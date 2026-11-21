@@ -26,3 +26,12 @@ describe('진행 저장', () => {
   it('끝내지 않은 첫 미션부터', () => { expect(resumeIndex(steps, [])).toBe(0); expect(resumeIndex(steps, ['M1'])).toBe(3); expect(resumeIndex(steps, ['M1', 'M2'])).toBe(0); });
   it('이어서 할 미션 이름', () => { expect(nextMission(steps, [])).toBeNull(); expect(nextMission(steps, ['M1'])).toBe('M2'); expect(nextMission(steps, ['M1', 'M2'])).toBeNull(); });
 });
+
+describe('좌표 판정 (±1 km)', () => {
+  it('경계 포함', async () => {
+    const { judgePoint } = await import('../src/model/judge');
+    expect(judgePoint({ x: 101, y: 140 }, { x: 100, y: 140 }, 1).ok).toBe(true);
+    expect(judgePoint({ x: 100.71, y: 140.71 }, { x: 100, y: 140 }, 1)).toEqual({ ok: false, reason: 'far' });
+    expect(judgePoint(null, { x: 100, y: 140 }, 1)).toEqual({ ok: false, reason: 'invalid' });
+  });
+});
