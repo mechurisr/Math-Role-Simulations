@@ -5,7 +5,7 @@ import type { CanvasSize } from '@series/engine/ui';
 import type { Colors } from './colors';
 import { intersect, type Circle, type Intersection } from '../model/circles';
 import { COASTLINE } from '../model/coastline';
-import type { Point } from '../model/constants';
+import { MAP_SIZE_KM, type Point } from '../model/constants';
 import type { Line } from '../model/line';
 
 export type Tone = 'a' | 'b' | 'c' | 'ink';
@@ -21,7 +21,7 @@ export interface MapScene {
   view?: MapView;                  // M8: 확대 보기 (없으면 0~200 km 전체)
 }
 export interface MapView { x0: number; x1: number; y0: number; y1: number; grid: number }
-export const FULL_VIEW: MapView = { x0: 0, x1: 200, y0: 0, y1: 200, grid: 20 };
+export const FULL_VIEW: MapView = { x0: 0, x1: MAP_SIZE_KM, y0: 0, y1: MAP_SIZE_KM, grid: 20 };
 
 const toneColor = (C: Colors, t: Tone) => t === 'a' ? C.blue : t === 'b' ? C.s : t === 'c' ? C.c3 : C.ink;
 
@@ -47,11 +47,11 @@ export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: Color
   cx.fillStyle = C.panel; cx.fillRect(0, 0, w, h);
   cx.fillStyle = scene.coast ? C.sky : C.bg; cx.fillRect(ox, oy, side, side);
   if (scene.coast) {
-    // 육지: 바다보다 조금 진하게 (evenodd), 해안선은 얇은 선
+    // 육지: 불투명한 --land (라이트는 바다보다 밝은 panel, 다크는 bg). 반투명으로 섞으면 선 대비가 3.45까지 떨어짐 (PR #39 크로스체크 권장 1)
     cx.save(); cx.beginPath(); cx.rect(ox, oy, side, side); cx.clip();
     cx.beginPath();
     for (const r of COASTLINE) { cx.moveTo(sx(r[0]), sy(r[1])); for (let i = 2; i < r.length; i += 2) cx.lineTo(sx(r[i]), sy(r[i + 1])); cx.closePath(); }
-    cx.globalAlpha = 0.3; cx.fillStyle = C.ground; cx.fill('evenodd'); cx.globalAlpha = 1;
+    cx.fillStyle = C.land; cx.fill('evenodd');
     cx.strokeStyle = C.coast; cx.lineWidth = 1; cx.stroke();
     cx.restore();
   }

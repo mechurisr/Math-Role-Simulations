@@ -40,3 +40,18 @@ describe('residual (M8)', () => {
     expect(judgePoint({ x: p.x + 0.99, y: p.y }, p, 1).ok).toBe(true); expect(judgePoint({ x: p.x + 1.01, y: p.y }, p, 1).ok).toBe(false);
   });
 });
+
+describe('residual 힌트·퇴화 입력 (PR #39 크로스체크)', () => {
+  it('힌트 화살표 방향으로 0.1 km 옮기면 잔차 제곱합이 줄어듦 (최소점 밖 대표 좌표)', async () => {
+    const { downhillDir8 } = await import('../src/model/residual');
+    for (const p of [{ x: 100, y: 140 }, { x: 90, y: 130 }, { x: 105, y: 145 }, { x: 96.6, y: 145 }, { x: 105, y: 136.2 }]) {
+      const d = downhillDir8(p, cs), step = 0.1 / Math.hypot(d.dx, d.dy);
+      expect(sumSquares({ x: p.x + d.dx * step, y: p.y + d.dy * step }, cs), `${p.x},${p.y} ${d.arrow}`).toBeLessThan(sumSquares(p, cs));
+    }
+  });
+  it('관측소가 한 직선 위여도 NaN이 나오지 않음', () => {
+    const line: Circle[] = [0, 50, 100].map(x => ({ center: { x, y: 0 }, r: 60 }));
+    const q = leastSquaresPoint(line, { x: 50, y: 0 });
+    expect(Number.isFinite(q.x) && Number.isFinite(q.y)).toBe(true);
+  });
+});

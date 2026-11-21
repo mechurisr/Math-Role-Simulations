@@ -4,7 +4,7 @@ import { P, tr } from '@series/engine/i18n';
 import type { Circle } from '../model/circles';
 import { M8_READINGS, M8_START, M8_VIEW, PRACTICE_STATIONS, type Point } from '../model/constants';
 import { judgePoint, judgeValue } from '../model/judge';
-import { downhill, leastSquaresPoint, sumSquares } from '../model/residual';
+import { downhillDir8, leastSquaresPoint, sumSquares } from '../model/residual';
 import { distanceFromSp } from '../model/waves';
 import type { MapPoint, MapScene } from '../view/map';
 import { answerOn, feedback, type Game, type MissionStep } from './index';
@@ -22,10 +22,7 @@ const scene = (points: MapPoint[] = [], zoom = false): MapScene => ({
   note: tr(`새 반지름: A ${fmt(m8Circles()[0].r)} · B ${fmt(m8Circles()[1].r)} · C ${fmt(m8Circles()[2].r)} km`, `New radii: A ${fmt(m8Circles()[0].r)} · B ${fmt(m8Circles()[1].r)} · C ${fmt(m8Circles()[2].r)} km`),
 });
 // 힌트: 잔차 제곱합이 줄어드는 쪽 (8방향)
-function hintArrow(p: Point) {
-  const g = downhill(p, m8Circles()), a = Math.atan2(g.y, g.x), k = ((Math.round(a / (Math.PI / 4)) % 8) + 8) % 8;
-  return ['→', '↗', '↑', '↖', '←', '↙', '↓', '↘'][k];
-}
+const hintArrow = (p: Point) => downhillDir8(p, m8Circles()).arrow;
 
 // 카드 안 조작판: 지금 잔차 제곱합과 0.1 km 화살표 (카드가 화면 아래를 가려도 늘 보이게, 스펙 검토 R3)
 function estPad(g: Game) {

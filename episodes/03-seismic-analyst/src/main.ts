@@ -4,7 +4,7 @@ import '@series/engine/css/ui/theme.css';
 import '@series/engine/css/ui/components.css';
 import '@series/engine/css/tutorial/tutorial.css';
 import '@series/engine/css/calculator/calculator.css';
-import { applyLang, bindLangButton, defineStrings, onLangChange, tr } from '@series/engine/i18n';
+import { applyLang, bindLangButton, defineStrings, onLangChange, tr, tx } from '@series/engine/i18n';
 import { bindInfoTips, byId as $, fitCanvas, load, onThemeChange, save, type CanvasSize } from '@series/engine/ui';
 import { readColors } from './view/colors';
 import { startFixedStepLoop } from '@series/engine/sim';
@@ -21,7 +21,7 @@ import { bindPointerDrag } from './view/drag';
 import { showResiduals } from './view/residual';
 import { residuals, sumSquares } from './model/residual';
 import { m8Circles } from './missions/residual';
-import { PRACTICE_STATIONS, type Point } from './model/constants';
+import { M4_SLIDER_MAX, PRACTICE_STATIONS, RACE_MAX_KM, type Point } from './model/constants';
 import { notesHtml } from './view/notes';
 import { drawRace, raceNote } from './view/race';
 import { createSeismogram } from './view/seismogram';
@@ -52,6 +52,8 @@ function draw() {
   }
 }
 
+// 화면 읽기 문구: M8 확대 보기에서는 20 km 지도라고 알림 (applyLang이 data-i18n-aria로 되돌리므로 언어 전환 뒤에도 다시 부름)
+const mapAria = () => mapCv.setAttribute('aria-label', tx(S.map?.view ? STRINGS.aMapZoom : STRINGS.aMap));
 // M8 추정점: 지도 위에 그리고 잔차 막대·잔차 제곱합을 갱신 (FR-018)
 const estOpen = () => !$('estBox').hidden;
 function setEst(p: Point) {
@@ -83,6 +85,7 @@ function configure(c: Scene) {
   if (c.map) S.map = c.map;
   if (c.rB !== undefined) rBIn.value = String(c.rB);
   if (S.panel === 'map') msize = fitCanvas(mapCv);
+  mapAria();
   // 끌기는 M8 추정점 단계에서만. 다른 단계에서는 지도 위에서도 페이지를 스크롤할 수 있게
   mapCv.style.touchAction = c.open.includes('est') ? 'none' : 'manipulation';
   (Object.keys(CONTROLS) as Control[]).forEach(k => { $(CONTROLS[k]).hidden = !c.open.includes(k); });
@@ -159,10 +162,15 @@ distIn.addEventListener('input', () => { S.distance = +distIn.value; replay(); d
 bindInfoTips($('tut'));
 // 테마 색: 시스템·data-theme 전환과, 스타일이 늦게 적용되는 첫 로드(WebKit, Issue #36) 모두에서 다시 읽음
 onThemeChange(() => { C = readColors(); draw(); });
-window.addEventListener('resize', () => { if (S.panel === 'race') rsize = fitCanvas(race); if (S.panel === 'record') ksize = fitCanvas(recordCv); if (S.panel === 'map') msize = fitCanvas(mapCv); draw(); });
+// 보이는 캔버스의 픽셀 수를 화면 크기에 다시 맞춤. 창 크기 변경뿐 아니라 스타일시트가 늦게 적용돼 캔버스 크기가 바뀌는 경우
+// (WebKit 첫 로드: 처음 잰 크기가 기본값 300×150으로 남아 지도가 늘어나 보임, PR #39 WebKit e2e)에도 ResizeObserver가 부름
+function refit() { if (S.panel === 'race') rsize = fitCanvas(race); if (S.panel === 'record') ksize = fitCanvas(recordCv); if (S.panel === 'map') msize = fitCanvas(mapCv); draw(); }
+const ro = new ResizeObserver(refit);
+[race, recordCv, mapCv].forEach(c => ro.observe(c));
 const showNotes = () => { $('notes').innerHTML = '<h2>' + tr('이 모델이 단순화한 것', 'What this model simplifies') + '</h2>' + notesHtml(); };
-onLangChange(() => { draw(); showNotes(); if (tut.current()) tut.render(false); if (!$('resumeBox').hidden) askResume(); });
+onLangChange(() => { draw(); showNotes(); mapAria(); if (tut.current()) tut.render(false); if (!$('resumeBox').hidden) askResume(); });
 bindLangButton($('langBtn'));
+distIn.max = String(RACE_MAX_KM); rBIn.max = String(M4_SLIDER_MAX);   // 슬라이더 범위는 상수 한 곳에서 (PR #39 크로스체크 권장 3)
 applyLang(); showNotes(); rsize = fitCanvas(race); distIn.value = String(S.distance);
 startFixedStepLoop({ dt: DT, active: () => race.dataset.running === '1', step, frame: draw });
 if (from) tut.start(); else if (!askResume()) tut.autoStart();

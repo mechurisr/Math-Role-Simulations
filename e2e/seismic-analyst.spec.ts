@@ -116,6 +116,34 @@ for (const scheme of ['light', 'dark'] as const) {
   });
 }
 
+// NFR-006 (PR #39 크로스체크 권장 1): M7 지도에 실제로 칠해진 육지·바다 픽셀 위에서 선·글자 색 대비 4.5:1 이상
+for (const scheme of ['light', 'dark'] as const) {
+  test(`M7 지도 육지·바다 픽셀 위 대비 4.5:1 이상 (${scheme})`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.goto(URL + '?from=M7');
+    await expect(page.locator('#tutTitle')).toContainText('M7 실제 지진');
+    const out = await page.locator('#map').evaluate(c => {
+      const cv = c as HTMLCanvasElement, r = cv.getBoundingClientRect(), d = cv.width / r.width;
+      const side = Math.min(r.width - 38, r.height - 32);   // view/map.ts PAD (L 30, T 8, R 8, B 24)
+      const px = (x: number, y: number) => { const i = cv.getContext('2d')!.getImageData(Math.round((30 + x / 200 * side) * d), Math.round((8 + side - y / 200 * side) * d), 1, 1).data; return [i[0], i[1], i[2]]; };
+      const lum = (c: number[]) => { const v = c.map(x => x / 255).map(x => x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+      const css = getComputedStyle(document.documentElement), hex = (k: string) => { const h = css.getPropertyValue('--' + k).trim(); return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); };
+      // 육지 확인점 (50, 130) km ≈ 36.17°N 128.56°E 내륙, 바다 확인점 (190, 30) km ≈ 130.1°E 동해. 격자선(20 km 간격)과 겹치지 않음
+      const bgs = { land: px(50, 130), sea: px(190, 30) }, res: { pair: string; r: number }[] = [];
+      for (const fg of ['ink', 'muted', 'blue', 's', 'c3', 'coast', 'bad']) for (const [k, bg] of Object.entries(bgs)) {
+        const [a, b] = [lum(hex(fg)), lum(bg)].sort((x, y) => y - x); res.push({ pair: `${fg}/${k} rgb(${bg})`, r: (a + 0.05) / (b + 0.05) });
+      }
+      return { res, land: bgs.land, sea: bgs.sea, ratio: [cv.width / r.width, cv.height / r.height] };
+    });
+    // 캔버스 픽셀 수가 화면 크기에 맞는지 (WebKit 첫 로드에서 기본 300×150으로 남던 문제, PR #39)
+    expect(Math.abs(out.ratio[0] - out.ratio[1]), `canvas ratio ${out.ratio}`).toBeLessThan(0.02);
+    expect(out.land).not.toEqual(out.sea);   // 육지와 바다가 구별되게 칠해졌는지
+    expect(out.res.length).toBe(14);
+    for (const { pair, r } of out.res) expect(r, pair).toBeGreaterThanOrEqual(4.5);
+    console.log(scheme, 'M7 land', out.land, 'sea', out.sea, 'min', Math.min(...out.res.map(x => x.r)).toFixed(2));
+  });
+}
+
 test('테마를 바꿔도 캔버스가 그려지고, 언어를 바꿔도 입력값 유지', async ({ page }) => {
   await start(page, ['M1', 'M2']); await next(page);
   await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));

@@ -62,15 +62,17 @@ export function createSeismogram(canvas: HTMLCanvasElement, onChange: () => void
     const sp = readSp(m.p, m.s);
     $('pV').textContent = m.p.toFixed(1) + ' s'; $('sV').textContent = m.s.toFixed(1) + ' s';
     for (const id of ['pMinus', 'pPlus', 'sMinus', 'sPlus']) $<HTMLButtonElement>(id).disabled = locked;
+    if (locked && sp !== 'invalid') return 'S-P = ' + sp.toFixed(1) + ' s ' + tr('(확정)', '(confirmed)');
     return 'S-P = ' + (sp === 'invalid' ? tr('S가 P보다 뒤에 와야 합니다', 'S must come after P') : sp.toFixed(1) + ' s');
   }
 
   return {
     draw, note,
     // 새 기록을 열 때 마커를 처음 위치로 (P는 앞쪽, S는 끝쪽)
-    load(r: Seismogram) { rec = r; m = { p: 1, s: snapTenth(r.end - 1) }; locked = false; },
+    load(r: Seismogram) { rec = r; m = { p: 1, s: snapTenth(r.end - 1) }; locked = false; canvas.style.touchAction = 'none'; },
     markers: () => ({ ...m }),
     // 판독이 통과하면 정답 위치로 맞추고 더 움직이지 않음 (중간값 확정 규칙)
-    confirm() { if (!rec) return; m = { p: rec.pArrival, s: rec.sArrival }; locked = true; onChange(); },
+    // 잠근 뒤에는 끌 것이 없으니 캔버스 위에서도 페이지를 스크롤할 수 있게 (PR #39 크로스체크 권장 2)
+    confirm() { if (!rec) return; m = { p: rec.pArrival, s: rec.sArrival }; locked = true; canvas.style.touchAction = 'manipulation'; onChange(); },
   };
 }

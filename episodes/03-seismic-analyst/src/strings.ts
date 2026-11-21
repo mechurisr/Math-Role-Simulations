@@ -20,6 +20,7 @@ export const STRINGS = {
   aEst: P('추정점의 잔차와 잔차 제곱합', 'Residuals and sum of squares at the estimate'),
   resFL: P('잔차 제곱합', 'Sum of squares'),
   aNotes: P('모델의 단순화', 'What the model simplifies'),
+  aMapZoom: P('확대한 20 km × 20 km 지도. 세 원과 끌 수 있는 추정점', 'A zoomed 20 km by 20 km map with three circles and a draggable estimate'),
   aMap: P('가로세로 200 km 지도. 관측소와 원, 교점, 직선', 'A 200 km by 200 km map with stations, circles, crossings and lines'),
   rBL: P('관측소 B 원의 반지름', 'Radius of station B\'s circle'),
   distL: P('진앙에서 관측소까지 거리', 'Epicentre to station distance'),
