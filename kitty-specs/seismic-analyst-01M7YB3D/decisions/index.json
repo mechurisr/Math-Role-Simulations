@@ -120,6 +120,30 @@
       "status": "resolved",
       "step_id": null,
       "summary_json": null
+    },
+    {
+      "created_at": "2026-11-21T07:37:53.264089Z",
+      "decision_id": "01M7YGMKBG9TEZT2JSAX2YR4SQ",
+      "final_answer": "Natural Earth 10m \uc721\uc9c0 \ub370\uc774\ud130\ub97c 1\ud68c \ub0b4\ub824\ubc1b\uc544 \uc758\uc874\uc131 \uc5c6\ub294 scripts/ \ubcc0\ud658 \uc2a4\ud06c\ub9bd\ud2b8\ub85c \uc9c0\ub3c4 \ubc94\uc704 \uc790\ub974\uae30\u00b7C-010 \ud658\uc0b0\u00b7\ub2e8\uc21c\ud654 \ud6c4 \uacb0\uacfc TS\ub9cc \ucee4\ubc0b. \uc6d0\ubcf8 \ubbf8\ucee4\ubc0b, \ub7f0\ud0c0\uc784 \uc758\uc874\uc131 \uc5c6\uc74c",
+      "input_key": "coastline_pipeline",
+      "mission_id": "01M7YB3DQC30GPPS3Q5YCVQDFK",
+      "mission_slug": "seismic-analyst-01M7YB3D",
+      "opened_by": "cli",
+      "options": [
+        "1\ud68c\uc131 \ubcc0\ud658 \uc2a4\ud06c\ub9bd\ud2b8 + \uacb0\uacfc\ub9cc \ucee4\ubc0b (10m)",
+        "1\ud68c\uc131 \ubcc0\ud658 \uc2a4\ud06c\ub9bd\ud2b8 + \uacb0\uacfc\ub9cc \ucee4\ubc0b (50m)",
+        "Other"
+      ],
+      "origin_flow": "plan",
+      "other_answer": false,
+      "question": "M7 \ud574\uc548\uc120 \uadf8\ub9bc\uc744 \uc5b4\ub5bb\uac8c \ub9cc\ub4e4\uae4c?",
+      "rationale": null,
+      "resolved_at": "2026-11-21T07:52:07.396248Z",
+      "resolved_by": null,
+      "slot_key": "plan.data.coastline",
+      "status": "resolved",
+      "step_id": null,
+      "summary_json": null
     }
   ],
   "mission_id": "01M7YB3DQC30GPPS3Q5YCVQDFK",
