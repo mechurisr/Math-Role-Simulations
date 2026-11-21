@@ -39,6 +39,7 @@ owned_files:
 - e2e/seismic-analyst-m8.spec.ts
 - e2e/seismic-analyst-from.spec.ts
 - e2e/mobile.spec.ts
+- docs/deploy.md
 - playwright.config.ts
 role: implementer
 tags: []
@@ -94,6 +95,7 @@ Use the `/ad-hoc-profile-load` skill to load the agent profile specified in the 
 
 - `mobile.spec.ts`의 URL 목록에 `/episodes/03-seismic-analyst/` 추가 (01·02 테스트는 건드리지 않음)
 - `seismic-analyst.spec.ts`에 테마 전환 뒤 캔버스가 비지 않는지(픽셀 샘플)와 언어 전환 뒤 입력값 유지 확인을 추가
+- NFR-006 대비: 라이트·다크 각각에서 계산된 CSS 변수 색으로 주요 쌍(원·직선·관측소·해안선·지진 기록 선·글자 대 배경)의 WCAG 대비비를 계산해 4.5 이상을 단언. 측정 쌍이 0개면 실패하게
 
 ### T034: `?from=M1..M8` 바로가기 + `e2e/seismic-analyst-from.spec.ts`
 
@@ -108,7 +110,8 @@ Use the `/ad-hoc-profile-load` skill to load the agent profile specified in the 
 
 ### T036: 전체 확인
 
-- quickstart.md 8항목을 직접 확인하고 결과를 PR 본문용으로 기록
+- quickstart.md 8항목을 직접 확인하고 결과를 PR 본문용으로 기록. 끌기·슬라이더 중 갱신이 한 프레임 안인지(plan Performance Goals) 개발자 도구 성능 패널로 한 번 확인
+- SC-005·SC-006은 사람 확인 항목으로 PR 본문 "리뷰 요청 사항"에 적는다
 - `pnpm check`, `pnpm test:e2e`(01 이전 비교 포함 약 8분), `pnpm build` — 실패를 숨기지 않는다
 - 엔진·01·02 변경 없음 확인(`git diff --stat main -- engine episodes/01-calculus-howitzer episodes/02-race-engineer`)
 - 4173 포트 프로세스 정리
