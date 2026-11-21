@@ -15,7 +15,12 @@ import { recordFor } from './model/seismogram';
 import { sArrival } from './model/waves';
 import { missionSteps, type Control, type Game, type MissionStep, type Panel, type Scene } from './missions/index';
 import { createAnswer } from './view/answer';
-import { crossingNote, drawMap, pickAt, type MapScene } from './view/map';
+import { crossingNote, drawMap, FULL_VIEW, pickAt, type MapScene } from './view/map';
+import { bindPointerDrag } from './view/drag';
+import { showResiduals } from './view/residual';
+import { residuals, sumSquares } from './model/residual';
+import { m8Circles } from './missions/residual';
+import { PRACTICE_STATIONS, type Point } from './model/constants';
 import { notesHtml } from './view/notes';
 import { drawRace, raceNote } from './view/race';
 import { createSeismogram } from './view/seismogram';
@@ -27,7 +32,7 @@ defineStrings(STRINGS);
 const DT = 1 / 60, RACE_REAL_S = 2.5;   // 두 파 애니메이션을 실제 약 2.5초에 보여 줌 (화면 표현용)
 const race = $<HTMLCanvasElement>('race'), rctx = race.getContext('2d')!, distIn = $<HTMLInputElement>('dist'), recordCv = $<HTMLCanvasElement>('record');
 const mapCv = $<HTMLCanvasElement>('map'), mctx = mapCv.getContext('2d')!, rBIn = $<HTMLInputElement>('rB');
-const S: { distance: number; panel: Panel; record: number | null; map: MapScene | null } = { distance: 84, panel: 'race', record: null, map: null };
+const S: { distance: number; panel: Panel; record: number | null; map: MapScene | null; est: Point } = { distance: 84, panel: 'race', record: null, map: null, est: { x: 100, y: 140 } };
 let C = readCssVars(THEME_KEYS), rsize: CanvasSize | undefined, ksize: CanvasSize | undefined, msize: CanvasSize | undefined, anim: number | null = null, animSpeed = 1;
 const seis = createSeismogram(recordCv, () => { draw(); tut.emit('marker'); });
 
@@ -46,6 +51,15 @@ function draw() {
   }
 }
 
+// M8 추정점: 지도 위에 그리고 잔차 막대·잔차 제곱합을 갱신 (FR-018)
+const estOpen = () => !$('estBox').hidden;
+function setEst(p: Point) {
+  const v = S.map?.view ?? FULL_VIEW, snap = (n: number) => Math.round(n * 10) / 10;
+  S.est = { x: Math.min(v.x1, Math.max(v.x0, snap(p.x))), y: Math.min(v.y1, Math.max(v.y0, snap(p.y))) };
+  if (S.map) S.map = { ...S.map, points: [{ p: S.est, kind: 'answer' }] };
+  showResiduals(PRACTICE_STATIONS.map(s => s.id), residuals(S.est, m8Circles()), sumSquares(S.est, m8Circles()), S.est);
+}
+
 // 거리가 바뀌면 지진이 다시 난 것처럼 두 파를 처음부터 보여 줌
 function replay() { anim = 0; animSpeed = Math.max(1, (sArrival(S.distance) + 2) / RACE_REAL_S); race.dataset.running = '1'; }
 function step() {
@@ -55,7 +69,7 @@ function step() {
   return true;
 }
 
-const CONTROLS: Record<Control, string> = { dist: 'distCtl', rB: 'rBCtl' };
+const CONTROLS: Record<Control, string> = { dist: 'distCtl', rB: 'rBCtl', est: 'estBox' };
 const PANELS: Record<Panel, string> = { race: 'raceBox', record: 'recordBox', map: 'mapBox' };
 function configure(c: Scene) {
   S.panel = c.panel ?? 'race';
@@ -68,7 +82,10 @@ function configure(c: Scene) {
   if (c.map) S.map = c.map;
   if (c.rB !== undefined) rBIn.value = String(c.rB);
   if (S.panel === 'map') msize = fitCanvas(mapCv);
+  // 끌기는 M8 추정점 단계에서만. 다른 단계에서는 지도 위에서도 페이지를 스크롤할 수 있게
+  mapCv.style.touchAction = c.open.includes('est') ? 'none' : 'manipulation';
   (Object.keys(CONTROLS) as Control[]).forEach(k => { $(CONTROLS[k]).hidden = !c.open.includes(k); });
+  if (c.est) setEst(c.est);
   draw();
 }
 const FREE: Scene = { open: ['dist'] };
@@ -76,6 +93,8 @@ const game: Game = {
   configure, target: c => c in PANELS ? $(PANELS[c as Panel]) : $(CONTROLS[c as Control]),
   markers: () => seis.markers(),
   confirmRecord: () => seis.confirm(),
+  estimate: () => ({ ...S.est }),
+  nudgeEst: (dx, dy) => setEst({ x: S.est.x + dx * 0.1, y: S.est.y + dy * 0.1 }),
 };
 
 const DONE_KEY = 'seismic-analyst:done';
@@ -117,6 +136,12 @@ $('resumeGo').onclick = () => openMissions(false);
 $('resumeNew').onclick = () => openMissions(true);
 
 rBIn.addEventListener('input', () => tut.emit('rB', +rBIn.value));
+// M8 추정점 끌기와 0.1 km 버튼 (touch-action은 configure가 단계마다 정함)
+bindPointerDrag(mapCv, (x, y) => {
+  if (!estOpen() || !msize) return;
+  const p = pickAt(msize, x, y, S.map?.view); if (p) { setEst(p); tut.emit('est'); }
+});
+mapCv.style.touchAction = 'manipulation';
 // 지도 탭: km 좌표를 현재 단계에 전달 (M7 진앙 고르기)
 mapCv.addEventListener('click', e => { if (!msize) return; const r = mapCv.getBoundingClientRect(), p = pickAt(msize, e.clientX - r.left, e.clientY - r.top); if (p) tut.emit('pick', { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10 }); });
 distIn.addEventListener('input', () => { S.distance = +distIn.value; replay(); draw(); tut.emit('dist', S.distance); });

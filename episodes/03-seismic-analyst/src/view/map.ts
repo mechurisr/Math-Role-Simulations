@@ -17,6 +17,7 @@ export interface MapScene {
   crossings?: [number, number];   // 교점을 깜빡여 보여 줄 두 원의 번호
   coast?: boolean;                 // M7: 해안선 층 (원점 35.0°N 128.0°E, model/geo.ts와 같은 환산)
   note?: string;                   // 지도 아래 문구 (교점 문구가 없을 때)
+  view?: MapView;                  // M8: 확대 보기 (없으면 0~200 km 전체)
 }
 export interface MapView { x0: number; x1: number; y0: number; y1: number; grid: number }
 export const FULL_VIEW: MapView = { x0: 0, x1: 200, y0: 0, y1: 200, grid: 20 };
@@ -34,7 +35,8 @@ export function pickAt(size: CanvasSize, px: number, py: number, view: MapView =
   return { x: view.x0 + (px - ox) / side * (view.x1 - view.x0), y: view.y0 + (oy + side - py) / side * (view.y1 - view.y0) };
 }
 
-export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, scene: MapScene, view: MapView = FULL_VIEW) {
+export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, scene: MapScene) {
+  const view = scene.view ?? FULL_VIEW;
   const { w, h, d } = size, R = PAD.R, { ox, oy, side } = box(size);
   if (side <= 0) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
   const sx = (x: number) => ox + (x - view.x0) / (view.x1 - view.x0) * side;

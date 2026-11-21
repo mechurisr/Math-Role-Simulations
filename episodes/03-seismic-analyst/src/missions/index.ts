@@ -7,21 +7,25 @@ import type { MapScene } from '../view/map';
 import { circleSteps } from './circles';
 import { epicentreSteps } from './epicenter';
 import { gyeongjuSteps } from './gyeongju';
+import { residualSteps } from './residual';
+import type { Point } from '../model/constants';
 import { distanceSteps } from './distance';
 
-export type Control = 'dist' | 'rB';
+export type Control = 'dist' | 'rB' | 'est';
 export type Panel = 'race' | 'record' | 'map';
 // record: 보여 줄 지진 기록의 S-P 시간, confirmed: 판독이 확정된 상태로 열기, map: 지도에 그릴 것, rB: M4 슬라이더 처음 값
-export interface Scene { panel?: Panel; distance?: number; record?: number; confirmed?: boolean; map?: MapScene; rB?: number; open: Control[] }
+export interface Scene { panel?: Panel; distance?: number; record?: number; confirmed?: boolean; map?: MapScene; rB?: number; est?: Point; open: Control[] }
 export interface Game {
   configure(s: Scene): void;
   target(c: Panel | Control): Element;
   markers(): { p: number; s: number };   // 지진 기록의 P·S 마커 위치 (기록 시작부터의 초)
   confirmRecord(): void;                 // 판독 통과: 마커를 정답 위치로 맞추고 잠금
+  estimate(): Point;                     // M8 추정점 (지도 km)
+  nudgeEst(dx: number, dy: number): void; // 추정점을 0.1 km 단위로 옮김
 }
 export type MissionStep = TutStep & { mission?: string; answer?: AnswerSpec; done?: (s: StepState) => boolean };
 
-export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g), ...circleSteps(g), ...epicentreSteps(g), ...gyeongjuSteps(g)];
+export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g), ...circleSteps(g), ...epicentreSteps(g), ...gyeongjuSteps(g), ...residualSteps(g)];
 
 // 답 판정 결과 문구. 틀리면 방향과 힌트 (FR-007)
 export function feedback(v: Verdict | undefined, good: string, hint: string) {

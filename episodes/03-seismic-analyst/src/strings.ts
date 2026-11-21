@@ -17,6 +17,8 @@ export const STRINGS = {
   aSMinus: P('S 마커 0.1초 앞으로', 'Move the S marker 0.1 s earlier'),
   aSPlus: P('S 마커 0.1초 뒤로', 'Move the S marker 0.1 s later'),
   recordAxis: P('가로축: 기록 시작부터의 시간 (s). 지진이 언제 났는지는 기록에 없습니다.', 'Horizontal axis: time since recording started (s). The record does not show when the quake happened.'),
+  aEst: P('추정점의 잔차와 잔차 제곱합', 'Residuals and sum of squares at the estimate'),
+  resFL: P('잔차 제곱합', 'Sum of squares'),
   aNotes: P('모델의 단순화', 'What the model simplifies'),
   aMap: P('가로세로 200 km 지도. 관측소와 원, 교점, 직선', 'A 200 km by 200 km map with stations, circles, crossings and lines'),
   rBL: P('관측소 B 원의 반지름', 'Radius of station B\'s circle'),

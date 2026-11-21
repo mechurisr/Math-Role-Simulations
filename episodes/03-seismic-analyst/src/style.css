@@ -70,3 +70,19 @@ body.tut-open #cond{display:none}
 .note-list{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
 .notes h2{margin:0;font-size:17px}
 .map canvas{cursor:crosshair}
+.est[hidden]{display:none}
+.res-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.res-f b{font-family:var(--mono);font-size:26px}
+.res-bars{display:grid;gap:4px}
+.res-row{display:grid;grid-template-columns:20px 1fr 64px;align-items:center;gap:8px}
+.res-id{font-family:var(--mono);font-weight:700}
+.res-track{position:relative;height:14px;background:var(--bg);border:1px solid var(--line);border-radius:3px}
+.res-track::after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--muted)}
+.res-fill{position:absolute;top:0;bottom:0}
+.res-fill.pos{background:var(--accent)}
+.res-fill.neg{background:var(--blue)}
+.res-v{font-family:var(--mono);font-size:13px;text-align:right}
+.est-pad{display:grid;grid-template-columns:repeat(4,44px);gap:8px;justify-content:center}
+.est-card{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;background:var(--bg);border-radius:4px;padding:4px 10px}
+.est-f{font-family:var(--mono);font-size:24px}
+.tut-body .est-pad{margin:6px 0}

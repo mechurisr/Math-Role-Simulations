@@ -37,3 +37,9 @@ export const GYEONGJU_DEPTH_KM = 13;
 export const GYEONGJU_MW = 5.4;
 // M7 가상 관측소 (지도 km 좌표) [game value]: 실제 기상청 관측소가 아니다. 육지 위로 고름 (answers.md)
 export const M7_STATIONS: readonly Point[] = [{ x: 30, y: 40 }, { x: 110, y: 30 }, { x: 80, y: 170 }];
+
+// M8 (심화): 세 관측소가 각각 0.5 s씩 어긋나게 판독된 상황 [game value]. 참값은 12.5 / 7.5 / 10.0 s (answers.md M8)
+export const M8_READINGS: readonly number[] = [12.0, 7.0, 10.5];
+// 확대 지도 범위 (km)와 추정점 시작 위치 = M6의 진앙 [game value]. 최소점과 시작점이 모두 범위 안
+export const M8_VIEW = { x0: 88, x1: 108, y0: 128, y1: 148, grid: 2 };
+export const M8_START: Point = { x: 100, y: 140 };
