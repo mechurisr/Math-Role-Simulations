@@ -11,7 +11,7 @@ requirement_refs:
 - NFR-003
 planning_base_branch: mission/03-seismic-analyst
 merge_target_branch: mission/03-seismic-analyst
-branch_strategy: Planning artifacts for this mission were generated on mission/03-seismic-analyst. During implementation this WP is built directly on mission/03-seismic-analyst (no lanes/worktrees, docs/agents/main.md section 6); completed changes stay on mission/03-seismic-analyst and reach main through the PR.
+branch_strategy: Planning artifacts for this mission were generated on mission/03-seismic-analyst. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into mission/03-seismic-analyst unless the human explicitly redirects the landing branch.
 subtasks:
 - T027
 - T028
@@ -19,10 +19,9 @@ subtasks:
 - T030
 phase: Phase 5 - Story 4
 history:
-- !!omap
-  - at: '2026-11-21T08:01:24Z'
-  - actor: system
-  - action: Prompt generated via /spec-kitty.tasks
+- at: '2026-11-21T08:01:24Z'
+  actor: system
+  action: Prompt generated via /spec-kitty.tasks
 agent_profile: frontend-freddy
 authoritative_surface: episodes/03-seismic-analyst/src/missions/residual.ts
 create_intent:

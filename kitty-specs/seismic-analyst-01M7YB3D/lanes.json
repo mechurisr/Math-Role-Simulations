@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "mission_slug": "seismic-analyst-01M7YB3D",
+  "mission_id": "01M7YB3DQC30GPPS3Q5YCVQDFK",
+  "mission_branch": "kitty/mission-seismic-analyst-01M7YB3D",
+  "target_branch": "mission/03-seismic-analyst",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "episodes/03-seismic-analyst/episode.json",
+        "episodes/03-seismic-analyst/index.html",
+        "episodes/03-seismic-analyst/package.json",
+        "episodes/03-seismic-analyst/src/main.ts",
+        "episodes/03-seismic-analyst/src/missions/distance.ts",
+        "episodes/03-seismic-analyst/src/missions/index.ts",
+        "episodes/03-seismic-analyst/src/model/constants.ts",
+        "episodes/03-seismic-analyst/src/model/judge.ts",
+        "episodes/03-seismic-analyst/src/model/progress.ts",
+        "episodes/03-seismic-analyst/src/model/waves.ts",
+        "episodes/03-seismic-analyst/src/strings.ts",
+        "episodes/03-seismic-analyst/src/style.css",
+        "episodes/03-seismic-analyst/src/view/race.ts",
+        "episodes/03-seismic-analyst/tests/judge.test.ts",
+        "episodes/03-seismic-analyst/tests/waves.test.ts",
+        "pnpm-lock.yaml"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering",
+        "workspace"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "episodes/03-seismic-analyst/src/model/seismogram.ts",
+        "episodes/03-seismic-analyst/src/view/drag.ts",
+        "episodes/03-seismic-analyst/src/view/seismogram.ts",
+        "episodes/03-seismic-analyst/tests/m2.test.ts",
+        "episodes/03-seismic-analyst/tests/seismogram.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "episodes/03-seismic-analyst/src/missions/circles.ts",
+        "episodes/03-seismic-analyst/src/model/circles.ts",
+        "episodes/03-seismic-analyst/src/model/line.ts",
+        "episodes/03-seismic-analyst/src/view/formula-panel.ts",
+        "episodes/03-seismic-analyst/src/view/map.ts",
+        "episodes/03-seismic-analyst/tests/circles.test.ts",
+        "episodes/03-seismic-analyst/tests/line.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-b"
+      ],
+      "parallel_group": 2
+    },
+    {
+      "lane_id": "lane-d",
+      "wp_ids": [
+        "WP04"
+      ],
+      "write_scope": [
+        "episodes/03-seismic-analyst/src/missions/epicenter.ts",
+        "episodes/03-seismic-analyst/src/model/system.ts",
+        "episodes/03-seismic-analyst/tests/system.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-c"
+      ],
+      "parallel_group": 3
+    },
+    {
+      "lane_id": "lane-e",
+      "wp_ids": [
+        "WP05"
+      ],
+      "write_scope": [
+        ".gitignore",
+        "episodes/03-seismic-analyst/src/missions/gyeongju.ts",
+        "episodes/03-seismic-analyst/src/model/coastline.ts",
+        "episodes/03-seismic-analyst/src/model/geo.ts",
+        "episodes/03-seismic-analyst/src/model/m7-flow.ts",
+        "episodes/03-seismic-analyst/src/view/notes.ts",
+        "episodes/03-seismic-analyst/tests/coastline.test.ts",
+        "episodes/03-seismic-analyst/tests/geo.test.ts",
+        "episodes/03-seismic-analyst/tests/m7-flow.test.ts",
+        "scripts/build-coastline.mjs"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-d"
+      ],
+      "parallel_group": 4
+    },
+    {
+      "lane_id": "lane-f",
+      "wp_ids": [
+        "WP06"
+      ],
+      "write_scope": [
+        "episodes/03-seismic-analyst/src/missions/residual.ts",
+        "episodes/03-seismic-analyst/src/model/residual.ts",
+        "episodes/03-seismic-analyst/src/view/residual.ts",
+        "episodes/03-seismic-analyst/tests/residual.test.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-d"
+      ],
+      "parallel_group": 4
+    },
+    {
+      "lane_id": "lane-g",
+      "wp_ids": [
+        "WP07"
+      ],
+      "write_scope": [
+        "e2e/mobile.spec.ts",
+        "e2e/seismic-analyst-from.spec.ts",
+        "e2e/seismic-analyst-m8.spec.ts",
+        "e2e/seismic-analyst.spec.ts",
+        "playwright.config.ts"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-e",
+        "lane-f"
+      ],
+      "parallel_group": 5
+    }
+  ],
+  "computed_at": "2026-11-21T08:06:31.762034+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [],
+  "planning_commit_sha": "f925b45d2a8c23c1532ce8ea61b5a373d1610cd1"
+}
