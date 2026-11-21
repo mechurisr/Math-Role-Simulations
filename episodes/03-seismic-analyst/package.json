@@ -1,0 +1,8 @@
+{
+  "name": "@series/episode-03-seismic-analyst",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@series/engine": "workspace:*"
+  }
+}

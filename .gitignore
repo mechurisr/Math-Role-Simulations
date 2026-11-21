@@ -52,3 +52,6 @@ kitty-ops/ops-index.jsonl
 
 # 검토 에이전트 실행 로그 (scripts/review-agent.sh)
 logs/
+
+# 03 지진 분석관 해안선 원본 데이터 (scripts/build-coastline.mjs 입력, 커밋하지 않음)
+scripts/data/
