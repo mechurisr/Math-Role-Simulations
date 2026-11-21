@@ -1,7 +1,8 @@
 // km 지도: 격자, 관측소, 원(범위 밖은 잘림), 교점(깜빡임), 직선, 후보 점 (FR-001, FR-004, FR-005).
 // y는 위가 북쪽. 계산은 model/에서 하고 여기서는 그리기만
 import { tr } from '@series/engine/i18n';
-import type { CanvasSize, ThemeColors } from '@series/engine/ui';
+import type { CanvasSize } from '@series/engine/ui';
+import type { Colors } from './colors';
 import { intersect, type Circle, type Intersection } from '../model/circles';
 import { COASTLINE } from '../model/coastline';
 import type { Point } from '../model/constants';
@@ -22,7 +23,7 @@ export interface MapScene {
 export interface MapView { x0: number; x1: number; y0: number; y1: number; grid: number }
 export const FULL_VIEW: MapView = { x0: 0, x1: 200, y0: 0, y1: 200, grid: 20 };
 
-const toneColor = (C: ThemeColors, t: Tone) => t === 'a' ? C.blue : t === 'b' ? C.accent : t === 'c' ? C.good : C.ink;
+const toneColor = (C: Colors, t: Tone) => t === 'a' ? C.blue : t === 'b' ? C.s : t === 'c' ? C.c3 : C.ink;
 
 // 지도 사각형의 위치와 크기 (그리기와 탭 위치 변환이 같은 값을 씀)
 const PAD = { L: 30, T: 8, R: 8, B: 24 };
@@ -35,7 +36,7 @@ export function pickAt(size: CanvasSize, px: number, py: number, view: MapView =
   return { x: view.x0 + (px - ox) / side * (view.x1 - view.x0), y: view.y0 + (oy + side - py) / side * (view.y1 - view.y0) };
 }
 
-export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, scene: MapScene) {
+export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: Colors, scene: MapScene) {
   const view = scene.view ?? FULL_VIEW;
   const { w, h, d } = size, R = PAD.R, { ox, oy, side } = box(size);
   if (side <= 0) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
@@ -51,7 +52,7 @@ export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: Theme
     cx.beginPath();
     for (const r of COASTLINE) { cx.moveTo(sx(r[0]), sy(r[1])); for (let i = 2; i < r.length; i += 2) cx.lineTo(sx(r[i]), sy(r[i + 1])); cx.closePath(); }
     cx.globalAlpha = 0.3; cx.fillStyle = C.ground; cx.fill('evenodd'); cx.globalAlpha = 1;
-    cx.strokeStyle = C.ground2; cx.lineWidth = 1; cx.stroke();
+    cx.strokeStyle = C.coast; cx.lineWidth = 1; cx.stroke();
     cx.restore();
   }
   const font = getComputedStyle(document.body).fontFamily;
@@ -82,7 +83,7 @@ export function drawMap(cx: CanvasRenderingContext2D, size: CanvasSize, C: Theme
   }
   for (const p of scene.points ?? []) {
     const x = sx(p.p.x), y = sy(p.p.y);
-    cx.fillStyle = p.state === 'good' ? C.good : p.state === 'bad' ? C.bad : p.kind === 'answer' ? C.bad : C.ink;
+    cx.fillStyle = p.state === 'good' ? C.c3 : p.state === 'bad' ? C.bad : p.kind === 'answer' ? C.bad : C.ink;
     cx.beginPath(); cx.arc(x, y, p.kind === 'answer' ? 6 : 4, 0, 2 * Math.PI); cx.fill();
     if (p.label) { cx.font = 'bold 11px ' + font; cx.textAlign = 'left'; cx.fillText(p.label, x + 6, y - 5); }
   }

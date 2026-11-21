@@ -1,14 +1,15 @@
 // M1 두 파의 경주: 위는 진앙에서 관측소까지 퍼지는 P·S 파면, 아래는 두 파의 도착 시각 막대 (FR-002).
 // 값은 model/waves.ts에서만 계산한다. 그리기는 화면 표현이다.
 import { tr } from '@series/engine/i18n';
-import type { CanvasSize, ThemeColors } from '@series/engine/ui';
+import type { CanvasSize } from '@series/engine/ui';
+import type { Colors } from './colors';
 import { RACE_MAX_KM, VP, VS } from '../model/constants';
 import { pArrival, sArrival, spTime } from '../model/waves';
 
 const T_MAX = 90;   // 시간 축 끝 (s). 300 km에서 S파 도착 85.7 s가 들어가게
 
 // t: 애니메이션 중인 지진 발생 뒤 시각 (s). null이면 다 끝난 상태(두 파 모두 도착)
-export function drawRace(cx: CanvasRenderingContext2D, size: CanvasSize, C: ThemeColors, d: number, t: number | null) {
+export function drawRace(cx: CanvasRenderingContext2D, size: CanvasSize, C: Colors, d: number, t: number | null) {
   const { w, h, d: dpr } = size;
   if (w < 60 || h < 60) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
   cx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -33,7 +34,7 @@ export function drawRace(cx: CanvasRenderingContext2D, size: CanvasSize, C: Them
     const a = Math.PI * 1.75;
     cx.fillStyle = color; cx.textAlign = 'center'; cx.fillText(v, x0 + rx * Math.cos(a) + 8, gy + ry * Math.sin(a) - 4);
   };
-  front('S', C.accent); front('P', C.blue);
+  front('S', C.s); front('P', C.blue);
 
   // 진앙(별)과 관측소(삼각형)
   cx.fillStyle = C.bad; star(cx, x0, gy, 7);
@@ -55,9 +56,9 @@ export function drawRace(cx: CanvasRenderingContext2D, size: CanvasSize, C: Them
   };
   if (now >= ts && d > 0) {
     // S-P 구간
-    cx.fillStyle = C.accent; cx.globalAlpha = .18; cx.fillRect(tToX(tp), ty - 12, tToX(ts) - tToX(tp), 12); cx.globalAlpha = 1;
+    cx.fillStyle = C.s; cx.globalAlpha = .18; cx.fillRect(tToX(tp), ty - 12, tToX(ts) - tToX(tp), 12); cx.globalAlpha = 1;
   }
-  mark(tp, C.blue, 'P'); mark(ts, C.accent, 'S');
+  mark(tp, C.blue, 'P'); mark(ts, C.s, 'S');
 }
 
 function star(cx: CanvasRenderingContext2D, x: number, y: number, r: number) {

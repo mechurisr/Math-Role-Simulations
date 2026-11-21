@@ -52,8 +52,9 @@ GitHub → Settings → Branches → `main` 규칙: "Require a pull request befo
 | 에피소드 | 예 | 받는 값 |
 |---|---|---|
 | 레이스 엔지니어 | `https://math-role-sims.pages.dev/episodes/02-race-engineer/?from=M8` | `M1`~`M8` (소문자 가능) |
+| 지진 분석관 | `https://math-role-sims.pages.dev/episodes/03-seismic-analyst/?from=M7` | `M1`~`M8` (소문자 가능) |
 
 - 진행 기록은 바꾸지 않습니다. 그 미션을 실제로 끝내면 평소처럼 그 미션만 기록됩니다
 - 첫 시작에만 적용됩니다. 튜토리얼을 닫고 다시 열면 기록대로 "이어서 하기"를 묻습니다
 - 모르는 값은 무시하고 평소처럼 시작합니다
-- 출처: Issue #34, `kitty-specs/race-engineer-from-url-01M6X3KZ/spec.md`
+- 출처: Issue #34, `kitty-specs/race-engineer-from-url-01M6X3KZ/spec.md` (지진 분석관: Issue #25, FR-020)

@@ -1,7 +1,8 @@
 // 지진 기록 판독: 기록을 그리고 P·S 마커를 끌거나 ◀ ▶ 버튼으로 0.1 s씩 옮긴다 (FR-003, research R4).
 // 360px에서 23 s 구간이면 1 s ≈ 14 px라 버튼이 주된 정밀 조작 수단이다
 import { tr } from '@series/engine/i18n';
-import { byId as $, type CanvasSize, type ThemeColors } from '@series/engine/ui';
+import { byId as $, type CanvasSize } from '@series/engine/ui';
+import type { Colors } from './colors';
 import { amplitude, readSp, snapTenth, type Seismogram } from '../model/seismogram';
 import { bindPointerDrag } from './drag';
 
@@ -28,7 +29,7 @@ export function createSeismogram(canvas: HTMLCanvasElement, onChange: () => void
     $(`${k}Plus`).onclick = () => set(k, m[k] + 0.1);
   }
 
-  function draw(size: CanvasSize, C: ThemeColors) {
+  function draw(size: CanvasSize, C: Colors) {
     if (!rec || size.w < 60 || size.h < 60) return;   // 숨겨진 캔버스(크기 0)는 그리지 않음
     const { w, h, d } = size, mid = h * 0.45, amp = h * 0.38;
     cx.setTransform(d, 0, 0, d, 0, 0); cx.fillStyle = C.panel; cx.fillRect(0, 0, w, h);
@@ -53,7 +54,7 @@ export function createSeismogram(canvas: HTMLCanvasElement, onChange: () => void
       cx.fillStyle = color; cx.beginPath(); cx.arc(x, 12, 9, 0, 7); cx.fill();
       cx.fillStyle = C.panel; cx.font = 'bold 11px ' + font; cx.fillText(k.toUpperCase(), x, 16);
     };
-    mark('p', C.blue); mark('s', C.accent);
+    mark('p', C.blue); mark('s', C.s);
   }
 
   function note() {

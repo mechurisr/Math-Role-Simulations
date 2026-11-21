@@ -5,7 +5,8 @@ import '@series/engine/css/ui/components.css';
 import '@series/engine/css/tutorial/tutorial.css';
 import '@series/engine/css/calculator/calculator.css';
 import { applyLang, bindLangButton, defineStrings, onLangChange, tr } from '@series/engine/i18n';
-import { bindInfoTips, byId as $, fitCanvas, load, onThemeChange, readCssVars, save, THEME_KEYS, type CanvasSize } from '@series/engine/ui';
+import { bindInfoTips, byId as $, fitCanvas, load, onThemeChange, save, type CanvasSize } from '@series/engine/ui';
+import { readColors } from './view/colors';
 import { startFixedStepLoop } from '@series/engine/sim';
 import { createTutorial } from '@series/engine/tutorial';
 import { createCalculator } from '@series/engine/calculator';
@@ -33,7 +34,7 @@ const DT = 1 / 60, RACE_REAL_S = 2.5;   // 두 파 애니메이션을 실제 약
 const race = $<HTMLCanvasElement>('race'), rctx = race.getContext('2d')!, distIn = $<HTMLInputElement>('dist'), recordCv = $<HTMLCanvasElement>('record');
 const mapCv = $<HTMLCanvasElement>('map'), mctx = mapCv.getContext('2d')!, rBIn = $<HTMLInputElement>('rB');
 const S: { distance: number; panel: Panel; record: number | null; map: MapScene | null; est: Point } = { distance: 84, panel: 'race', record: null, map: null, est: { x: 100, y: 140 } };
-let C = readCssVars(THEME_KEYS), rsize: CanvasSize | undefined, ksize: CanvasSize | undefined, msize: CanvasSize | undefined, anim: number | null = null, animSpeed = 1;
+let C = readColors(), rsize: CanvasSize | undefined, ksize: CanvasSize | undefined, msize: CanvasSize | undefined, anim: number | null = null, animSpeed = 1;
 const seis = createSeismogram(recordCv, () => { draw(); tut.emit('marker'); });
 
 function draw() {
@@ -101,11 +102,21 @@ const DONE_KEY = 'seismic-analyst:done';
 const done = parseDone(load(DONE_KEY));
 const STEPS = missionSteps(game);
 function markDone(m: string) { if (!done.includes(m)) { done.push(m); save(DONE_KEY, JSON.stringify(done)); } }
+const MISSIONS = [...new Set(STEPS.map(s => s.mission).filter((m): m is string => !!m))];
+// 확인용 바로가기 ?from=M7 (FR-020, 링크 없음, 02와 같은 규칙): 첫 시작만 그 미션의 첫 단계로 엶.
+// 앞 미션을 끝낸 것으로 친 목록은 시작 위치 계산에만 쓰고 저장하지 않음. 모르는 값은 무시
+const fromParam = new URLSearchParams(location.search).get('from')?.trim().toUpperCase() ?? '';
+let from = MISSIONS.includes(fromParam) ? fromParam : null;
+function startIndex() {
+  const missions = STEPS.map(s => s.mission);
+  if (!from) return resumeIndex(missions, done);
+  const i = resumeIndex(missions, MISSIONS.slice(0, MISSIONS.indexOf(from))); from = null; return i;
+}
 
 const answer = createAnswer(raw => tut.emit('answer', raw));
 const tut = createTutorial({
   steps: STEPS, episode: 'seismic-analyst', ctrl: $('tutCtrl'),
-  resume: () => resumeIndex(STEPS.map(s => s.mission), done),
+  resume: startIndex,
   onEnd: () => { configure(FREE); calc.setAvailable(true); },
   onAction: el => tut.emit('act', el.dataset.act),
   onRender: () => {
@@ -147,11 +158,11 @@ mapCv.addEventListener('click', e => { if (!msize) return; const r = mapCv.getBo
 distIn.addEventListener('input', () => { S.distance = +distIn.value; replay(); draw(); tut.emit('dist', S.distance); });
 bindInfoTips($('tut'));
 // 테마 색: 시스템·data-theme 전환과, 스타일이 늦게 적용되는 첫 로드(WebKit, Issue #36) 모두에서 다시 읽음
-onThemeChange(() => { C = readCssVars(THEME_KEYS); draw(); });
+onThemeChange(() => { C = readColors(); draw(); });
 window.addEventListener('resize', () => { if (S.panel === 'race') rsize = fitCanvas(race); if (S.panel === 'record') ksize = fitCanvas(recordCv); if (S.panel === 'map') msize = fitCanvas(mapCv); draw(); });
 const showNotes = () => { $('notes').innerHTML = '<h2>' + tr('이 모델이 단순화한 것', 'What this model simplifies') + '</h2>' + notesHtml(); };
 onLangChange(() => { draw(); showNotes(); if (tut.current()) tut.render(false); if (!$('resumeBox').hidden) askResume(); });
 bindLangButton($('langBtn'));
 applyLang(); showNotes(); rsize = fitCanvas(race); distIn.value = String(S.distance);
 startFixedStepLoop({ dt: DT, active: () => race.dataset.running === '1', step, frame: draw });
-if (!askResume()) tut.autoStart();
+if (from) tut.start(); else if (!askResume()) tut.autoStart();

@@ -2,7 +2,7 @@
   "id": "seismic-analyst",
   "number": 3,
   "slug": "03-seismic-analyst",
-  "status": "draft",
+  "status": "published",
   "title": { "ko": "지진 분석관", "en": "Seismic Analyst" },
   "role": { "ko": "지진 분석관", "en": "Seismic analyst" },
   "summary": { "ko": "세 관측소의 S-P 시간으로 원을 그려 진앙을 찾아 주세요", "en": "Draw circles from three stations' S-P times and pin down the epicentre" },
