@@ -3,7 +3,8 @@
 import { expect, test } from '@playwright/test';
 
 test.describe.configure({ timeout: 180_000 });
-test.use({ viewport: { width: 360, height: 800 }, hasTouch: true, isMobile: true });
+// 동작 줄이기: 튜토리얼의 부드러운 스크롤을 끔. Firefox는 그 끝의 1px을 300 ms 넘게 끌어 아래 scrollY 기준값이 1~3px 어긋났음 (PR #39 CI)
+test.use({ viewport: { width: 360, height: 800 }, hasTouch: true, isMobile: true, reducedMotion: 'reduce' });
 
 test('M8을 버튼과 끌기로 완주', async ({ page }) => {
   await page.goto('/episodes/03-seismic-analyst/?from=M8');
