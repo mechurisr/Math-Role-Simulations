@@ -11,12 +11,18 @@ test('M8을 버튼과 끌기로 완주', async ({ page }) => {
   await page.locator('#answerIn0').fill('52.92'); await page.locator('#answerGo').tap();
   await expect(page.locator('#tutBody .fb')).toContainText('52.92'); await page.locator('#tutNext').tap(); await page.locator('#tutNext').tap();
   await expect(page.locator('#resF')).toHaveText('52.92');
-  // 끌기: 지도 위쪽(카드에 가리지 않는 곳)에서. 페이지가 스크롤되지 않고 점만 움직임
+  // 끌기: 지도 위쪽(카드에 가리지 않는 곳)에서. 페이지가 스크롤되지 않고 점만 움직임.
+  // Firefox는 isMobile 에뮬레이션에서 page.mouse가 포인터 이벤트를 보내지 않아(2026-11-21 확인) 터치 포인터 이벤트를 직접 보냄
   await page.locator('#map').scrollIntoViewIfNeeded();
   await expect(page.locator('#map')).toHaveCSS('touch-action', 'none');
-  const box = (await page.locator('#map').boundingBox())!, y0 = await page.evaluate(() => scrollY), before = await page.locator('#resAt').textContent();
-  await page.mouse.move(box.x + box.width / 2, box.y + 60); await page.mouse.down();
-  await page.mouse.move(box.x + box.width / 2 - 30, box.y + 90, { steps: 5 }); await page.mouse.up();
+  // 단계 진입 때 시작된 부드러운 스크롤이 멈춘 뒤에 기준값을 잼
+  await page.waitForFunction(() => new Promise(res => { const a = scrollY; setTimeout(() => res(scrollY === a), 300); }));
+  const y0 = await page.evaluate(() => scrollY), before = await page.locator('#resAt').textContent();
+  await page.locator('#map').evaluate(c => {
+    const r = c.getBoundingClientRect(), x0 = r.left + r.width / 2, ys = r.top + 60;
+    const fire = (type: string, x: number, y: number) => c.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 7, pointerType: 'touch', isPrimary: true, buttons: type === 'pointerup' ? 0 : 1, clientX: x, clientY: y }));
+    fire('pointerdown', x0, ys); for (let i = 1; i <= 5; i++) fire('pointermove', x0 - 6 * i, ys + 6 * i); fire('pointerup', x0 - 30, ys + 30);
+  });
   await expect(page.locator('#resAt')).not.toHaveText(before!);
   expect(await page.evaluate(() => scrollY)).toBe(y0);
   // 끈 점에서 버튼으로 (96.6, 136.2)까지

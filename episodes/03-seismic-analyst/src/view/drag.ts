@@ -4,7 +4,8 @@ export function bindPointerDrag(el: HTMLElement, onMove: (x: number, y: number, 
   let dragging = false;
   el.style.touchAction = 'none';
   const at = (e: PointerEvent, start: boolean) => { const r = el.getBoundingClientRect(); onMove(e.clientX - r.left, e.clientY - r.top, start); };
-  const down = (e: PointerEvent) => { dragging = true; el.setPointerCapture(e.pointerId); at(e, true); };
+  // 포인터를 잡지 못해도(합성 이벤트, 이미 끝난 포인터) 끌기는 계속 동작하게
+  const down = (e: PointerEvent) => { dragging = true; try { el.setPointerCapture(e.pointerId); } catch { /* 잡지 못해도 진행 */ } at(e, true); };
   const move = (e: PointerEvent) => { if (dragging) at(e, false); };
   const up = () => { dragging = false; };
   el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move);
