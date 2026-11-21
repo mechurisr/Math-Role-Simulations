@@ -11,6 +11,12 @@ export const STRINGS = {
   resumeNew: P('처음부터', 'Start over'),
   aRace: P('진앙에서 관측소까지 퍼지는 P파와 S파, 아래는 도착 시각', 'P and S waves spreading from the epicentre to the station, with arrival times below'),
   aPanel: P('조작 패널', 'Controls'),
+  aRecord: P('지진 기록. 가로축은 기록 시작부터의 시간, 끌어서 P·S 마커를 옮김', 'Seismogram. The horizontal axis is time since recording started; drag to move the P and S markers'),
+  aPMinus: P('P 마커 0.1초 앞으로', 'Move the P marker 0.1 s earlier'),
+  aPPlus: P('P 마커 0.1초 뒤로', 'Move the P marker 0.1 s later'),
+  aSMinus: P('S 마커 0.1초 앞으로', 'Move the S marker 0.1 s earlier'),
+  aSPlus: P('S 마커 0.1초 뒤로', 'Move the S marker 0.1 s later'),
+  recordAxis: P('가로축: 기록 시작부터의 시간 (s). 지진이 언제 났는지는 기록에 없습니다.', 'Horizontal axis: time since recording started (s). The record does not show when the quake happened.'),
   distL: P('진앙에서 관측소까지 거리', 'Epicentre to station distance'),
   cond: P('P파 6.0 km/s · S파 3.5 km/s (게임용 값)', 'P wave 6.0 km/s · S wave 3.5 km/s (game values)'),
 };

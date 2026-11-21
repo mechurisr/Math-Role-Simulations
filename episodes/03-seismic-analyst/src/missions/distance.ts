@@ -1,13 +1,17 @@
-// M1 두 파의 경주. 상황 → 직접 보기 → 의미 → 계산 → 왜 중요한가 (FR-010).
+// M1 두 파의 경주, M2 시간 차로 거리 구하기. 상황 → 직접 보기 → 의미 → 계산 → 왜 중요한가 (FR-010).
 // 정답·풀이: kitty-specs/seismic-analyst-01M7YB3D/answers.md
 import { P, tr } from '@series/engine/i18n';
-import { quizStep } from '@series/engine/tutorial';
-import { VP, VS } from '../model/constants';
-import { judgeValue } from '../model/judge';
-import { spTime } from '../model/waves';
+import { quizStep, type StepState } from '@series/engine/tutorial';
+import { frac, math, mi, mo, row, sub } from '@series/engine/ui';
+import { M2_SP_TIME, VP, VS } from '../model/constants';
+import { judgeIntermediate, judgeValue } from '../model/judge';
+import { LEAD, readSp, recordFor } from '../model/seismogram';
+import { distanceFromSp, spTime } from '../model/waves';
+import { formulaBox } from '../view/symbols';
 import { answerOn, feedback, type Game, type MissionStep } from './index';
 
 const CH1 = P('1장 두 파의 경주', 'Ch.1 The race of two waves');
+const CH2 = P('2장 시간 차로 거리 구하기', 'Ch.2 Distance from the gap');
 const M1_KM = 210;
 const SEEN = [84, 168, 252];
 const sp1 = (km: number) => spTime(km).toFixed(1);
@@ -60,4 +64,59 @@ export const distanceSteps = (g: Game): MissionStep[] => [
     enter: () => g.configure({ distance: 210, open: [] }),
     body: () => '<p>' + tr('거리를 알면 S-P 시간을 알 수 있었습니다. 그런데 분석관에게 필요한 것은 <b>거꾸로</b>입니다. 관측소에는 S-P 시간이 기록되고, 우리가 모르는 것은 거리입니다.', 'Knowing the distance gave us the S-P time. An analyst needs it the <b>other way round</b>: the station records the S-P time, and the distance is what we do not know.') + '</p>'
       + '<p>' + tr('비례하니까 거꾸로도 됩니다. S-P 시간이 25 s면 거리는 210 km입니다. 다음 장에서는 진짜 지진 기록에서 S-P 시간을 직접 읽고 거리를 계산합니다.', 'Because they are proportional, it works backwards too: an S-P time of 25 s means 210 km. Next, you read the S-P time off a real-looking seismogram and work out the distance.') + '</p>' },
+  ...recordSteps(g),
+];
+
+const vp = sub(mi('V'), mi('P')), vs = sub(mi('V'), mi('S')), dt = row(mo('Δ'), mi('t'));
+export const distanceFormula = () => math(mi('d'), mo('='), dt, mo('×'), frac(row(vp, vs), row(vp, mo('−'), vs)));
+
+// M2 판독 판정 뒤 어느 마커가 어긋났는지 짚는 힌트
+function readHint(g: Game) {
+  const r = recordFor(M2_SP_TIME), m = g.markers();
+  if (Math.abs(m.p - r.pArrival) > 0.3) return tr('P 마커를 잔잔하던 선이 <b>처음 흔들리기 시작하는 곳</b>에 놓아 보세요.', 'Put the P marker where the quiet line <b>first starts to wiggle</b>.');
+  return tr('S 마커를 흔들림이 <b>갑자기 훨씬 커지는 곳</b>에 놓아 보세요.', 'Put the S marker where the shaking <b>suddenly gets much bigger</b>.');
+}
+function onRead(g: Game, s: StepState) {
+  const m = g.markers();
+  s.v = judgeIntermediate(readSp(m.p, m.s), M2_SP_TIME, 0.3);
+  if (s.v.ok) { s.ok = true; g.confirmRecord(); }
+}
+
+const recordSteps = (g: Game): MissionStep[] => [
+  { ch: CH2, title: P('지진 기록 읽는 법', 'How to read a seismogram'), mission: 'M2',
+    enter: () => g.configure({ panel: 'record', record: M2_SP_TIME, open: [] }),
+    target: () => [g.target('record')],
+    body: () => '<p>' + tr('새 지진이 났고, 관측소 한 곳의 <b>지진 기록</b>이 도착했습니다. 지진 기록은 땅이 흔들린 모습을 시간에 따라 그린 그래프입니다. 가로축은 시간, 위아래로 움직이는 선이 흔들림입니다.', 'A new quake has struck and the <b>seismogram</b> from one station has arrived. A seismogram draws how the ground shook over time: time runs left to right, and the wiggling line is the shaking.') + '</p>'
+      + '<p>' + tr(`가로축은 <b>기록을 시작한 때부터</b>의 시간입니다. 지진이 언제 났는지는 기록에 없습니다. 그래서 P파가 도착한 시각만으로는 거리를 알 수 없고, 두 파의 <b>도착 시각 차이</b>를 읽어야 합니다.`, 'The time axis starts when the <b>recording started</b>. The record does not say when the quake happened, so the P arrival time alone cannot give the distance. You have to read the <b>gap between the two arrivals</b>.') + '</p>'
+      + '<p>' + tr('처음에는 거의 잔잔합니다. 선이 처음 흔들리기 시작하는 곳이 <span class="bl">P파</span>가 도착한 때이고, 흔들림이 갑자기 훨씬 커지는 곳이 <span class="o">S파</span>가 도착한 때입니다.', 'At first it is almost still. Where the line first starts to wiggle, the <span class="bl">P wave</span> has arrived. Where the shaking suddenly gets much bigger, the <span class="o">S wave</span> has arrived.') + '</p>' },
+  { ch: CH2, title: P('M2 기록 판독', 'M2 Read the record'), mission: 'M2',
+    enter: () => g.configure({ panel: 'record', record: M2_SP_TIME, open: [] }),
+    target: () => [g.target('record')],
+    on: { act: (s, a) => { if (a === 'read') onRead(g, s); } },
+    gate: s => !!s.ok, waitLabel: P('판독을 통과해 보세요', 'Pass the reading'),
+    body: s => '<p>' + tr('마커를 끌거나 ◀ ▶ 버튼으로 0.1 s씩 옮겨 <span class="bl">P</span> 마커는 P파 첫 도착에, <span class="o">S</span> 마커는 S파 첫 도착에 놓으세요. 다 놓았으면 <b>판독 확인</b>을 누르세요.', 'Drag the markers or nudge them 0.1 s at a time with ◀ ▶. Put the <span class="bl">P</span> marker on the first P arrival and the <span class="o">S</span> marker on the first S arrival, then press <b>Check reading</b>.') + '</p>'
+      + `<p class="pick-btns"><button class="act" data-act="read"${s.ok ? ' disabled' : ''}>${tr('판독 확인', 'Check reading')}</button></p>`
+      + (s.v?.ok ? `<p class="fb good">${tr(`판독 통과. 확정된 값 <b>${M2_SP_TIME.toFixed(1)} s</b>로 계산하세요. 마커도 정확한 위치로 맞췄습니다.`, `Reading passed. Use the confirmed value, <b>${M2_SP_TIME.toFixed(1)} s</b>. The markers have been set to the exact spots.`)}</p>`
+        : feedback(s.v, '', readHint(g))) },
+  { ch: CH2, title: P('M2 거리 식 만들기', 'M2 Build the distance formula'), mission: 'M2',
+    enter: () => g.configure({ panel: 'record', record: M2_SP_TIME, confirmed: true, open: [] }),
+    body: () => '<p>' + tr(`먼저 숫자로 해 봅시다. 1장의 84 km에서 P파는 84 ÷ ${VP} = 14 s, S파는 84 ÷ ${VS} = 24 s가 걸려 차이가 10 s였습니다.`, `Start with numbers. At 84 km in chapter 1, the P wave took 84 ÷ ${VP} = 14 s and the S wave 84 ÷ ${VS} = 24 s, a gap of 10 s.`) + '</p>'
+      + '<p>' + tr('거리를 d라고 하면 같은 일을 식으로 쓸 수 있습니다. S파가 걸린 시간에서 P파가 걸린 시간을 빼면 S-P 시간 Δt입니다.', 'Call the distance d and write the same thing as a formula. The S wave time minus the P wave time is the S-P time Δt.') + '</p>'
+      + math(frac(mi('d'), vs), mo('−'), frac(mi('d'), vp), mo('='), dt)
+      + '<p>' + tr('d로 묶으면 d × (1/3.5 − 1/6) = Δt입니다. 1/3.5 − 1/6 = 5/42이니, 양쪽을 5/42로 나누면 d = Δt × 42/5 = <b>8.4 × Δt</b>입니다. 같은 식을 기호로 쓰면 이렇습니다.', 'Factor out d: d × (1/3.5 − 1/6) = Δt. Since 1/3.5 − 1/6 = 5/42, dividing both sides by 5/42 gives d = Δt × 42/5 = <b>8.4 × Δt</b>. In symbols:') + '</p>'
+      + distanceFormula()
+      + '<p>' + tr('확인: Δt = 10 s면 8.4 × 10 = 84 km로 1장과 같습니다. S-P 시간이 1 s 늘 때마다 진앙이 8.4 km 더 멉니다.', 'Check: Δt = 10 s gives 8.4 × 10 = 84 km, as in chapter 1. Every extra second of S-P time puts the epicentre 8.4 km further away.') + '</p>' },
+  { ch: CH2, title: P('M2 거리 보내기', 'M2 Send the distance'), mission: 'M2', ctrl: true,
+    enter: () => g.configure({ panel: 'record', record: M2_SP_TIME, confirmed: true, open: [] }),
+    answer: { title: P(`확정된 S-P 시간 ${M2_SP_TIME.toFixed(1)} s`, `Confirmed S-P time ${M2_SP_TIME.toFixed(1)} s`), fields: [{ label: P('거리', 'Distance'), unit: 'km' }] },
+    gate: s => !!s.ok, waitLabel: P('거리를 보내세요', 'Send the distance'),
+    on: answerOn(raw => judgeValue(raw[0], distanceFromSp(M2_SP_TIME), 2, { positive: true })),
+    body: s => '<p>' + tr('판독한 S-P 시간으로 진앙까지의 거리를 계산해 발송팀에 보내세요.', 'Work out the distance to the epicentre from the S-P time you read and send it to the alert team.') + '</p>'
+      + formulaBox(distanceFormula(), ['d', 'dt', 'vp', 'vs'])
+      + feedback(s.v, tr(`맞습니다. 8.4 × ${M2_SP_TIME} = <b>${distanceFromSp(M2_SP_TIME).toFixed(0)} km</b>입니다.`, `Right. 8.4 × ${M2_SP_TIME} = <b>${distanceFromSp(M2_SP_TIME).toFixed(0)} km</b>.`), tr('S-P 시간에 8.4를 곱합니다.', 'Multiply the S-P time by 8.4.')) },
+  { ch: CH2, title: P('M2 거리만으로는 부족합니다', 'M2 Distance is not enough'), mission: 'M2', done: () => true,
+    enter: () => g.configure({ panel: 'record', record: M2_SP_TIME, confirmed: true, open: [] }),
+    body: () => '<p>' + tr(`발송팀이 다시 묻습니다. <b>"${distanceFromSp(M2_SP_TIME).toFixed(0)} km라고요? 어느 쪽으로요?"</b>`, `The alert team asks again: <b>"${distanceFromSp(M2_SP_TIME).toFixed(0)} km? In which direction?"</b>`) + '</p>'
+      + '<p>' + tr('관측소 하나의 기록으로는 거리만 알 수 있고 방향은 모릅니다. 진앙은 관측소에서 그만큼 떨어진 곳이면 북쪽이든 동쪽이든 어디든 될 수 있습니다. 다음 장에서는 이 "어디든"이 지도에서 어떤 모양인지 봅니다.', 'One station only gives the distance, not the direction. The epicentre could be anywhere that far away, north, east or any other way. Next, see what shape that "anywhere" makes on a map.') + '</p>'
+      + `<p class="small">${tr(`참고: 기록은 P파 도착 ${LEAD} s 전부터 시작합니다.`, `Note: the record starts ${LEAD} s before the P wave arrives.`)}</p>` },
 ];

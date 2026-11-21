@@ -27,6 +27,16 @@
     <p class="note" id="raceNote" role="status"></p>
   </section>
 
+  <section class="panel record" id="recordBox" hidden>
+    <canvas id="record" data-i18n-aria="aRecord"></canvas>
+    <div class="nudges">
+      <div class="nudge-row"><span class="mk bl">P</span><button class="nudge-btn" id="pMinus" type="button" data-i18n-aria="aPMinus">◀</button><span class="val" id="pV"></span><button class="nudge-btn" id="pPlus" type="button" data-i18n-aria="aPPlus">▶</button></div>
+      <div class="nudge-row"><span class="mk o">S</span><button class="nudge-btn" id="sMinus" type="button" data-i18n-aria="aSMinus">◀</button><span class="val" id="sV"></span><button class="nudge-btn" id="sPlus" type="button" data-i18n-aria="aSPlus">▶</button></div>
+    </div>
+    <p class="note" id="recordNote" role="status"></p>
+    <p class="small axis-note" data-i18n="recordAxis"></p>
+  </section>
+
   <section class="panel" data-i18n-aria="aPanel">
     <p class="stats" id="cond" data-i18n="cond"></p>
     <div class="ctl" id="distCtl">

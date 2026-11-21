@@ -6,10 +6,14 @@ import type { AnswerSpec } from '../view/answer';
 import { distanceSteps } from './distance';
 
 export type Control = 'dist';
-export interface Scene { distance?: number; open: Control[] }
+export type Panel = 'race' | 'record';
+// record: 보여 줄 지진 기록의 S-P 시간, confirmed: 판독이 확정된 상태로 열기
+export interface Scene { panel?: Panel; distance?: number; record?: number; confirmed?: boolean; open: Control[] }
 export interface Game {
   configure(s: Scene): void;
-  target(c: 'race' | Control): Element;
+  target(c: Panel | Control): Element;
+  markers(): { p: number; s: number };   // 지진 기록의 P·S 마커 위치 (기록 시작부터의 초)
+  confirmRecord(): void;                 // 판독 통과: 마커를 정답 위치로 맞추고 잠금
 }
 export type MissionStep = TutStep & { mission?: string; answer?: AnswerSpec; done?: (s: StepState) => boolean };
 

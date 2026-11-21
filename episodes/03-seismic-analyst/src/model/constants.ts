@@ -10,3 +10,6 @@ export const VS = 3.5;
 
 // M1: 거리 슬라이더 범위 (km) [game value]
 export const RACE_MAX_KM = 300;
+
+// M2: 관측소 하나의 기록 S-P 시간 (s) [game value]. 기록은 P 3.0 s, S 18.0 s, 구간 0 ~ 23.0 s (spec "M2 지진 기록")
+export const M2_SP_TIME = 15;
