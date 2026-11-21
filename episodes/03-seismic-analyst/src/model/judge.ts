@@ -1,6 +1,6 @@
 // 판정. 학습자가 보내는 최종 답은 입력 원값 그대로 정답과 비교한다 (spec Edge Cases).
 // 허용 오차는 미션 표(spec Staged Missions)와 answers.md를 따른다.
-export type Reason = 'tooHigh' | 'tooLow' | 'invalid';
+export type Reason = 'tooHigh' | 'tooLow' | 'notSameLine' | 'invalid';
 export type Verdict = { ok: true; confirmed?: number } | { ok: false; reason: Reason };
 
 export interface ParseOptions { positive?: boolean }

@@ -3,12 +3,14 @@ import { tr } from '@series/engine/i18n';
 import type { StepState, TutStep } from '@series/engine/tutorial';
 import type { Verdict } from '../model/judge';
 import type { AnswerSpec } from '../view/answer';
+import type { MapScene } from '../view/map';
+import { circleSteps } from './circles';
 import { distanceSteps } from './distance';
 
-export type Control = 'dist';
-export type Panel = 'race' | 'record';
-// record: 보여 줄 지진 기록의 S-P 시간, confirmed: 판독이 확정된 상태로 열기
-export interface Scene { panel?: Panel; distance?: number; record?: number; confirmed?: boolean; open: Control[] }
+export type Control = 'dist' | 'rB';
+export type Panel = 'race' | 'record' | 'map';
+// record: 보여 줄 지진 기록의 S-P 시간, confirmed: 판독이 확정된 상태로 열기, map: 지도에 그릴 것, rB: M4 슬라이더 처음 값
+export interface Scene { panel?: Panel; distance?: number; record?: number; confirmed?: boolean; map?: MapScene; rB?: number; open: Control[] }
 export interface Game {
   configure(s: Scene): void;
   target(c: Panel | Control): Element;
@@ -17,13 +19,13 @@ export interface Game {
 }
 export type MissionStep = TutStep & { mission?: string; answer?: AnswerSpec; done?: (s: StepState) => boolean };
 
-export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g)];
+export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g), ...circleSteps(g)];
 
 // 답 판정 결과 문구. 틀리면 방향과 힌트 (FR-007)
 export function feedback(v: Verdict | undefined, good: string, hint: string) {
   if (!v) return '';
   if (v.ok) return `<p class="fb good">${good}</p>`;
-  const why = { tooHigh: tr('너무 큽니다.', 'Too high.'), tooLow: tr('너무 작습니다.', 'Too low.'), invalid: tr('숫자를 입력해 주세요.', 'Enter a number.') }[v.reason];
+  const why = { tooHigh: tr('너무 큽니다.', 'Too high.'), tooLow: tr('너무 작습니다.', 'Too low.'), notSameLine: tr('다른 직선입니다.', 'That is a different line.'), invalid: tr('숫자를 입력해 주세요. 직선은 a와 b가 둘 다 0이면 안 됩니다.', 'Enter numbers. For a line, a and b cannot both be 0.') }[v.reason];
   return `<p class="fb bad">${why} ${v.reason === 'invalid' ? '' : hint}</p>`;
 }
 

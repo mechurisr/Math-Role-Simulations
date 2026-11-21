@@ -37,11 +37,20 @@
     <p class="small axis-note" data-i18n="recordAxis"></p>
   </section>
 
+  <section class="panel map" id="mapBox" hidden>
+    <canvas id="map" data-i18n-aria="aMap"></canvas>
+    <p class="note" id="mapNote" role="status"></p>
+  </section>
+
   <section class="panel" data-i18n-aria="aPanel">
     <p class="stats" id="cond" data-i18n="cond"></p>
     <div class="ctl" id="distCtl">
       <div class="ctl-head"><label for="dist" data-i18n="distL"></label><span class="val" id="distV"></span></div>
       <div class="row"><input type="range" id="dist" min="0" max="300" step="1" value="84"></div>
+    </div>
+    <div class="ctl" id="rBCtl" hidden>
+      <div class="ctl-head"><label for="rB" data-i18n="rBL"></label><span class="val" id="rBV"></span></div>
+      <div class="row"><input type="range" id="rB" min="0" max="250" step="1" value="40"></div>
     </div>
   </section>
 </div>

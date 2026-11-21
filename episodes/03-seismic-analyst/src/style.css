@@ -50,3 +50,19 @@ body.tut-open #cond{display:none}
 .formula .info{margin-left:auto}
 .tut .formula .tip{position:static;flex-basis:100%;width:auto!important;margin:2px 0 8px;box-shadow:none;z-index:auto}
 .sym{font-family:var(--mono);margin-right:4px;color:var(--blue)}
+.map canvas{display:block;width:100%;aspect-ratio:1/1;max-height:70vh}
+.map[hidden]{display:none}
+.cands{border-collapse:collapse;width:100%}
+.cands td{padding:3px 2px;vertical-align:middle}
+.cands .pick{display:flex;gap:4px;justify-content:flex-end}
+.cands .pick button{min-height:44px;min-width:56px;padding:4px 8px}
+.cands button.sel{background:var(--blue);color:var(--panel);border-color:var(--blue)}
+.cands .cand-calc td{font-family:var(--mono);font-size:12px;color:var(--muted);padding-bottom:6px}
+.cands .good,.seen .good{color:var(--good);font-weight:700}
+.cands .bad{color:var(--bad);font-weight:700}
+.seen{display:flex;gap:12px;font-weight:500}
+.eq-name{margin:4px 0 0;font-weight:700;font-family:var(--mono)}
+.eq-name.a{color:var(--blue)}
+.eq-name.b{color:var(--accent)}
+.eq-name.c{color:var(--good)}
+.tut-body math{max-width:100%;overflow-x:auto}
