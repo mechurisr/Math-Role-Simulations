@@ -199,6 +199,12 @@ importers:
         specifier: workspace:*
         version: link:../../engine
 
+  episodes/03-seismic-analyst:
+    dependencies:
+      '@series/engine':
+        specifier: workspace:*
+        version: link:../../engine
+
   episodes/_template:
     dependencies:
       '@series/engine':

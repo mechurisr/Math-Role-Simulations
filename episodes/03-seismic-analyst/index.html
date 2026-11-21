@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>지진 분석관</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script type="module" src="./src/main.ts"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <button class="lang-btn" id="langBtn" type="button"></button>
+    <h1 data-i18n="title"></h1>
+    <p data-i18n="lead"></p>
+    <button class="tut-btn" id="tutOpen" data-i18n="tutOpen"></button>
+  </header>
+
+  <section class="panel resume" id="resumeBox" hidden data-i18n-aria="aResume">
+    <p class="resume-q" data-i18n="resumeQ"></p>
+    <div class="actions"><button class="btn-primary" id="resumeGo" type="button"></button><button class="btn-sec" id="resumeNew" type="button" data-i18n="resumeNew"></button></div>
+  </section>
+
+  <section class="panel race" id="raceBox">
+    <canvas id="race" data-i18n-aria="aRace"></canvas>
+    <p class="note" id="raceNote" role="status"></p>
+  </section>
+
+  <section class="panel" data-i18n-aria="aPanel">
+    <p class="stats" id="cond" data-i18n="cond"></p>
+    <div class="ctl" id="distCtl">
+      <div class="ctl-head"><label for="dist" data-i18n="distL"></label><span class="val" id="distV"></span></div>
+      <div class="row"><input type="range" id="dist" min="0" max="300" step="1" value="84"></div>
+    </div>
+  </section>
+</div>
+
+<div class="tut-ctrl answer" id="tutCtrl" hidden>
+  <p class="answer-title" id="answerTitle"></p>
+  <div class="answer-calc" id="answerCalc" hidden></div>
+  <div class="answer-fields" id="answerFields"></div>
+  <div class="answer-acts"><button class="btn-primary" id="answerGo" type="button"></button></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+.race canvas{display:block;width:100%;height:220px}
+.note{margin:0;font-family:var(--mono);font-size:13px;min-height:1.5em}
+.stats{margin:0}
+.ctl[hidden]{display:none}
+/* 터치 대상 44px (헌장 PRJ-004) */
+.row input[type=range]{height:44px}
+.btn-primary,.btn-sec,.lang-btn{min-height:44px}
+.resume[hidden]{display:none}
+.resume-q{margin:0;font-weight:500}
+/* 조건은 튜토리얼 중 카드에 표시 */
+body.tut-open #cond{display:none}
+.tut-body math{font-size:1.2em;margin:6px 0 10px}
+.tut-body td{font-size:13px}
+.tut-body .o{color:var(--accent);font-weight:700}
+.tut-body .bl{color:var(--blue);font-weight:700}
+.pick-btns{display:flex;gap:8px;flex-wrap:wrap}
+.pick-btns button{min-height:44px;min-width:64px}
+/* 답 보내기 상자 */
+.answer{display:grid;gap:6px}
+.answer[hidden]{display:none}
+.answer-title{margin:0;font-weight:500}
+.answer-title:empty{display:none}
+.answer-fields{display:grid;gap:6px}
+.answer-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+.answer-row label{font-weight:500;font-size:14px}
+.answer-row input{min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:18px}
+.answer-row .unit{font-family:var(--mono);font-size:14px;color:var(--muted)}
+.answer-acts{display:flex;gap:8px;flex-wrap:wrap}
+.answer-acts button{min-height:44px}
+/* 입력란 위 계산기 결과 (kitty-specs/floating-calculator-01M755VB FR-013) */
+.answer-calc{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:4px 10px;border-radius:4px;background:var(--bg);border-left:3px solid var(--blue)}
+.answer-calc[hidden]{display:none}
+.answer-calc span{font-size:13px;color:var(--muted)}
+.answer-calc b{font-family:var(--mono);font-size:24px;overflow-wrap:anywhere}
