@@ -61,8 +61,11 @@ body.tut-open #cond{display:none}
 .map[hidden]{display:none}
 .cands{border-collapse:collapse;width:100%}
 .cands td{padding:3px 2px;vertical-align:middle}
+.cands td:first-child{white-space:nowrap}
 .cands .pick{display:flex;gap:4px;justify-content:flex-end}
 .cands .pick button{min-height:44px;min-width:56px;padding:4px 8px}
+/* 메모 칸 (Issue #40): 버튼 왼쪽에서 남는 폭을 차지 */
+.cands .memo{flex:1 1 64px;width:64px;min-width:44px;max-width:110px;min-height:44px;box-sizing:border-box;padding:4px 6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:16px;text-align:right}
 .cands button.sel{background:var(--blue);color:var(--panel);border-color:var(--blue)}
 .cands .cand-calc td{font-family:var(--mono);font-size:12px;color:var(--muted);padding-bottom:6px}
 .cands .good,.seen .good{color:var(--c3);font-weight:700}
