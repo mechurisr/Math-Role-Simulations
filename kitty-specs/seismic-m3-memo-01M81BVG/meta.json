@@ -1,0 +1,16 @@
+{
+  "coordination_branch": "kitty/mission-seismic-m3-memo-01M81BVG",
+  "created_at": "2026-11-22T10:11:59.688670+00:00",
+  "flattened": false,
+  "friendly_name": "지진분석관 M3 후보 판정 편의 (식·메모 칸·계산기)",
+  "mission_id": "01M81BVG1CE639CGQ848CVXNAG",
+  "mission_number": null,
+  "mission_slug": "seismic-m3-memo-01M81BVG",
+  "mission_type": "software-dev",
+  "pr_bound": true,
+  "purpose_context": "Issue #40. 학습 흐름과 판정은 그대로 두고, 후보 다섯 곳을 원의 방정식에 대입하는 계산을 화면 안에서 할 수 있게 하는 편의 개선 (가벼운 경로).",
+  "purpose_tldr": "M3 진앙 후보 판정 단계에서 원의 방정식을 보며 계산기와 메모 칸으로 직접 대입하게 한다",
+  "slug": "seismic-m3-memo-01M81BVG",
+  "target_branch": "mission/04-seismic-m3-memo",
+  "topology": "coord"
+}
