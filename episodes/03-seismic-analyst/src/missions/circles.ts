@@ -19,6 +19,7 @@ export const rOf = (i: number) => distanceFromSp(PRACTICE_STATIONS[i].spTime);  
 export const circleOf = (i: number, r = rOf(i)): Circle => ({ center: PRACTICE_STATIONS[i].pos, r });
 const stationA = { id: A.id, pos: A.pos, tone: 'a' as const }, stationB = { id: B.id, pos: B.pos, tone: 'b' as const };
 const ptText = (p: Point) => `(${p.x}, ${p.y})`;
+const attr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
 // 거리(반지름) 답: 숫자로 읽어 중간값 판정. 통과하면 정답 반지름으로 확정
 export const radiusCheck = (i: number) => (raw: string[]): Verdict => judgeIntermediate(parseNumber(raw[0], { positive: true }) ?? 'invalid', rOf(i), 2);
@@ -43,7 +44,9 @@ function candidateRows(s: StepState) {
     const pick = s.pick?.[i], truth = onCircle(p, c) === 'on';
     const btn = (on: boolean) => `<button class="act${pick === on ? ' sel' : ''}" data-act="c${i}:${on ? 1 : 0}" aria-pressed="${pick === on}">${on ? tr('원 위', 'On') : tr('아님', 'Not on')}</button>`;
     const calc = s.checked ? `<tr class="cand-calc"><td colspan="2">(${p.x} − ${c.center.x})² + (${p.y} − ${c.center.y})² = ${(p.x - c.center.x) ** 2 + (p.y - c.center.y) ** 2} ${truth ? '=' : (p.x - c.center.x) ** 2 + (p.y - c.center.y) ** 2 < r2 ? '<' : '>'} ${r2} <span class="${pick === truth ? 'good' : 'bad'}">${pick === truth ? '✓' : '✗'}</span></td></tr>` : '';
-    return `<tr><td>${'①②③④⑤'[i]} ${ptText(p)}</td><td class="pick">${btn(true)}${btn(false)}</td></tr>` + calc;
+    // 메모 칸: 채점하지 않음. 값은 main.ts가 단계 상태(s.memo)에 담아 다시 그려도 유지 (Issue #40)
+    const memo = `<input class="memo" data-memo="${i}" inputmode="decimal" autocomplete="off" aria-label="${attr(tr(`${'①②③④⑤'[i]} 대입한 값 메모`, `${'①②③④⑤'[i]} note for the value`))}" value="${attr(s.memo?.[i] ?? '')}">`;
+    return `<tr><td>${'①②③④⑤'[i]} ${ptText(p)}</td><td class="pick">${memo}${btn(true)}${btn(false)}</td></tr>` + calc;
   }).join('') + '</table>';
 }
 const allPicked = (s: StepState) => M3_CANDIDATES.every((_, i) => s.pick?.[i] !== undefined);
@@ -80,7 +83,9 @@ export const circleSteps = (g: Game): MissionStep[] => [
       + circleEq(circleOf(0))
       + '<p>' + tr('이것을 <b>원의 방정식</b>이라고 합니다. 왼쪽이 오른쪽보다 작으면 원 안, 크면 원 밖입니다.', 'This is the <b>equation of the circle</b>. If the left side is smaller than the right, the point is inside; if larger, outside.') + '</p>' },
   { ch: CH3, title: P('M3 진앙 후보 가려내기', 'M3 Sort the candidates'), mission: 'M3',
-    enter: s => { s.pick = {}; g.configure({ panel: 'map', map: m3Scene(true, true), open: [] }); },
+    // 답 입력란은 없지만 대입 계산을 하도록 계산기를 켬 (Issue #40)
+    calc: true,
+    enter: s => { s.pick = {}; s.memo = {}; g.configure({ panel: 'map', map: m3Scene(true, true), open: [] }); },
     target: () => [g.target('map')],
     on: { act: (s, a) => {
       const t = a as string;
@@ -89,7 +94,7 @@ export const circleSteps = (g: Game): MissionStep[] => [
       g.configure({ panel: 'map', map: m3Scene(true, true, s), open: [] });
     } },
     gate: s => !!s.ok, waitLabel: P('다섯 곳을 모두 맞혀 보세요', 'Get all five right'),
-    body: s => '<p>' + tr('발송팀이 주민 신고가 들어온 다섯 곳을 알려 왔습니다. 각 지점이 진앙일 수 있는지, 즉 원 위에 있는지 원의 방정식에 넣어 판정하세요. 지도에서는 원에 가까워 보여도 식으로 확인해야 합니다.', 'The alert team sends five places where people reported shaking. For each, decide whether it could be the epicentre, that is, whether it lies on the circle. Plug it into the equation; looking close on the map is not enough.') + '</p>'
+    body: s => circleEq(circleOf(0)) + '<p>' + tr('발송팀이 주민 신고가 들어온 다섯 곳을 알려 왔습니다. 각 지점이 진앙일 수 있는지, 즉 원 위에 있는지 위의 원의 방정식에 넣어 판정하세요. 지도에서는 원에 가까워 보여도 식으로 확인해야 합니다. 계산기로 구한 값은 각 칸에 적어 둘 수 있습니다.', 'The alert team sends five places where people reported shaking. For each, decide whether it could be the epicentre, that is, whether it lies on the circle. Plug it into the equation above; looking close on the map is not enough. Use the calculator and jot each value in its box.') + '</p>'
       + candidateRows(s)
       + `<p class="pick-btns"><button class="act" data-act="check"${allPicked(s) ? '' : ' disabled'}>${tr('판정 확인', 'Check')}</button></p>`
       + (s.checked ? (allRight(s) ? `<p class="fb good">${tr('모두 맞습니다. ①②③은 원 위, ④는 원 안, ⑤는 원 밖입니다.', 'All right. ①②③ are on the circle, ④ is inside and ⑤ is outside.')}</p>` : `<p class="fb bad">${tr('✗ 표시가 있는 곳을 다시 보세요. 대입한 값이 정확히 같아야 원 위입니다.', 'Look again at the ✗ rows. Only an exact match is on the circle.')}</p>`) : '') },

@@ -23,7 +23,8 @@ export interface Game {
   estimate(): Point;                     // M8 추정점 (지도 km)
   nudgeEst(dx: number, dy: number): void; // 추정점을 0.1 km 단위로 옮김
 }
-export type MissionStep = TutStep & { mission?: string; answer?: AnswerSpec; done?: (s: StepState) => boolean };
+// calc: 답 입력란이 없어도 계산기를 켤 단계 (Issue #40)
+export type MissionStep = TutStep & { mission?: string; answer?: AnswerSpec; calc?: boolean; done?: (s: StepState) => boolean };
 
 export const missionSteps = (g: Game): MissionStep[] => [...distanceSteps(g), ...circleSteps(g), ...epicentreSteps(g), ...gyeongjuSteps(g), ...residualSteps(g)];
 

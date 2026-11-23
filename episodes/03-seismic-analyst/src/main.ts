@@ -126,10 +126,16 @@ const tut = createTutorial({
     const c = tut.current(); if (!c) return;
     const step = c.step as MissionStep;
     answer.show(step.answer);
-    // 계산기는 답 입력란이 보이는 단계에서만 (02와 같은 규칙, kitty-specs/floating-calculator-01M755VB spec 5절)
-    calc.setAvailable(!!step.answer);
+    // 계산기는 답 입력란이 보이는 단계에서만 (02와 같은 규칙, kitty-specs/floating-calculator-01M755VB spec 5절).
+    // 예외: 계산이 필요한 판정 단계는 step.calc로 켬 (M3 후보 판정, Issue #40)
+    calc.setAvailable(!!step.answer || !!step.calc);
     if (step.mission && step.done?.(c.state)) markDone(step.mission);
   },
+});
+// M3 메모 칸: 단계 상태에만 담고 다시 그리지 않음 (입력 중 포커스 유지). 단계를 다시 들어오면 비워짐
+$('tut').addEventListener('input', e => {
+  const t = e.target as HTMLInputElement, st = tut.current()?.state;
+  if (t.dataset.memo !== undefined && st) (st.memo ??= {})[+t.dataset.memo] = t.value;
 });
 const calc = createCalculator({ avoid: () => $('tut'), reveal: () => $('tutCtrl') });
 calc.onResult(answer.setCalcResult);
