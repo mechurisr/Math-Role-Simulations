@@ -45,7 +45,7 @@ function candidateRows(s: StepState) {
     const btn = (on: boolean) => `<button class="act${pick === on ? ' sel' : ''}" data-act="c${i}:${on ? 1 : 0}" aria-pressed="${pick === on}">${on ? tr('원 위', 'On') : tr('아님', 'Not on')}</button>`;
     const calc = s.checked ? `<tr class="cand-calc"><td colspan="2">(${p.x} − ${c.center.x})² + (${p.y} − ${c.center.y})² = ${(p.x - c.center.x) ** 2 + (p.y - c.center.y) ** 2} ${truth ? '=' : (p.x - c.center.x) ** 2 + (p.y - c.center.y) ** 2 < r2 ? '<' : '>'} ${r2} <span class="${pick === truth ? 'good' : 'bad'}">${pick === truth ? '✓' : '✗'}</span></td></tr>` : '';
     // 메모 칸: 채점하지 않음. 값은 main.ts가 단계 상태(s.memo)에 담아 다시 그려도 유지 (Issue #40)
-    const memo = `<input class="memo" data-memo="${i}" inputmode="decimal" autocomplete="off" aria-label="${tr(`${'①②③④⑤'[i]} 대입한 값 메모`, `${'①②③④⑤'[i]} note for the value`)}" value="${attr(s.memo?.[i] ?? '')}">`;
+    const memo = `<input class="memo" data-memo="${i}" inputmode="decimal" autocomplete="off" aria-label="${attr(tr(`${'①②③④⑤'[i]} 대입한 값 메모`, `${'①②③④⑤'[i]} note for the value`))}" value="${attr(s.memo?.[i] ?? '')}">`;
     return `<tr><td>${'①②③④⑤'[i]} ${ptText(p)}</td><td class="pick">${memo}${btn(true)}${btn(false)}</td></tr>` + calc;
   }).join('') + '</table>';
 }
